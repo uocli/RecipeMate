@@ -138,6 +138,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # ]
 
 # Serving React index.html
-TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR.parent, "frontend", "build")]
+# TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR.parent, "frontend", "build")]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
