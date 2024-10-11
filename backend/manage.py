@@ -18,7 +18,7 @@ def main():
         ) from exc
 
     # Build the React app
-    subprocess.check_call(["npm", "run", "build"], cwd="frontend")
+    # subprocess.check_call(["npm", "run", "build"], cwd="frontend")
     execute_from_command_line(sys.argv)
 
 
