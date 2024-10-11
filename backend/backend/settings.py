@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-(o3f4$xpt6cusql2qt6)om1m0i6ya^^3#^(@(@zl3!qsc&rd@f
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "meal-muse-9d688e3b8149.herokuapp.com",
+    "meal-muse-bacb1edf75fc.herokuapp.com",
     "127.0.0.1",
 ]
 
