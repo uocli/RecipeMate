@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 from pathlib import Path
 import os
 import dj_database_url
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-(o3f4$xpt6cusql2qt6)om1m0i6ya^^3#^(@(@zl3!qsc&rd@f"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = [
     "meal-muse-bacb1edf75fc.herokuapp.com",
@@ -76,18 +77,19 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-# DATABASES = {
-#     "default": dj_database_url.config(conn_max_age=600, ssl_require=True),
-# }
-DATABASES = {
-    "default": dj_database_url.config(default="postgres://localhost"),
-}
+ENV = config("DJANGO_ENV", default="development")
+
+if ENV == "production":
+    DATABASES = {
+        "default": dj_database_url.config(default="postgres://localhost"),
+    }
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
