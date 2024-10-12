@@ -28,6 +28,7 @@ SECRET_KEY = "django-insecure-(o3f4$xpt6cusql2qt6)om1m0i6ya^^3#^(@(@zl3!qsc&rd@f
 DEBUG = config("DEBUG", default=False, cast=bool)
 
 ALLOWED_HOSTS = [
+    "mm.uocli.me",
     "meal-muse-bacb1edf75fc.herokuapp.com",
     "127.0.0.1",
 ]
