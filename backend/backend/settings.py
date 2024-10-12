@@ -150,3 +150,16 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") if ENV == "production" else 
 # TEMPLATES[0]["DIRS"] = [os.path.join(BASE_DIR.parent, "frontend", "build")]
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+# CSRF_TRUSTED_ORIGINS = [
+#     "https://mm.uocli.me",
+#     "https://meal-muse-bacb1edf75fc.herokuapp.com",
+#     "http://127.0.0.1",
+# ]
+#
+# CSRF_COOKIE_NAME = "csrftoken"
+# CSRF_COOKIE_HTTPONLY = False  # This should be False to allow JS access
+# CSRF_COOKIE_SECURE = (
+#     True if ENV == "production" else False
+# )  # Set to True only if using HTTPS
+# CSRF_COOKIE_SAMESITE = "Lax"  # You can use 'Strict' if you want stricter controls

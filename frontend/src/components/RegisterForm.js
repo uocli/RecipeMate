@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Alert } from "@mui/material";
 import axios from "axios";
+import { getCsrfToken } from "../utils/csrfCookie";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
@@ -25,7 +26,7 @@ const RegisterForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const { email, password } = formData;
-
+        const csrfToken = await getCsrfToken();
         if (!validateEmail(email)) {
             setError("Invalid email format");
             return;
@@ -39,10 +40,16 @@ const RegisterForm = () => {
         }
 
         try {
-            await axios.post(
-                "/api/auth/registration/",
-                formData,
-            );
+            const response = await axios.post("/api/auth/signup/", formData, {
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": csrfToken,
+                },
+            });
+            console.log(response);
+            if (response.status === 201) {
+                setFormData({ email: "", password: "" });
+            }
             setSuccess(true);
         } catch (err) {
             setError("Registration failed. Try again.");
