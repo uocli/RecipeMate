@@ -2,7 +2,7 @@
   "name": "meal-muse",
   "version": "1.0.0",
   "scripts": {
-    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix frontend && npm run build --prefix frontend"
+    "heroku-postbuild": "cd frontend && npm install && npm run build"
   },
   "dependencies": {
     "react": "^17.0.2",
