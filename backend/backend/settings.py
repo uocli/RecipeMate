@@ -82,8 +82,11 @@ WSGI_APPLICATION = "backend.wsgi.application"
 #         "NAME": BASE_DIR / "db.sqlite3",
 #     }
 # }
+# DATABASES = {
+#     "default": dj_database_url.config(conn_max_age=600, ssl_require=True),
+# }
 DATABASES = {
-    "default": dj_database_url.config(conn_max_age=600, ssl_require=True),
+    "default": dj_database_url.config(default="postgres://localhost"),
 }
 
 # Password validation
