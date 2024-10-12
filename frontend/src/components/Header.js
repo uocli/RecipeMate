@@ -68,8 +68,8 @@ const ResponsiveHeader = () => {
                     )}
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         <Link
-                            href="/"
                             style={{ textDecoration: "none", color: "white" }}
+                            onClick={() => navigate("/")}
                         >
                             Meal Muse
                         </Link>
