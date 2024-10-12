@@ -5,6 +5,7 @@ import Header from "./Header";
 import Home from "./Home";
 import About from "./About";
 import NotFound from "./NotFound";
+import RegisterForm from "./RegisterForm";
 
 const App = () => {
     return (
@@ -13,7 +14,7 @@ const App = () => {
             <Routes>
                 <Route path="/" exact element={<Home />} />
                 <Route path="/about" element={<About />} />
-                {/*<Route path="/contact" component={Contact} />*/}
+                <Route path="/signup" element={<RegisterForm />} />
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
                 <Route path="*" element={<NotFound />} />
