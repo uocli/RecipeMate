@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Alert } from "@mui/material";
+import { TextField, Button, Box, Typography, Alert, Link } from "@mui/material";
 import axios from "axios";
 import { getCsrfToken } from "../utils/csrfCookie";
 
@@ -23,8 +23,8 @@ const RegisterForm = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         const { email, password } = formData;
         const csrfToken = await getCsrfToken();
         if (!validateEmail(email)) {
@@ -39,21 +39,23 @@ const RegisterForm = () => {
             return;
         }
 
-        try {
-            const response = await axios.post("/api/auth/signup/", formData, {
+        axios
+            .post("/auth/signup/", formData, {
                 headers: {
                     "Content-Type": "application/json",
                     "X-CSRFToken": csrfToken,
                 },
+            })
+            .then((response) => {
+                if (response.status === 201) {
+                    setFormData({ email: "", password: "" });
+                    setSuccess(true);
+                    setError("");
+                }
+            })
+            .catch((error) => {
+                setError(error.response?.data?.message);
             });
-            console.log(response);
-            if (response.status === 201) {
-                setFormData({ email: "", password: "" });
-            }
-            setSuccess(true);
-        } catch (err) {
-            setError("Registration failed. Try again.");
-        }
     };
 
     return (
@@ -69,7 +71,11 @@ const RegisterForm = () => {
             {error && <Alert severity="error">{error}</Alert>}
             {success ? (
                 <Alert severity="success">
-                    Please check your email to verify your account.
+                    You have successfully registered. Go to{" "}
+                    <Link href="/login" underline="hover">
+                        login
+                    </Link>{" "}
+                    page to login.
                 </Alert>
             ) : (
                 <>

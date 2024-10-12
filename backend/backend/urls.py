@@ -22,5 +22,6 @@ from .views import index
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
+    path("auth/", include("auth.urls")),
     re_path(r"^.*$", index),
 ]
