@@ -1,13 +1,15 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import { AuthContext } from "../utils/AuthContext";
 
-const LoginForm = () => {
+const LoginForm = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
+    const { login } = useContext(AuthContext);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -28,7 +30,7 @@ const LoginForm = () => {
             .then(({ status, data }) => {
                 if (status === 200) {
                     if (data.token) {
-                        localStorage.setItem("authToken", data.token);
+                        login(data.token);
                     }
                     setMessage("Login successful");
                 }

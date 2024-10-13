@@ -7,6 +7,7 @@ import About from "./About";
 import NotFound from "./NotFound";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
+import ProtectedRoute from "../utils/ProtectedRoute";
 
 const App = () => {
     return (
@@ -14,7 +15,14 @@ const App = () => {
             <Header />
             <Routes>
                 <Route path="/" exact element={<Home />} />
-                <Route path="/about" element={<About />} />
+                <Route
+                    path="/about"
+                    element={
+                        <ProtectedRoute>
+                            <About />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 {/*<Route path="/tasks" component={Tasks} />*/}
