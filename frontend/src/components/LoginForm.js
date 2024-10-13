@@ -4,7 +4,7 @@ import { getCsrfToken } from "../utils/CsrfCookie";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 
-const LoginForm = (props) => {
+const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -28,11 +28,20 @@ const LoginForm = (props) => {
                 },
             )
             .then(({ status, data }) => {
-                if (status === 200) {
-                    if (data.token) {
-                        login(data.token);
+                switch (status) {
+                    case 400: {
+                        setError(data.message);
+                        break;
                     }
-                    setMessage("Login successful");
+                    case 200: {
+                        setMessage("Login successful");
+                        if (data.token) {
+                            login(data.token);
+                        }
+                        break;
+                    }
+                    default: {
+                    }
                 }
             })
             .catch((error) => {
