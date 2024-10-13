@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography, Alert, Link } from "@mui/material";
 import axios from "axios";
-import { getCsrfToken } from "../utils/csrfCookie";
+import { getCsrfToken } from "../utils/CsrfCookie";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });

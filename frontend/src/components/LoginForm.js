@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { getCsrfToken } from "../utils/csrfCookie";
+import { getCsrfToken } from "../utils/CsrfCookie";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 
 const LoginForm = () => {
