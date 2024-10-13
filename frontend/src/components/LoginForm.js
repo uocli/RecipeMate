@@ -3,6 +3,7 @@ import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
@@ -10,7 +11,9 @@ const LoginForm = () => {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const { login } = useContext(AuthContext);
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
     const handleSubmit = async (event) => {
         event.preventDefault();
         setMessage("");
@@ -35,6 +38,7 @@ const LoginForm = () => {
                     }
                     case 200: {
                         setMessage("Login successful");
+                        navigate(from, { replace: true });
                         if (data.token) {
                             login(data.token);
                         }
