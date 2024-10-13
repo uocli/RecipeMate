@@ -8,5 +8,4 @@ def get_csrf_token(request):
     token = get_token(request)
     response = JsonResponse({"csrfToken": token})
     response.set_cookie("csrftoken", token)
-    print("get_csrf_token", response.getvalue())
     return response
