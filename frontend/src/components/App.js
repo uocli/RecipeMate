@@ -11,7 +11,7 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 
 const App = () => {
     return (
-        <Router>
+        <>
             <Header />
             <Routes>
                 <Route path="/" exact element={<Home />} />
@@ -29,7 +29,7 @@ const App = () => {
                 {/*<Route path="/task/:id" component={Task} />*/}
                 <Route path="*" element={<NotFound />} />
             </Routes>
-        </Router>
+        </>
     );
 };
 

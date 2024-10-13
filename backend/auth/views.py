@@ -48,3 +48,13 @@ def login_view(request):
         return Response({"token": token.key, "message": "Login successful"}, status=200)
     else:
         return Response({"error": "Invalid credentials"}, status=400)
+
+
+@api_view(["POST"])
+def verify_token_view(request):
+    try:
+        token = request.headers.get("Authorization").split(" ")[1]
+        user = Token.objects.get(key=token).user
+        return JsonResponse({"email": user.email}, status=200)
+    except Exception as e:
+        return JsonResponse({"message": "Invalid token"}, status=400)
