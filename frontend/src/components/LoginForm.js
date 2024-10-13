@@ -1,8 +1,9 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
-import { Alert, Box, Button, TextField, Typography } from "@mui/material";
+import { Alert, Box, Button, Link, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
@@ -10,7 +11,9 @@ const LoginForm = () => {
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
     const { login } = useContext(AuthContext);
-
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
     const handleSubmit = async (event) => {
         event.preventDefault();
         setMessage("");
@@ -35,6 +38,7 @@ const LoginForm = () => {
                     }
                     case 200: {
                         setMessage("Login successful");
+                        navigate(from, { replace: true });
                         if (data.token) {
                             login(data.token);
                         }
@@ -53,21 +57,16 @@ const LoginForm = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                width: "300px",
-                margin: "auto",
-                mt: 5,
-            }}
+            sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
-            <Typography variant="h5" textAlign="center">
+            <Typography variant="h5" align="center" gutterBottom>
                 Login
             </Typography>
             <TextField
                 label="Email"
                 variant="outlined"
+                fullWidth
+                margin="normal"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -76,16 +75,36 @@ const LoginForm = () => {
             <TextField
                 label="Password"
                 variant="outlined"
+                fullWidth
+                margin="normal"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ marginTop: 2 }}
+                type="submit"
+            >
                 Login
             </Button>
             {message && <Alert severity="success">{message}</Alert>}
             {error && <Alert severity="error">{error}</Alert>}
+            <Typography
+                variant="body2"
+                align="center"
+                style={{ marginTop: "16px" }}
+            >
+                <Link
+                    underline="hover"
+                    onClick={() => navigate("/password-recovery")}
+                >
+                    Forget your password?
+                </Link>
+            </Typography>
         </Box>
     );
 };

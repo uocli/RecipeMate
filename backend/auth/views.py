@@ -1,5 +1,4 @@
 from datetime import datetime
-from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 import json
@@ -24,7 +23,7 @@ def signup_view(request):
         user = User.objects.create_user(username=email, email=email, password=password)
         user.save()
         return JsonResponse({"message": "User created successfully!"}, status=201)
-    except IntegrityError as e:
+    except IntegrityError:
         return JsonResponse(
             {"message": "User with this email already exists."}, status=400
         )
@@ -53,5 +52,5 @@ def verify_token_view(request):
         token = request.headers.get("Authorization").split(" ")[1]
         user = Token.objects.get(key=token).user
         return JsonResponse({"email": user.email}, status=200)
-    except Exception as e:
+    except Exception:
         return JsonResponse({"message": "Invalid token"}, status=400)
