@@ -68,8 +68,10 @@ const ResponsiveHeader = () => {
                     )}
                     <Typography variant="h6" sx={{ flexGrow: 1 }}>
                         <Link
+                            component="button"
                             style={{ textDecoration: "none", color: "white" }}
                             onClick={() => navigate("/")}
+                            underline="none"
                         >
                             Meal Muse
                         </Link>
@@ -101,7 +103,11 @@ const ResponsiveHeader = () => {
 
             <Box
                 component="main"
-                sx={{ flexGrow: 1, p: 3, mt: 3 }} // Adding margin to prevent overlap with AppBar
+                sx={{
+                    flexGrow: 1,
+                    p: 3,
+                    mt: 3,
+                }} // Adding margin to prevent overlap with AppBar
             ></Box>
         </Box>
     );
