@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from django.contrib.auth.models import User
 from django.http import JsonResponse
@@ -42,6 +43,8 @@ def login_view(request):
     user = authenticate(username=email, password=password)
     if user is not None:
         token, _ = Token.objects.get_or_create(user=user)
+        user.last_login = datetime.now()
+        user.save(update_fields=["last_login"])
         return Response({"token": token.key, "message": "Login successful"}, status=200)
     else:
         return Response({"error": "Invalid credentials"}, status=400)
