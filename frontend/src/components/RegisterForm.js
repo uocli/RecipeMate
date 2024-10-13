@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -64,11 +66,14 @@ const RegisterForm = () => {
             onSubmit={handleSubmit}
             sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
+            <Typography variant="h5" align="center" gutterBottom>
+                Register
+            </Typography>
             {error && <Alert severity="error">{error}</Alert>}
             {success ? (
                 <Alert severity="success">
                     You have successfully registered. Go to{" "}
-                    <Link href={"/login"} underline="hover">
+                    <Link underline="hover" onClick={() => navigate("/login")}>
                         login
                     </Link>{" "}
                     page to login.
@@ -111,7 +116,10 @@ const RegisterForm = () => {
                         style={{ marginTop: "16px" }}
                     >
                         Already have an account?{" "}
-                        <Link href={"/login"} underline="always">
+                        <Link
+                            underline="hover"
+                            onClick={() => navigate("/login")}
+                        >
                             Login
                         </Link>
                     </Typography>
