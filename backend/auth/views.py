@@ -44,7 +44,7 @@ def login_view(request):
         user.save(update_fields=["last_login"])
         return Response({"token": token.key, "message": "Login successful"}, status=200)
     else:
-        return Response({"error": "Invalid credentials"}, status=400)
+        return Response({"message": "Invalid credentials"}, status=400)
 
 
 @api_view(["POST"])
