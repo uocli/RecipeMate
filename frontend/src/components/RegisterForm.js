@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Alert, Link } from "@mui/material";
+import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
 
@@ -64,15 +64,11 @@ const RegisterForm = () => {
             onSubmit={handleSubmit}
             sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
-            <Typography variant="h4" gutterBottom>
-                Register
-            </Typography>
-
             {error && <Alert severity="error">{error}</Alert>}
             {success ? (
                 <Alert severity="success">
                     You have successfully registered. Go to{" "}
-                    <Link href="/login" underline="hover">
+                    <Link href={"/login"} underline="hover">
                         login
                     </Link>{" "}
                     page to login.
@@ -109,6 +105,16 @@ const RegisterForm = () => {
                     >
                         Register
                     </Button>
+                    <Typography
+                        variant="body2"
+                        align="center"
+                        style={{ marginTop: "16px" }}
+                    >
+                        Already have an account?{" "}
+                        <Link href={"/login"} underline="always">
+                            Login
+                        </Link>
+                    </Typography>
                 </>
             )}
         </Box>
