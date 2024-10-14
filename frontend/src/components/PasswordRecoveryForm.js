@@ -64,7 +64,13 @@ const PasswordRecoveryForm = () => {
                 style={{ marginTop: "16px" }}
             >
                 Remembered your password?{" "}
-                <Link onClick={() => navigate("/login")}>Login</Link>
+                <Link
+                    component="button"
+                    underline="hover"
+                    onClick={() => navigate("/login")}
+                >
+                    Login
+                </Link>
             </Typography>
         </Box>
     );

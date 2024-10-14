@@ -1,14 +1,22 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
 import { getCsrfToken } from "../utils/CsrfCookie";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthContext";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
+    const { isAuthenticated } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -117,6 +125,7 @@ const RegisterForm = () => {
                     >
                         Already have an account?{" "}
                         <Link
+                            component="button"
                             underline="hover"
                             onClick={() => navigate("/login")}
                         >
