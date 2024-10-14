@@ -13,6 +13,9 @@ import {
     CssBaseline,
     useMediaQuery,
     Link,
+    Avatar,
+    MenuItem,
+    Menu,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
@@ -26,6 +29,7 @@ const ResponsiveHeader = () => {
     const navigate = useNavigate();
     const [auth, setAuth] = useState(false);
     const { isAuthenticated, logout } = useContext(AuthContext);
+    const [anchorEl, setAnchorEl] = useState(null);
     useEffect(() => {
         setAuth(isAuthenticated);
     }, [isAuthenticated]);
@@ -39,6 +43,17 @@ const ResponsiveHeader = () => {
         { text: "Services", path: "/services" },
         { text: "Contact", path: "/contact" },
     ];
+
+    const handleAvatarClick = (event) => {
+        setAnchorEl(event.currentTarget); // Open menu on avatar click
+    };
+    const handleClose = () => {
+        setAnchorEl(null); // Close menu
+    };
+    const handleProfile = () => {
+        handleClose();
+        navigate("/profile"); // Navigate to profile page
+    };
 
     const drawerContent = (
         <List>
@@ -110,9 +125,35 @@ const ResponsiveHeader = () => {
                             </Button>
                         </>
                     ) : (
-                        <Button color="inherit" onClick={logout}>
-                            Sign Out
-                        </Button>
+                        <>
+                            <IconButton
+                                onClick={handleAvatarClick}
+                                sx={{ p: 0 }}
+                            >
+                                <Avatar
+                                    alt="User Avatar"
+                                    src="/static/images/avatar/1.jpg"
+                                />
+                            </IconButton>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                }}
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                            >
+                                <MenuItem onClick={handleProfile}>
+                                    Account Settings
+                                </MenuItem>
+                                <MenuItem onClick={logout}>Sign Out</MenuItem>
+                            </Menu>
+                        </>
                     )}
                 </Toolbar>
             </AppBar>
