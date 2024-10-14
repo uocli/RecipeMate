@@ -99,6 +99,7 @@ const LoginForm = () => {
                 style={{ marginTop: "16px" }}
             >
                 <Link
+                    component="button"
                     underline="hover"
                     onClick={() => navigate("/password-recovery")}
                 >

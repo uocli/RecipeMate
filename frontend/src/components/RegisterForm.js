@@ -117,6 +117,7 @@ const RegisterForm = () => {
                     >
                         Already have an account?{" "}
                         <Link
+                            component="button"
                             underline="hover"
                             onClick={() => navigate("/login")}
                         >
