@@ -1,2 +1,2 @@
-# meal-muse
+# RecipeMate
  
