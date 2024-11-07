@@ -11,90 +11,6 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 import Chat from "./Chat";
 
 const App = () => {
-
-    const chatHistory = [
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "User",
-            message: "Hello",
-            time: new Date().toLocaleTimeString(),
-        },
-        {
-            from: "Bot",
-            message: "Hi, how can I help you?",
-            time: new Date().toLocaleTimeString(),
-        },
-
-    ];
     return (
         <>
             <Header />
@@ -110,7 +26,7 @@ const App = () => {
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
-                <Route path="/chat" element={<Chat history={chatHistory} />} />
+                <Route path="/chat" element={<Chat />} />
                 {/*<Route path="/task/:id" component={Task} />*/}
                 <Route path="*" element={<NotFound />} />
             </Routes>
