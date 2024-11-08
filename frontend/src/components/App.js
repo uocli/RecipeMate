@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Header from "./Header";
 import Home from "./Home";
@@ -8,6 +8,7 @@ import NotFound from "./NotFound";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import ProtectedRoute from "../utils/ProtectedRoute";
+import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 
@@ -27,6 +28,7 @@ const App = () => {
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/chat" element={<Chat />} />
                 <Route path="/logout" element={<LogoutPage />} />
                 <Route
                     path="/password-recovery"
