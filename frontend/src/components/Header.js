@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     AppBar,
     Toolbar,
@@ -17,13 +17,18 @@ import {
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthContext";
 
 const ResponsiveHeader = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const navigate = useNavigate();
-
+    const [auth, setAuth] = useState(false);
+    const { isAuthenticated, logout } = useContext(AuthContext);
+    useEffect(() => {
+        setAuth(isAuthenticated);
+    }, [isAuthenticated]);
     const toggleDrawer = (open) => () => {
         setDrawerOpen(open);
     };
@@ -89,6 +94,26 @@ const ResponsiveHeader = () => {
                                 </Button>
                             ))}
                         </>
+                    )}
+                    {!auth ? (
+                        <>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate("/login")}
+                            >
+                                Sign In
+                            </Button>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate("/signup")}
+                            >
+                                Sign Up
+                            </Button>
+                        </>
+                    ) : (
+                        <Button color="inherit" onClick={logout}>
+                            Sign Out
+                        </Button>
                     )}
                 </Toolbar>
             </AppBar>

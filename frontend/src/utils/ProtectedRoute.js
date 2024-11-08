@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { useContext } from "react";
 import { AuthContext } from "./AuthContext";
 
 const ProtectedRoute = ({ children }) => {
+    const location = useLocation();
     const { isAuthenticated } = useContext(AuthContext);
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" replace />;
+        // Redirect the user to the login page, and save the intended URL in state
+        return <Navigate to="/login" state={{ from: location }} />;
     }
 
     return children;
