@@ -79,7 +79,7 @@ const ResponsiveHeader = () => {
                             onClick={() => navigate("/")}
                             underline="none"
                         >
-                            Meal Muse
+                            Recipe Mate
                         </Link>
                     </Typography>
                     {!isMobile && (
