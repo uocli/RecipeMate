@@ -14,12 +14,20 @@ import {
 import { deepOrange, green } from "@mui/material/colors";
 import Face6Icon from "@mui/icons-material/Face6";
 import SmartToyIcon from "@mui/icons-material/SmartToy";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Chat = () => {
+    const scrollableRef = useRef();
+    const textFieldRef = useRef();
     const [chatHistory, setChatHistory] = useState([]);
     const [loading, setLoading] = useState(false);
     const [question, setQuestion] = useState("");
+
+    useEffect(() => {
+        // Automatically scroll to the latest message when messages update
+        scrollableRef.current?.scrollTo(0, 0); // Scroll to the top (left, top)
+        textFieldRef.current?.focus(); // Focus on the input field
+    }, [chatHistory]);
 
     const handleSubmit = () => {
         setLoading(true);
@@ -31,6 +39,7 @@ const Chat = () => {
             },
             ...prevState,
         ]);
+        setQuestion("");
         // TODO: Implement the API call to the backend
         setTimeout(() => {
             setChatHistory((prevState) => [
@@ -62,6 +71,7 @@ const Chat = () => {
                     }}
                 >
                     <TextField
+                        inputRef={textFieldRef}
                         disabled={loading}
                         fullWidth
                         label="Type in your question here"
@@ -73,6 +83,7 @@ const Chat = () => {
             <Grid size={12}>{loading ? <LinearProgress /> : null}</Grid>
             <Grid size={12}>
                 <List
+                    ref={scrollableRef}
                     sx={{
                         width: "100%",
                         maxWidth: 500,
