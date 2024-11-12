@@ -10,6 +10,7 @@ import LoginForm from "./LoginForm";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
+import ShoppingList from "./ShoppingList";
 
 const App = () => {
     return (
@@ -22,6 +23,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <About />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingList />
                         </ProtectedRoute>
                     }
                 />
