@@ -7,7 +7,7 @@ from django.utils.timezone import make_aware
 from rest_framework.authtoken.models import Token
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login
 from django.db.utils import IntegrityError
 
 
@@ -41,6 +41,7 @@ def login_view(request):
         token, _ = Token.objects.get_or_create(user=user)
         user.last_login = make_aware(datetime.now())
         user.save(update_fields=["last_login"])
+        login(request, user)
         return Response({"token": token.key, "message": "Login successful"}, status=200)
     else:
         return Response({"message": "Invalid credentials"}, status=400)
