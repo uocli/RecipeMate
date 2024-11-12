@@ -15,16 +15,40 @@ const ShoppingList = () => {
         fetchShoppingList();
     }, []);
 
+    const handleQuantityChange = (index, newQuantity) => {
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].quantity = newQuantity;
+            return updatedList;
+        });
+    };
+
+    const handleSaveAll = async () => {
+        await getCsrfToken();
+        await axios.post('/api/shopping-list/update/', {
+            items: shoppingList
+        });
+    };
+
     return (
         <div>
             <h1>Shopping List</h1>
             <ul>
                 {shoppingList.map((item, index) => (
                     <li key={index}>
-                        {item.ingredient}: {item.quantity}
+                        {item.ingredient}
+                        <button onClick={() => handleQuantityChange(index, Math.max(1, item.quantity - 1))}>-</button>
+                        <input
+                            type="number"
+                            value={item.quantity}
+                            min="1"
+                            onChange={(e) => handleQuantityChange(index, Math.max(1, parseInt(e.target.value)))}
+                        />
+                        <button onClick={() => handleQuantityChange(index, item.quantity + 1)}>+</button>
                     </li>
                 ))}
             </ul>
+            <button onClick={handleSaveAll}>Save All</button>
         </div>
     );
 };
