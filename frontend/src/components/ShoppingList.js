@@ -23,6 +23,14 @@ const ShoppingList = () => {
         });
     };
 
+    const handleIsOwnedChange = (index, isOwned) => {
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].is_owned = isOwned;
+            return updatedList;
+        });
+    };
+
     const handleSaveAll = async () => {
         await getCsrfToken();
         await axios.post('/api/shopping-list/update/', {
@@ -35,7 +43,12 @@ const ShoppingList = () => {
             <h1>Shopping List</h1>
             <ul>
                 {shoppingList.map((item, index) => (
-                    <li key={index}>
+                    <li key={index} style={{ textDecoration: item.is_owned ? 'line-through' : 'none', color: item.is_owned ? 'gray' : 'black' }}>
+                        <input
+                            type="checkbox"
+                            checked={item.is_owned}
+                            onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
+                        />
                         {item.ingredient}
                         <button onClick={() => handleQuantityChange(index, Math.max(1, item.quantity - 1))}>-</button>
                         <input
@@ -48,7 +61,7 @@ const ShoppingList = () => {
                     </li>
                 ))}
             </ul>
-            <button onClick={handleSaveAll}>Save All</button>
+            <button onClick={handleSaveAll}>Save</button>
         </div>
     );
 };
