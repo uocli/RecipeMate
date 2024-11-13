@@ -56,7 +56,7 @@ const ShoppingListEdit = () => {
             });
             if (response.data.success) {
                 alert("Changes saved successfully!");
-                setTimeout(() => navigate('/shopping-list'), 3000);
+                setTimeout(() => navigate('/shopping-list'), 500);
             } else {
                 alert("Failed to save changes.");
             }
