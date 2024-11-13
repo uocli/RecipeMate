@@ -11,6 +11,7 @@ import ProtectedRoute from "../utils/ProtectedRoute";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import ShoppingList from "./ShoppingList";
+import ShoppingListEdit from "./ShoppingListEdit";
 
 const App = () => {
     return (
@@ -31,6 +32,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <ShoppingList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list-edit"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingListEdit />
                         </ProtectedRoute>
                     }
                 />
