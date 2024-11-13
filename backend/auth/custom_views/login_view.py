@@ -10,7 +10,7 @@ class LoginView(APIView):
     def post(self, request, format=None):
         email = request.data["email"]
         password = request.data["password"]
-        user = User.objects.get(email=email)
+        user = User.objects.filter(username=email).first()
         if (
             user is None
             or check_password(password=password, encoded=user.password) is False
