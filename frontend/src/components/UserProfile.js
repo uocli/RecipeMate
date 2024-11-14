@@ -7,8 +7,10 @@ import {
     RadioGroup,
     FormControlLabel,
     Paper,
-    Container,
     Alert,
+    Tabs,
+    Tab,
+    Box,
 } from "@mui/material";
 import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
@@ -20,12 +22,9 @@ const UserProfile = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [dietaryPreference, setDietaryPreference] = useState("none");
-    const [accountSettingAlertMessage, setAccountSettingAlertMessage] =
-        useState("");
-    const [accountSettingAlertSeverity, setAccountSettingAlertSeverity] =
-        useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
+    const [disabled, setDisabled] = useState(false);
 
     useEffect(() => {
         // Fetch user data from the backend
@@ -48,26 +47,33 @@ const UserProfile = () => {
 
     const handleAccountUpdate = (e) => {
         e.preventDefault();
+        setDisabled(true);
         // Handle account update logic
-        setAccountSettingAlertMessage("Account updated successfully!");
-        setAccountSettingAlertSeverity("success");
-        setTimeout(() => {
-            setAccountSettingAlertMessage("");
-        }, 3000);
         http.post("/api/user-profile/", {
             first_name: firstName,
             last_name: lastName,
             email: email,
-        }).then((response) => {
-            if (response.status === 200) {
-                setUser(response.data?.user);
-                setAccountSettingAlertMessage("Account updated successfully!");
-                setAccountSettingAlertSeverity("success");
-            } else {
-                setAccountSettingAlertMessage("Error updating account!");
-                setAccountSettingAlertSeverity("error");
-            }
-        });
+        })
+            .then((response) => {
+                if (response.status === 200) {
+                    setUser(response.data?.user);
+                    setAlertMessage("Account updated successfully!");
+                    setAlertSeverity("success");
+                } else {
+                    setAlertMessage("Error updating account!");
+                    setAlertSeverity("error");
+                }
+            })
+            .catch((_) => {
+                setAlertMessage("Error updating account!");
+                setAlertSeverity("error");
+            })
+            .finally(() => {
+                setDisabled(false);
+                setTimeout(() => {
+                    setAlertMessage("");
+                }, 3000);
+            });
     };
 
     const handlePreferenceUpdate = (e) => {
@@ -80,20 +86,16 @@ const UserProfile = () => {
         }, 3000);
     };
 
-    return (
-        <Container maxWidth="sm" sx={{ mt: 5 }}>
-            {/* Alert for notifications */}
-            {accountSettingAlertMessage && (
-                <Alert
-                    severity={accountSettingAlertSeverity}
-                    onClose={() => setAccountSettingAlertMessage("")}
-                    sx={{ mb: 2 }}
-                >
-                    {accountSettingAlertMessage}
-                </Alert>
-            )}
+    // Used to enhance accessibility (or a11y) for tab components in React.
+    const a11yProps = (index) => {
+        return {
+            id: `tab-${index}`,
+            "aria-controls": `tabpanel-${index}`,
+        };
+    };
 
-            {/* Account Settings Section */}
+    const settings = {
+        "Account Settings": (
             <Paper elevation={3} sx={{ padding: 2, marginBottom: 4 }}>
                 <Typography variant="h5" gutterBottom>
                     Account Settings
@@ -106,6 +108,7 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
+                        disabled={disabled}
                     />
                     <TextField
                         label="Last Name"
@@ -113,6 +116,7 @@ const UserProfile = () => {
                         onChange={(e) => setLastName(e.target.value)}
                         fullWidth
                         margin="normal"
+                        disabled={disabled}
                     />
                     <TextField
                         label="Email"
@@ -122,37 +126,21 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                    />
-                    <TextField
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
+                        disabled={disabled}
                     />
                     <Button
                         type="submit"
                         variant="contained"
                         color="primary"
                         sx={{ mt: 2 }}
+                        disabled={disabled}
                     >
                         Update Account
                     </Button>
                 </form>
             </Paper>
-
-            {/* Dietary Preferences Section */}
-            {alertMessage && (
-                <Alert
-                    severity={alertSeverity}
-                    onClose={() => setAlertMessage("")}
-                    sx={{ mb: 2 }}
-                >
-                    {alertMessage}
-                </Alert>
-            )}
+        ),
+        "Dietary Preferences": (
             <Paper elevation={3} sx={{ padding: 2 }}>
                 <Typography variant="h5" gutterBottom>
                     Dietary Preferences
@@ -171,16 +159,19 @@ const UserProfile = () => {
                             value="vegan"
                             control={<Radio />}
                             label="Vegan"
+                            disabled={disabled}
                         />
                         <FormControlLabel
                             value="vegetarian"
                             control={<Radio />}
                             label="Vegetarian"
+                            disabled={disabled}
                         />
                         <FormControlLabel
                             value="glutenFree"
                             control={<Radio />}
                             label="Gluten Free"
+                            disabled={disabled}
                         />
                     </RadioGroup>
                     <Button
@@ -188,12 +179,84 @@ const UserProfile = () => {
                         variant="contained"
                         color="primary"
                         sx={{ mt: 2 }}
+                        disabled={disabled}
                     >
                         Save Preferences
                     </Button>
                 </form>
             </Paper>
-        </Container>
+        ),
+        "Security Settings": (
+            <Paper elevation={3} sx={{ padding: 2 }}>
+                <Typography variant="h5" gutterBottom>
+                    Account Settings
+                </Typography>
+                <form onSubmit={handleAccountUpdate}>
+                    <TextField
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        fullWidth
+                        margin="normal"
+                        required
+                        disabled={disabled}
+                    />
+                    <Button
+                        type="submit"
+                        variant="contained"
+                        color="primary"
+                        sx={{ mt: 2 }}
+                        disabled={disabled}
+                    >
+                        Save Password
+                    </Button>
+                </form>
+            </Paper>
+        ),
+    };
+
+    const [value, setValue] = useState(0);
+    const tabLabels = Object.keys(settings);
+
+    const handleChange = (event, newValue) => {
+        setValue(newValue);
+    };
+
+    return (
+        <Box sx={{ width: "100%" }}>
+            <Tabs
+                value={value}
+                onChange={handleChange}
+                variant="scrollable"
+                scrollButtons="auto"
+                allowScrollButtonsMobile
+            >
+                {tabLabels.map((label, index) => (
+                    <Tab label={label} key={index} {...a11yProps(index)} />
+                ))}
+            </Tabs>
+            {alertMessage && (
+                <Alert
+                    severity={alertSeverity}
+                    onClose={() => setAlertMessage("")}
+                    sx={{ mb: 2 }}
+                >
+                    {alertMessage}
+                </Alert>
+            )}
+            {tabLabels.map((label, index) => (
+                <div
+                    role="tabpanel"
+                    hidden={value !== index}
+                    id={`tabpanel-${index}`}
+                    aria-labelledby={`tab-${index}`}
+                    key={index}
+                >
+                    {value === index && settings[label]}
+                </div>
+            ))}
+        </Box>
     );
 };
 
