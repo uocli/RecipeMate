@@ -16,21 +16,34 @@ class LoginView(APIView):
             or check_password(password=password, encoded=user.password) is False
         ):
             return Response(
-                {
-                    "success": False,
-                    "message": "Invalid Login Credentials!",
-                },
-                status=status.HTTP_200_OK,
+                {"message": "Invalid Login Credentials!"},
+                status=status.HTTP_401_UNAUTHORIZED,
             )
         else:
             refresh = RefreshToken.for_user(user)
             access_token = refresh.access_token
-            return Response(
-                {
-                    "success": True,
-                    "message": "You are now logged in!",
-                    "access_token": str(access_token),
-                    "refresh_token": str(refresh),
-                },
+            refresh_token = str(refresh)
+            response = Response(
+                {"success": True, "message": "You are now logged in!"},
                 status=status.HTTP_200_OK,
             )
+
+            # Set Access Token Cookie
+            response.set_cookie(
+                "access_token",
+                access_token,
+                samesite="Lax",
+                secure=True,
+                max_age=3600,  # 1 hour
+            )
+
+            # Set Refresh Token Cookie
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                samesite="Lax",
+                secure=True,
+                max_age=86400 * 1,  # 1 day
+            )
+
+            return response
