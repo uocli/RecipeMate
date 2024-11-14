@@ -1,56 +1,43 @@
 import axios from "axios";
-import { getCsrfToken } from "./CsrfCookie";
-
+import Cookies from "js-cookie";
 
 // Setup Axios Instance
 const http = axios.create({
     baseURL: "/",
+    withCredentials: true, // Ensure cookies (including JWT) are sent with each request
     headers: {
         "Content-Type": "application/json",
-        "X-CSRFToken": await getCsrfToken(),
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        "X-CSRFToken": Cookies.get("csrftoken"),
+        Authorization: `Bearer ${Cookies.get("access_token")}`,
     },
 });
 
-
 // Interceptor to handle token expiration and auto-refresh
 http.interceptors.response.use(
-    (response) => response, // If the request is successful, just return the response
+    (response) => response, // If the response is successful, just return it
     async (error) => {
         const originalRequest = error.config;
 
+        // If we get a 401 error (Unauthorized), try to refresh the token
         if (error.response.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            const refreshToken = localStorage.getItem("refresh_token");
-
             try {
-                // Attempt to refresh the access token
-                const response = await axios.post("/api/token/refresh/", {
-                    refresh_token: refreshToken,
-                });
-
-                // Update localStorage with the new tokens
-                const newAccessToken = response.data.access_token;
-                const newRefreshToken = response.data.refresh_token;
-                localStorage.setItem("access_token", newAccessToken);
-                localStorage.setItem("refresh_token", newRefreshToken);
-
-                // Retry the original request with the new access token
-                originalRequest.headers["Authorization"] =
-                    `Bearer ${newAccessToken}`;
-                return axios(originalRequest);
+                // Attempt to refresh the access token using the refresh token in the cookie
+                await axios.post("/auth/token/refresh/", {
+                    refresh_token: Cookies.get("refresh_token"),
+                }); // POST request to refresh token
+                return axios(originalRequest); // Retry the original request
             } catch (refreshError) {
-                console.error("Token refresh failed:", refreshError);
-                // Optionally, handle failed refresh (e.g., log out user)
-                localStorage.removeItem("access_token");
-                localStorage.removeItem("access_token");
+                // If refreshing the token fails, direct the user to login
+                console.error("Token refresh failed", refreshError);
+                window.location.href = "/login"; // Redirect to login or show an error
+                return Promise.reject(refreshError);
             }
         }
 
         return Promise.reject(error);
     },
 );
-
 
 export default http;
