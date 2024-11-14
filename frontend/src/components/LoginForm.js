@@ -82,6 +82,19 @@ const LoginForm = () => {
                 </Button>
                 {message && <Alert severity="success">{message}</Alert>}
                 {error && <Alert severity="error">{error}</Alert>}
+                <Typography
+                    variant="body2"
+                    align="center"
+                    style={{ marginTop: "16px" }}
+                >
+                    <Link
+                        component="button"
+                        underline="hover"
+                        onClick={() => navigate("/password-recovery")}
+                    >
+                        Forget your password?
+                    </Link>
+                </Typography>
             </Box>
         );
     }

@@ -1,11 +1,21 @@
-import React, { useState } from "react";
-import { TextField, Button, Box, Typography, Alert, Link } from "@mui/material";
+import React, { useContext, useEffect, useState } from "react";
+import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthContext";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
     const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
+    const navigate = useNavigate();
+    const { isAuthenticated } = useContext(AuthContext);
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -62,15 +72,14 @@ const RegisterForm = () => {
             onSubmit={handleSubmit}
             sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h5" align="center" gutterBottom>
                 Register
             </Typography>
-
             {error && <Alert severity="error">{error}</Alert>}
             {success ? (
                 <Alert severity="success">
                     You have successfully registered. Go to{" "}
-                    <Link href="/login" underline="hover">
+                    <Link underline="hover" onClick={() => navigate("/login")}>
                         login
                     </Link>{" "}
                     page to login.
@@ -107,6 +116,20 @@ const RegisterForm = () => {
                     >
                         Register
                     </Button>
+                    <Typography
+                        variant="body2"
+                        align="center"
+                        style={{ marginTop: "16px" }}
+                    >
+                        Already have an account?{" "}
+                        <Link
+                            component="button"
+                            underline="hover"
+                            onClick={() => navigate("/login")}
+                        >
+                            Login
+                        </Link>
+                    </Typography>
                 </>
             )}
         </Box>
