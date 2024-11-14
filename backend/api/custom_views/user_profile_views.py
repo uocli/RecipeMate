@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -18,4 +17,10 @@ class UserProfileView(APIView):
         return Response({"user": user_with_profile.data}, status.HTTP_200_OK)
 
     def post(self, request):
-        return JsonResponse({"message": "POST request received"})
+        user = request.user
+        user.email = request.data.get("email", user.email)
+        user.username = request.data.get("email", user.email)
+        user.first_name = request.data.get("first_name", user.first_name)
+        user.last_name = request.data.get("last_name", user.last_name)
+        user.save()
+        return Response({"message": "POST request received"}, status.HTTP_200_OK)

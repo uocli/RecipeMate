@@ -40,6 +40,19 @@ const UserProfile = () => {
         setTimeout(() => {
             setAccountSettingAlertMessage("");
         }, 3000);
+        http.post("/api/user-profile/", {
+            first_name: firstName,
+            last_name: lastName,
+            email: email,
+        }).then((response) => {
+            if (response.status === 200) {
+                setAccountSettingAlertMessage("Account updated successfully!");
+                setAccountSettingAlertSeverity("success");
+            } else {
+                setAccountSettingAlertMessage("Error updating account!");
+                setAccountSettingAlertSeverity("error");
+            }
+        });
     };
 
     const handlePreferenceUpdate = (e) => {
