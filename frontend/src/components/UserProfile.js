@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     Button,
     TextField,
@@ -9,10 +9,13 @@ import {
     Paper,
     Container,
     Alert,
+    Grid2 as Grid,
 } from "@mui/material";
 import http from "../utils/Http";
+import { AuthContext } from "../utils/AuthContext";
 
 const UserProfile = () => {
+    const { setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
@@ -27,9 +30,20 @@ const UserProfile = () => {
 
     useEffect(() => {
         // Fetch user data from the backend
-        http.get("/api/user-profile/").then((response) => {
-            console.log(response.data);
-        });
+        http.get("/api/user-profile/")
+            .then((response) => {
+                if (response.status === 200) {
+                    const { user } = response.data || {},
+                        { first_name, last_name, email } = user || {};
+                    setFirstName(first_name);
+                    setLastName(last_name);
+                    setEmail(email);
+                }
+            })
+            .catch((_) => {
+                setAlertMessage("Error fetching user data!");
+                setAlertSeverity("error");
+            });
     }, []);
 
     const handleAccountUpdate = (e) => {
@@ -46,6 +60,7 @@ const UserProfile = () => {
             email: email,
         }).then((response) => {
             if (response.status === 200) {
+                setUser(response.data?.user);
                 setAccountSettingAlertMessage("Account updated successfully!");
                 setAccountSettingAlertSeverity("success");
             } else {
@@ -91,7 +106,6 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                        error={firstName.length < 1}
                     />
                     <TextField
                         label="Last Name"
@@ -108,7 +122,6 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                        error={!email.includes("@")}
                     />
                     <TextField
                         label="Password"
@@ -118,7 +131,6 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                        error={password.length < 6}
                     />
                     <Button
                         type="submit"
