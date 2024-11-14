@@ -15,6 +15,8 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
     const navigate = useNavigate();
 
+    const [user, setUser] = useState({});
+
     const login = (tokens) => {
         setAuthTokens(tokens);
         setIsAuthenticated(true);
