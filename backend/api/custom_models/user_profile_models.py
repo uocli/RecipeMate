@@ -24,6 +24,7 @@ class UserProfile(models.Model):
         blank=True,
         null=True,
     )
+    cooking_time_in_min = models.PositiveIntegerField(blank=True, null=True)
 
     # Add more fields as needed
 
