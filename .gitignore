@@ -192,5 +192,5 @@ cython_debug/
 staticfiles/
 
 # To omit the files under migrations directory
-backend/auth/migrations/
-!backend/auth/migrations/__init__.py
+**/migrations/
+!**/migrations/__init__.py
