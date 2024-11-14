@@ -34,6 +34,59 @@ cd ../backend # or cd backend if you are in the root directory
 python manage.py runserver
 ```
 If all goes well, you can access the application at `http://127.0.0.1:8000/` locally.
+## Views and URLs
+As we are working as a team, if we build functions on top of the same views `api/views.py` urls `api/urls.py`
+or serializers `api/serializers.py` conflicts may arise when we make a pull request since we are working on the same files, sometimes even the same lines.
+
+To avoid this, we introduced a custom_views and custom_urls directories to manage smaller views and urls.
+The main views and urls are still in the `views.py` and `urls.py` files. But creating your own views and urls
+in the custom_views and custom_urls directories is highly recommended and will help you avoid any code conflicts.
+Let's take the token views as an example.
+
+There are three urls related to the token functions.
+- ObtainAuthToken
+- VerifyAuthToken
+- RefreshAuthToken
+
+We can definitely implement these views and urls in the main `views.py` and `urls.py` files.
+But it is better to create a new file to manage them in the `custom_views` and `custom_urls` directories.
+
+The main urls.py file will look like this:
+```python
+from django.urls import path, include
+
+urlpatterns = [
+    # ...
+    path("token/", include("auth.custom_urls.token_urls")),
+    # ...
+]
+```
+While in the `custom_urls/token_urls.py` file, we will have:
+```python
+from django.urls import path
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+)
+from ..custom_views.token_views import VerifyTokenView
+
+urlpatterns = [
+    path("", TokenObtainPairView.as_view(), name="token_obtain"),
+    path("verify/", VerifyTokenView.as_view(), name="token_verify"),
+    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+]
+```
+We can now have smaller views for different tasks.
+This gives us the flexibility to work on different tasks without conflicts.
+Moreover, it makes the code more readable and maintainable.
+```text
+custom_views
+	|-- __init__.py
+	|-- csrf_token_view.py
+	|-- login_view.py
+	|-- registration_view.py
+	|-- token_views.py
+```
 
 ## Development Process
 - A User Story is created for each task. The assignee will be responsible for the task.
