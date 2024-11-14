@@ -10,6 +10,8 @@ const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(!!access_token);
     const navigate = useNavigate();
 
+    const [user, setUser] = useState({});
+
     const login = () => {
         setIsAuthenticated(true);
     };
@@ -58,7 +60,9 @@ const AuthProvider = ({ children }) => {
     }, [access_token, logout]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider
+            value={{ isAuthenticated, login, logout, user, setUser }}
+        >
             {children}
         </AuthContext.Provider>
     );
