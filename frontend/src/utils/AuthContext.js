@@ -1,25 +1,24 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { getCsrfToken } from "./CsrfCookie";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const [authToken, setAuthToken] = useState(
-        localStorage.getItem("authToken"),
+
+    const [isAuthenticated, setIsAuthenticated] = useState(
+        !!localStorage.getItem("access_token")
     );
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
-    const login = (token) => {
-        localStorage.setItem("authToken", token);
-        setAuthToken(token);
+    const login = (access_token) => {
+        localStorage.setItem("access_token", access_token);
         setIsAuthenticated(true);
     };
 
     const logout = useCallback(() => {
-        localStorage.removeItem("authToken");
-        setAuthToken(null);
+        localStorage.removeItem("access_token");
         setIsAuthenticated(false);
         navigate("/login");
     }, [navigate]);
@@ -27,19 +26,20 @@ const AuthProvider = ({ children }) => {
     // Verify token on page load or refresh
     useEffect(() => {
         const verifyToken = () => {
-            if (authToken) {
+            const access_token = localStorage.getItem("access_token");
+            if (access_token) {
                 try {
-                    axios
-                        .post(
-                            "/auth/verify-token/",
-                            {},
-                            {
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    Authorization: `Token ${authToken}`,
-                                },
+                    axios.post(
+                        "/auth/token/verify/",
+                        {},
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${access_token}`,
+                                "X-CSRFToken": getCsrfToken(),
                             },
-                        )
+                        },
+                    )
                         .then((response) => {
                             if (response.status === 200) {
                                 setIsAuthenticated(true);
@@ -58,7 +58,7 @@ const AuthProvider = ({ children }) => {
             }
         };
         verifyToken();
-    }, [authToken, logout]);
+    }, []);
 
     return (
         <AuthContext.Provider value={{ isAuthenticated, login, logout }}>

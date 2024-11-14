@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export async function getCsrfToken() {
-    const response = await axios.post("/api/csrf-token/", {
+    const response = await axios.post("/auth/csrf-token/", {
         credentials: "include", // Important to include credentials for CSRF
     });
 
