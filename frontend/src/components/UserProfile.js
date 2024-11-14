@@ -9,7 +9,6 @@ import {
     Paper,
     Container,
     Alert,
-    Grid2 as Grid,
 } from "@mui/material";
 import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
@@ -38,6 +37,7 @@ const UserProfile = () => {
                     setFirstName(first_name);
                     setLastName(last_name);
                     setEmail(email);
+                    setUser(user || {});
                 }
             })
             .catch((_) => {
