@@ -5,7 +5,6 @@ import { AuthContext } from "./AuthContext";
 const ProtectedRoute = ({ children }) => {
     const location = useLocation();
     const { isAuthenticated } = useContext(AuthContext);
-    const location = useLocation();
 
     if (!isAuthenticated) {
         // Redirect to login page with the original location saved in state
