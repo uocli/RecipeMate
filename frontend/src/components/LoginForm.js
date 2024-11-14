@@ -1,10 +1,9 @@
 import React, { useContext, useState } from "react";
 import { Alert, Box, Button, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
-import http from "../utils/Http";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { getCsrfToken } from "../utils/CsrfCookie";
+import Cookies from "js-cookie";
 
 const LoginForm = () => {
         const [email, setEmail] = useState("");
@@ -28,37 +27,17 @@ const LoginForm = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        "X-CSRFToken": await getCsrfToken(),
+                        "X-CSRFToken": Cookies.get("csrftoken"),
                     }
                 }
             )
                 .then(({ status, data }) => {
                     if (status === 200) {
-                        const {
-                            success,
-                            message,
-                            access_token,
-                            refresh_token,
-                        } = data || {};
-                        if (success) {
-                            setMessage("Logged in successfully!");
-                            navigate(from, { replace: true });
-                            if (access_token) {
-                                login(access_token);
-                                localStorage.setItem(
-                                    "access_token",
-                                    access_token,
-                                );
-                            }
-                            if (refresh_token) {
-                                localStorage.setItem(
-                                    "refresh_token",
-                                    refresh_token,
-                                );
-                            }
-                        } else {
-                            setError(message);
-                        }
+                        setMessage("Logged in successfully!");
+                        login();
+                        navigate(from, { replace: true });
+                    } else {
+                        setError(data?.message);
                     }
                 })
                 .catch((error) => {
