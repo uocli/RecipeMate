@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
     AppBar,
     Toolbar,
@@ -13,17 +13,26 @@ import {
     CssBaseline,
     useMediaQuery,
     Link,
+    Avatar,
+    MenuItem,
+    Menu,
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../utils/AuthContext";
 
 const ResponsiveHeader = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const navigate = useNavigate();
-
+    const [auth, setAuth] = useState(false);
+    const { isAuthenticated, logout, user } = useContext(AuthContext);
+    const [anchorEl, setAnchorEl] = useState(null);
+    useEffect(() => {
+        setAuth(isAuthenticated);
+    }, [isAuthenticated]);
     const toggleDrawer = (open) => () => {
         setDrawerOpen(open);
     };
@@ -34,6 +43,17 @@ const ResponsiveHeader = () => {
         { text: "Services", path: "/services" },
         { text: "Contact", path: "/contact" },
     ];
+
+    const handleAvatarClick = (event) => {
+        setAnchorEl(event.currentTarget); // Open menu on avatar click
+    };
+    const handleClose = () => {
+        setAnchorEl(null); // Close menu
+    };
+    const handleProfile = () => {
+        handleClose();
+        navigate("/profile"); // Navigate to profile page
+    };
 
     const drawerContent = (
         <List>
@@ -87,6 +107,49 @@ const ResponsiveHeader = () => {
                                     {text}
                                 </Button>
                             ))}
+                        </>
+                    )}
+                    {!auth ? (
+                        <>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate("/login")}
+                            >
+                                Sign In
+                            </Button>
+                            <Button
+                                color="inherit"
+                                onClick={() => navigate("/signup")}
+                            >
+                                Sign Up
+                            </Button>
+                        </>
+                    ) : (
+                        <>
+                            <IconButton
+                                onClick={handleAvatarClick}
+                                sx={{ p: 0 }}
+                            >
+                                <Avatar>{user?.acronym || "U"}</Avatar>
+                            </IconButton>
+                            <Menu
+                                anchorEl={anchorEl}
+                                open={Boolean(anchorEl)}
+                                onClose={handleClose}
+                                anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                }}
+                                transformOrigin={{
+                                    vertical: "top",
+                                    horizontal: "right",
+                                }}
+                            >
+                                <MenuItem onClick={handleProfile}>
+                                    Account Settings
+                                </MenuItem>
+                                <MenuItem onClick={logout}>Sign Out</MenuItem>
+                            </Menu>
                         </>
                     )}
                 </Toolbar>
