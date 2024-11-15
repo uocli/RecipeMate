@@ -206,7 +206,6 @@ const UserProfile = () => {
                             <Typography variant="h5" gutterBottom>
                                 Dietary Preferences
                             </Typography>
-                </Typography>
                             <RadioGroup
                                 value={dietaryPreference}
                                 onChange={(e) =>
