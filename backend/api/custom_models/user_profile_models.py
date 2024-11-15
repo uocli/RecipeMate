@@ -14,7 +14,16 @@ class UserProfile(models.Model):
         blank=True,
         null=True,
     )
-    cooking_time_in_min = models.PositiveIntegerField(blank=True, null=True)
+    cooking_time = models.CharField(
+        max_length=8,
+        choices=(
+            ("Limited", "Limited"),
+            ("Medium", "Medium"),
+            ("Extended", "Extended"),
+        ),
+        blank=True,
+        null=True,
+    )
 
     # Add more fields as needed
 
