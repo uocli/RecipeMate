@@ -110,11 +110,26 @@ const UserProfile = () => {
     const handlePreferenceUpdate = (e) => {
         e.preventDefault();
         // Handle dietary preference update logic
-        setAlertMessage("Preferences updated successfully!");
-        setAlertSeverity("success");
-        setTimeout(() => {
-            setAlertMessage("");
-        }, 3000);
+        http.put("api/user-profile/", {
+            dietary_preference: dietaryPreference,
+            cooking_time: duration,
+        })
+            .then((r) => {
+                if (r.status === 200) {
+                    setAlertMessage("Preferences updated successfully!");
+                    setAlertSeverity("success");
+                }
+            })
+            .catch((error) => {
+                setAlertMessage("Error updating preferences!");
+                setAlertSeverity("error");
+            })
+            .finally(() => {
+                setDisabled(false);
+                setTimeout(() => {
+                    setAlertMessage("");
+                }, 3000);
+            });
     };
 
     // Used to enhance accessibility (or a11y) for tab components in React.
