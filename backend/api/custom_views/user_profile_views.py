@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -33,22 +34,24 @@ class UserProfileView(APIView):
 
     def put(self, request):
         user = request.user
-        profile = UserProfile.objects.filter(user=user).first()
-        if profile is None:
-            profile = UserProfile.objects.create(
-                user=user,
-                dietary_preference=request.data.get("dietary_preference", ""),
-                cooking_time=request.data.get("cooking_time", ""),
-            )
-            profile.save()
-        else:
-            profile.dietary_preference = request.data.get(
-                "dietary_preference", profile.dietary_preference
-            )
-            profile.cooking_time = request.data.get(
-                "cooking_time", profile.cooking_time
-            )
-            profile.save(update_fields=["dietary_preference", "cooking_time"])
+        dietary_preference = request.data.get("dietary_preference", "")
+        cooking_time = request.data.get("cooking_time", "")
+
+        # Validate dietary_preference
+        if dietary_preference not in ["vegetarian", "vegan", "glutenFree", ""]:
+            raise ValidationError("Invalid dietary preference")
+
+        # Validate cooking_time
+        if cooking_time not in ["limited", "medium", "extended", ""]:
+            raise ValidationError("Invalid cooking time")
+
+        UserProfile.objects.update_or_create(
+            user=user,
+            defaults={
+                "dietary_preference": dietary_preference,
+                "cooking_time": cooking_time,
+            },
+        )
 
         return Response(
             {"user": self.user_serializer_class(user).data}, status.HTTP_200_OK
