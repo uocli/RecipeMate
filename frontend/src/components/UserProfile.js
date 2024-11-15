@@ -12,6 +12,7 @@ import {
     Tab,
     Box,
     CircularProgress,
+    Grid2 as Grid,
 } from "@mui/material";
 import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
@@ -32,6 +33,8 @@ const UserProfile = () => {
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+
+    const [duration, setDuration] = useState("");
 
     useEffect(() => {
         // Fetch user data from the backend
@@ -192,43 +195,78 @@ const UserProfile = () => {
                     Dietary Preferences
                 </Typography>
                 <form onSubmit={handlePreferenceUpdate}>
-                    <RadioGroup
-                        value={dietaryPreference}
-                        onChange={(e) => setDietaryPreference(e.target.value)}
-                    >
-                        <FormControlLabel
-                            value="none"
-                            control={<Radio />}
-                            label="No Preference"
-                        />
-                        <FormControlLabel
-                            value="vegan"
-                            control={<Radio />}
-                            label="Vegan"
-                            disabled={disabled}
-                        />
-                        <FormControlLabel
-                            value="vegetarian"
-                            control={<Radio />}
-                            label="Vegetarian"
-                            disabled={disabled}
-                        />
-                        <FormControlLabel
-                            value="glutenFree"
-                            control={<Radio />}
-                            label="Gluten Free"
-                            disabled={disabled}
-                        />
-                    </RadioGroup>
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 2 }}
-                        disabled={disabled}
-                    >
-                        Save Preferences
-                    </Button>
+                    <Grid container>
+                        <Grid spacing={3} size={{ sm: 12, md: 6, lg: 6 }}>
+                            <RadioGroup
+                                value={dietaryPreference}
+                                onChange={(e) =>
+                                    setDietaryPreference(e.target.value)
+                                }
+                            >
+                                <FormControlLabel
+                                    value="none"
+                                    control={<Radio />}
+                                    label="No Preference"
+                                />
+                                <FormControlLabel
+                                    value="vegan"
+                                    control={<Radio />}
+                                    label="Vegan"
+                                    disabled={disabled}
+                                />
+                                <FormControlLabel
+                                    value="vegetarian"
+                                    control={<Radio />}
+                                    label="Vegetarian"
+                                    disabled={disabled}
+                                />
+                                <FormControlLabel
+                                    value="glutenFree"
+                                    control={<Radio />}
+                                    label="Gluten Free"
+                                    disabled={disabled}
+                                />
+                            </RadioGroup>
+                        </Grid>
+                        <Grid spacing={3} size={{ sm: 12, md: 6, lg: 12 }}>
+                            <Typography variant="h5" gutterBottom>
+                                Cooking Time
+                            </Typography>
+                            <RadioGroup
+                                aria-label="duration"
+                                name="duration"
+                                value={duration}
+                                onChange={(e) => setDuration(e.target.value)}
+                            >
+                                <FormControlLabel
+                                    value="limited"
+                                    control={<Radio />}
+                                    label="Limited (Less than 30 minutes)"
+                                />
+                                <FormControlLabel
+                                    value="medium"
+                                    control={<Radio />}
+                                    label="Medium (About 1 hour)"
+                                />
+                                <FormControlLabel
+                                    value="extended"
+                                    control={<Radio />}
+                                    label="Extended (More than 1 hour)"
+                                />
+                            </RadioGroup>
+                        </Grid>
+                        <Grid spacing={3} size={12}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                color="primary"
+                                sx={{ mt: 2 }}
+                                disabled={disabled}
+                            >
+                                Save Preferences
+                            </Button>
+                        </Grid>
+                    </Grid>
                 </form>
             </Paper>
         ),
