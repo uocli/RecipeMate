@@ -7,9 +7,9 @@ class UserProfile(models.Model):
     dietary_preference = models.CharField(
         max_length=20,
         choices=(
-            ("Vegetarian", "Vegetarian"),
-            ("Vegan", "Vegan"),
-            ("Gluten Free", "Gluten Free"),
+            ("vegetarian", "Vegetarian"),
+            ("vegan", "Vegan"),
+            ("glutenFree", "Gluten Free"),
         ),
         blank=True,
         null=True,
