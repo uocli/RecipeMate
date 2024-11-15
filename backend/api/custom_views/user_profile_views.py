@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -14,7 +15,9 @@ class UserProfileView(APIView):
     user_serializer_class = UserSerializer
 
     def get(self, request):
-        user_with_profile = self.user_serializer_class(request.user)
+        user = request.user
+        user = User.objects.select_related("profile").get(id=user.id)
+        user_with_profile = self.user_serializer_class(user)
         return Response({"user": user_with_profile.data}, status.HTTP_200_OK)
 
     def post(self, request):
