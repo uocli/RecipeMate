@@ -1,10 +1,12 @@
-from django.contrib.auth.models import User
 from rest_framework import serializers
+
+from ..custom_models.user_profile_models import UserProfile
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = UserProfile
         fields = [
-            "email",
+            "dietary_preference",
+            "cooking_time",
         ]
