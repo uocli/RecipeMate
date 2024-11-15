@@ -22,19 +22,40 @@ const UserProfile = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const [dietaryPreference, setDietaryPreference] = useState("none");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
     const [disabled, setDisabled] = useState(false);
 
-    const [showForm, setShowForm] = useState(false);
-    const [oldPassword, setOldPassword] = useState("");
-    const [newPassword, setNewPassword] = useState("");
-    const [confirmPassword, setConfirmPassword] = useState("");
     const [loading, setLoading] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(5); // 5 seconds timer
 
     const [duration, setDuration] = useState("");
+
+    // Handle button click
+    const handleChangePassword = () => {
+        // Logic to trigger password reset (e.g., calling your API)
+        // After the API call is successful, show the Snackbar
+        setDisabled(true);
+        setLoading(true);
+        setTimeLeft(5); // Reset the timer to 5 seconds
+        // Simulate an API call or delay
+        const timer = setInterval(() => {
+            setTimeLeft((prevTime) => {
+                if (prevTime <= 1) {
+                    clearInterval(timer); // Clear the interval when time is up
+                    setLoading(false); // Stop the loading spinner
+                    setAlertSeverity("success");
+                    setAlertMessage(
+                        "A password reset link has been sent to your email.",
+                    );
+                    setDisabled(false); // Re-enable the button
+                    return 0;
+                }
+                return prevTime - 1;
+            });
+        }, 1000);
+    };
 
     useEffect(() => {
         // Fetch user data from the backend
@@ -53,7 +74,7 @@ const UserProfile = () => {
                 setAlertMessage("Error fetching user data!");
                 setAlertSeverity("error");
             });
-    }, []);
+    }, [setUser]);
 
     const handleAccountUpdate = (e) => {
         e.preventDefault();
@@ -94,45 +115,6 @@ const UserProfile = () => {
         setTimeout(() => {
             setAlertMessage("");
         }, 3000);
-    };
-
-    const handlePasswordChange = async (e) => {
-        e.preventDefault();
-        // Check if new password and confirm password match
-        if (newPassword !== confirmPassword) {
-            setAlertMessage("New password and confirm password don't match.");
-            setAlertSeverity("error");
-            return;
-        }
-
-        try {
-            setLoading(true);
-            // Call the Django backend endpoint to change the password
-            http.post("/auth/reset-password", {
-                old_password: oldPassword,
-                new_password: newPassword,
-            })
-                .then((response) => {
-                    setAlertMessage("Password changed successfully.");
-                    setAlertSeverity("success");
-                    setOldPassword("");
-                    setNewPassword("");
-                    setConfirmPassword("");
-                })
-                .catch((err) => {
-                    setAlertMessage(
-                        "New password and confirm password don't match.",
-                    );
-                    setAlertSeverity("error");
-                });
-        } catch (err) {
-            setAlertMessage(
-                err.response?.data?.detail || "Failed to change password.",
-            );
-            setAlertSeverity("error");
-        } finally {
-            setLoading(false);
-        }
     };
 
     // Used to enhance accessibility (or a11y) for tab components in React.
@@ -273,75 +255,29 @@ const UserProfile = () => {
         "Security Settings": (
             <Paper elevation={3} sx={{ padding: 2 }}>
                 <Typography variant="h5" gutterBottom>
-                    Account Settings
+                    Security Settings
                 </Typography>
                 <Box>
                     <Button
                         variant="contained"
-                        onClick={() => setShowForm(!showForm)}
+                        color="primary"
+                        onClick={handleChangePassword}
+                        disabled={disabled}
+                        startIcon={
+                            loading && (
+                                <CircularProgress size={24} color="inherit" />
+                            )
+                        }
+                        style={{ position: "relative" }}
                     >
-                        Change Password
-                    </Button>
-                    {showForm && (
-                        <Box
-                            component="form"
-                            onSubmit={handlePasswordChange}
-                            sx={{ mt: 2 }}
-                        >
-                            <Typography variant="h6">
-                                Change Your Password
+                        {loading ? (
+                            <Typography variant="body2" color="inherit">
+                                {timeLeft}s
                             </Typography>
-                            <TextField
-                                label="Old Password"
-                                type="password"
-                                fullWidth
-                                margin="normal"
-                                value={oldPassword}
-                                onChange={(e) => setOldPassword(e.target.value)}
-                                required
-                            />
-                            <TextField
-                                label="New Password"
-                                type="password"
-                                fullWidth
-                                margin="normal"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                required
-                            />
-                            <TextField
-                                label="Confirm New Password"
-                                type="password"
-                                fullWidth
-                                margin="normal"
-                                value={confirmPassword}
-                                onChange={(e) =>
-                                    setConfirmPassword(e.target.value)
-                                }
-                                required
-                            />
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    alignItems: "center",
-                                    mt: 2,
-                                }}
-                            >
-                                <Button
-                                    type="submit"
-                                    variant="contained"
-                                    color="primary"
-                                    disabled={loading}
-                                >
-                                    {loading ? (
-                                        <CircularProgress size={24} />
-                                    ) : (
-                                        "Submit"
-                                    )}
-                                </Button>
-                            </Box>
-                        </Box>
-                    )}
+                        ) : (
+                            "Change Password"
+                        )}
+                    </Button>
                 </Box>
             </Paper>
         ),
