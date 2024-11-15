@@ -173,12 +173,12 @@ const UserProfile = () => {
         ),
         "Dietary Preferences": (
             <Paper elevation={3} sx={{ padding: 2 }}>
-                <Typography variant="h5" gutterBottom>
-                    Dietary Preferences
-                </Typography>
                 <form onSubmit={handlePreferenceUpdate}>
-                    <Grid container>
-                        <Grid spacing={3} size={{ sm: 12, md: 6, lg: 6 }}>
+                    <Grid container spacing={2}>
+                        <Grid size={{ xs: 12, md: 6 }}>
+                            <Typography variant="h5" gutterBottom>
+                                Dietary Preferences
+                            </Typography>
                             <RadioGroup
                                 value={dietaryPreference}
                                 onChange={(e) =>
@@ -210,7 +210,7 @@ const UserProfile = () => {
                                 />
                             </RadioGroup>
                         </Grid>
-                        <Grid spacing={3} size={{ sm: 12, md: 6, lg: 12 }}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                             <Typography variant="h5" gutterBottom>
                                 Cooking Time
                             </Typography>
@@ -245,7 +245,7 @@ const UserProfile = () => {
                                 sx={{ mt: 2 }}
                                 disabled={disabled}
                             >
-                                Save Preferences
+                                Save All Changes
                             </Button>
                         </Grid>
                     </Grid>
