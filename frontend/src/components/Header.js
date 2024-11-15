@@ -30,6 +30,7 @@ const ResponsiveHeader = () => {
     const [auth, setAuth] = useState(false);
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
+
     useEffect(() => {
         setAuth(isAuthenticated);
     }, [isAuthenticated]);
@@ -40,6 +41,7 @@ const ResponsiveHeader = () => {
     const NAVIGATION = [
         { text: "Home", path: "/" },
         { text: "About", path: "/about" },
+        { text: "Chat", path: "/chat" },
         { text: "Services", path: "/services" },
         { text: "Contact", path: "/contact" },
     ];
