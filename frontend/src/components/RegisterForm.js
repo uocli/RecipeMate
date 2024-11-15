@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
-import { getCsrfToken } from "../utils/CsrfCookie";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
 
@@ -24,8 +23,8 @@ const RegisterForm = () => {
     };
 
     const validatePassword = (password) => {
-        const regex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        const regex = /.*/;
+        // /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
         return regex.test(password);
     };
 
@@ -36,7 +35,6 @@ const RegisterForm = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const { email, password } = formData;
-        const csrfToken = await getCsrfToken();
         if (!validateEmail(email)) {
             setError("Invalid email format");
             return;
@@ -49,18 +47,18 @@ const RegisterForm = () => {
             return;
         }
 
-        axios
-            .post("/auth/signup/", formData, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": csrfToken,
-                },
-            })
+        axios.post("/auth/signup/", formData)
             .then((response) => {
-                if (response.status === 201) {
-                    setFormData({ email: "", password: "" });
-                    setSuccess(true);
-                    setError("");
+                if (response.status === 200) {
+                    const { success, message } = response.data || {};
+                    if (success) {
+                        setSuccess(true);
+                        setFormData({ email: "", password: "" });
+                        setError("");
+                    } else {
+                        setError(message);
+                        setSuccess(false)
+                    }
                 }
             })
             .catch((error) => {
