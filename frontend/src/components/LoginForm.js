@@ -1,25 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { getCsrfToken } from "../utils/CsrfCookie";
+import React, { useContext, useState } from "react";
 import { Alert, Box, Button, Link, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 import { useLocation, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
 
 const LoginForm = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
     const [error, setError] = useState("");
-    const { login, isAuthenticated } = useContext(AuthContext);
+    const { login, setUser } = useContext(AuthContext);
+
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
-
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/");
-        }
-    }, [isAuthenticated, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -33,26 +28,18 @@ const LoginForm = () => {
                 {
                     headers: {
                         "Content-Type": "application/json",
-                        "X-CSRFToken": getCsrfToken(),
+                        "X-CSRFToken": Cookies.get("csrftoken"),
                     },
                 },
             )
             .then(({ status, data }) => {
-                switch (status) {
-                    case 400: {
-                        setError(data.message);
-                        break;
-                    }
-                    case 200: {
-                        setMessage("Login successful");
-                        navigate(from, { replace: true });
-                        if (data.token) {
-                            login(data.token);
-                        }
-                        break;
-                    }
-                    default: {
-                    }
+                if (status === 200) {
+                    setMessage("Logged in successfully!");
+                    login();
+                    setUser(data.user || {});
+                    navigate(from, { replace: true });
+                } else {
+                    setError(data?.message);
                 }
             })
             .catch((error) => {

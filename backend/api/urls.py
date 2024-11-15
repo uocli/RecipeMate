@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import get_csrf_token
+from .custom_views.user_profile_views import UserProfileView
 
 urlpatterns = [
-    path("csrf-token/", get_csrf_token, name="csrf-token"),
+    path("user-profile/", UserProfileView.as_view(), name="csrf-token"),
 ]

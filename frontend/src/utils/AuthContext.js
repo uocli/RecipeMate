@@ -1,25 +1,23 @@
 import React, { createContext, useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Cookies from "js-cookie";
 
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const [authToken, setAuthToken] = useState(
-        localStorage.getItem("authToken"),
-    );
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const access_token = Cookies.get("access_token"); // Use a helper function to read cookies
+    const [isAuthenticated, setIsAuthenticated] = useState(!!access_token);
     const navigate = useNavigate();
 
-    const login = (token) => {
-        localStorage.setItem("authToken", token);
-        setAuthToken(token);
+    const [user, setUser] = useState({});
+
+    const login = () => {
         setIsAuthenticated(true);
     };
 
-    const logout = useCallback(() => {
-        localStorage.removeItem("authToken");
-        setAuthToken(null);
+    const logout = useCallback(async () => {
+        await axios.post("auth/logout/");
         setIsAuthenticated(false);
         navigate("/login");
     }, [navigate]);
@@ -27,16 +25,17 @@ const AuthProvider = ({ children }) => {
     // Verify token on page load or refresh
     useEffect(() => {
         const verifyToken = () => {
-            if (authToken) {
+            if (access_token) {
                 try {
                     axios
                         .post(
-                            "/auth/verify-token/",
+                            "/auth/token/verify/",
                             {},
                             {
                                 headers: {
                                     "Content-Type": "application/json",
-                                    Authorization: `Token ${authToken}`,
+                                    Authorization: `Bearer ${Cookies.get("access_token")}`,
+                                    "X-CSRFToken": Cookies.get("csrftoken"),
                                 },
                             },
                         )
@@ -58,10 +57,12 @@ const AuthProvider = ({ children }) => {
             }
         };
         verifyToken();
-    }, [authToken, logout]);
+    }, [access_token, logout]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider
+            value={{ isAuthenticated, login, logout, user, setUser }}
+        >
             {children}
         </AuthContext.Provider>
     );

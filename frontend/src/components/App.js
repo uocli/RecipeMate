@@ -8,6 +8,7 @@ import NotFound from "./NotFound";
 import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import ProtectedRoute from "../utils/ProtectedRoute";
+import UserProfile from "./UserProfile";
 import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
@@ -23,6 +24,14 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <About />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/profile"
+                    element={
+                        <ProtectedRoute>
+                            <UserProfile />
                         </ProtectedRoute>
                     }
                 />
