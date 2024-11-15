@@ -22,7 +22,7 @@ const UserProfile = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [email, setEmail] = useState("");
-    const [dietaryPreference, setDietaryPreference] = useState("none");
+    const [dietaryPreference, setDietaryPreference] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
     const [disabled, setDisabled] = useState(false);
@@ -63,11 +63,14 @@ const UserProfile = () => {
             .then((response) => {
                 if (response.status === 200) {
                     const { user } = response.data || {},
-                        { first_name, last_name, email } = user || {};
+                        { first_name, last_name, email, profile } = user || {},
+                        { dietary_preference, cooking_time } = profile || {};
                     setFirstName(first_name);
                     setLastName(last_name);
                     setEmail(email);
                     setUser(user || {});
+                    setDietaryPreference(profile.dietary_preference || "");
+                    setDuration(profile.cooking_time || "");
                 }
             })
             .catch((_) => {
@@ -201,7 +204,7 @@ const UserProfile = () => {
                                 }
                             >
                                 <FormControlLabel
-                                    value="none"
+                                    value=""
                                     control={<Radio />}
                                     label="No Preference"
                                 />
