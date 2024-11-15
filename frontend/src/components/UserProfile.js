@@ -11,6 +11,7 @@ import {
     Tabs,
     Tab,
     Box,
+    CircularProgress,
 } from "@mui/material";
 import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
@@ -25,6 +26,12 @@ const UserProfile = () => {
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
     const [disabled, setDisabled] = useState(false);
+
+    const [showForm, setShowForm] = useState(false);
+    const [oldPassword, setOldPassword] = useState("");
+    const [newPassword, setNewPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         // Fetch user data from the backend
@@ -84,6 +91,45 @@ const UserProfile = () => {
         setTimeout(() => {
             setAlertMessage("");
         }, 3000);
+    };
+
+    const handlePasswordChange = async (e) => {
+        e.preventDefault();
+        // Check if new password and confirm password match
+        if (newPassword !== confirmPassword) {
+            setAlertMessage("New password and confirm password don't match.");
+            setAlertSeverity("error");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            // Call the Django backend endpoint to change the password
+            http.post("/auth/reset-password", {
+                old_password: oldPassword,
+                new_password: newPassword,
+            })
+                .then((response) => {
+                    setAlertMessage("Password changed successfully.");
+                    setAlertSeverity("success");
+                    setOldPassword("");
+                    setNewPassword("");
+                    setConfirmPassword("");
+                })
+                .catch((err) => {
+                    setAlertMessage(
+                        "New password and confirm password don't match.",
+                    );
+                    setAlertSeverity("error");
+                });
+        } catch (err) {
+            setAlertMessage(
+                err.response?.data?.detail || "Failed to change password.",
+            );
+            setAlertSeverity("error");
+        } finally {
+            setLoading(false);
+        }
     };
 
     // Used to enhance accessibility (or a11y) for tab components in React.
@@ -191,27 +237,74 @@ const UserProfile = () => {
                 <Typography variant="h5" gutterBottom>
                     Account Settings
                 </Typography>
-                <form onSubmit={handleAccountUpdate}>
-                    <TextField
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
-                        disabled={disabled}
-                    />
+                <Box>
                     <Button
-                        type="submit"
                         variant="contained"
-                        color="primary"
-                        sx={{ mt: 2 }}
-                        disabled={disabled}
+                        onClick={() => setShowForm(!showForm)}
                     >
-                        Save Password
+                        Change Password
                     </Button>
-                </form>
+                    {showForm && (
+                        <Box
+                            component="form"
+                            onSubmit={handlePasswordChange}
+                            sx={{ mt: 2 }}
+                        >
+                            <Typography variant="h6">
+                                Change Your Password
+                            </Typography>
+                            <TextField
+                                label="Old Password"
+                                type="password"
+                                fullWidth
+                                margin="normal"
+                                value={oldPassword}
+                                onChange={(e) => setOldPassword(e.target.value)}
+                                required
+                            />
+                            <TextField
+                                label="New Password"
+                                type="password"
+                                fullWidth
+                                margin="normal"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                            />
+                            <TextField
+                                label="Confirm New Password"
+                                type="password"
+                                fullWidth
+                                margin="normal"
+                                value={confirmPassword}
+                                onChange={(e) =>
+                                    setConfirmPassword(e.target.value)
+                                }
+                                required
+                            />
+                            <Box
+                                sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    mt: 2,
+                                }}
+                            >
+                                <Button
+                                    type="submit"
+                                    variant="contained"
+                                    color="primary"
+                                    disabled={loading}
+                                >
+                                    {loading ? (
+                                        <CircularProgress size={24} />
+                                    ) : (
+                                        "Submit"
+                                    )}
+                                </Button>
+                            </Box>
+                        </Box>
+                    )}
+                </Box>
             </Paper>
         ),
     };
