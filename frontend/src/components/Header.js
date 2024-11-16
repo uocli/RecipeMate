@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import {
     AppBar,
     Toolbar,
@@ -27,12 +27,9 @@ const ResponsiveHeader = () => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
     const navigate = useNavigate();
-    const [auth, setAuth] = useState(false);
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
-    useEffect(() => {
-        setAuth(isAuthenticated);
-    }, [isAuthenticated]);
+
     const toggleDrawer = (open) => () => {
         setDrawerOpen(open);
     };
@@ -110,7 +107,7 @@ const ResponsiveHeader = () => {
                             ))}
                         </>
                     )}
-                    {!auth ? (
+                    {!isAuthenticated ? (
                         <>
                             <Button
                                 color="inherit"
