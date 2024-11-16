@@ -6,30 +6,31 @@ import axios from "axios";
 import Cookies from "js-cookie";
 
 const LoginForm = () => {
-        const [email, setEmail] = useState("");
-        const [password, setPassword] = useState("");
-        const [message, setMessage] = useState("");
-        const [error, setError] = useState("");
-        const { login } = useContext(AuthContext);
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [message, setMessage] = useState("");
+    const [error, setError] = useState("");
+    const { login, setUser } = useContext(AuthContext);
 
-        const navigate = useNavigate();
-        const location = useLocation();
-        const from = location.state?.from?.pathname || "/";
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/";
 
-        const handleSubmit = async (event) => {
-            event.preventDefault();
-            setMessage("");
-            setError("");
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        setMessage("");
+        setError("");
 
-            axios.post(
+        axios
+            .post(
                 "/auth/login/",
                 { email, password },
                 {
                     headers: {
                         "Content-Type": "application/json",
                         "X-CSRFToken": Cookies.get("csrftoken"),
-                    }
-                }
+                    },
+                },
             )
                 .then(({ status, data }) => {
                     if (status === 200) {
