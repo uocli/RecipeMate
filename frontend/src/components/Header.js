@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
     AppBar,
     Toolbar,
@@ -30,6 +30,7 @@ const ResponsiveHeader = () => {
     const [auth, setAuth] = useState(false);
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
+
     useEffect(() => {
         setAuth(isAuthenticated);
     }, [isAuthenticated]);
