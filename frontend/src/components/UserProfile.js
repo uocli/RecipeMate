@@ -14,10 +14,11 @@ import {
     CircularProgress,
     Grid2 as Grid,
 } from "@mui/material";
-import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
+import useAxios from "../utils/useAxios";
 
 const UserProfile = () => {
+    const axiosInstance = useAxios();
     const { setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
@@ -59,35 +60,42 @@ const UserProfile = () => {
 
     useEffect(() => {
         // Fetch user data from the backend
-        http.get("/api/user-profile/")
-            .then((response) => {
-                if (response.status === 200) {
-                    const { user } = response.data || {},
-                        { first_name, last_name, email, profile } = user || {},
-                        { dietary_preference, cooking_time } = profile || {};
-                    setFirstName(first_name);
-                    setLastName(last_name);
-                    setEmail(email);
-                    setUser(user || {});
-                    setDietaryPreference(profile.dietary_preference || "");
-                    setDuration(profile.cooking_time || "");
-                }
-            })
-            .catch((_) => {
-                setAlertMessage("Error fetching user data!");
-                setAlertSeverity("error");
-            });
+        const fetchData = async () => {
+            axiosInstance
+                .get("/api/user-profile/")
+                .then((response) => {
+                    if (response.status === 200) {
+                        const { user } = response.data || {},
+                            { first_name, last_name, email, profile } =
+                                user || {},
+                            { dietary_preference, cooking_time } =
+                                profile || {};
+                        setFirstName(first_name);
+                        setLastName(last_name);
+                        setEmail(email);
+                        setUser(user || {});
+                        setDietaryPreference(dietary_preference || "");
+                        setDuration(cooking_time || "");
+                    }
+                })
+                .catch((_) => {
+                    setAlertMessage("Error fetching user data!");
+                    setAlertSeverity("error");
+                });
+        };
+        fetchData();
     }, [setUser]);
 
     const handleAccountUpdate = (e) => {
         e.preventDefault();
         setDisabled(true);
         // Handle account update logic
-        http.post("/api/user-profile/", {
-            first_name: firstName,
-            last_name: lastName,
-            email: email,
-        })
+        axiosInstance
+            .post("/api/user-profile/", {
+                first_name: firstName,
+                last_name: lastName,
+                email: email,
+            })
             .then((response) => {
                 if (response.status === 200) {
                     setUser(response.data?.user);
@@ -113,10 +121,11 @@ const UserProfile = () => {
     const handlePreferenceUpdate = (e) => {
         e.preventDefault();
         // Handle dietary preference update logic
-        http.put("api/user-profile/", {
-            dietary_preference: dietaryPreference,
-            cooking_time: duration,
-        })
+        axiosInstance
+            .put("api/user-profile/", {
+                dietary_preference: dietaryPreference,
+                cooking_time: duration,
+            })
             .then((r) => {
                 if (r.status === 200) {
                     setAlertMessage("Preferences updated successfully!");
