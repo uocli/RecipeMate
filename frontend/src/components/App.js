@@ -12,6 +12,7 @@ import UserProfile from "./UserProfile";
 import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
+import PasswordReset from "./PasswordReset";
 
 const App = () => {
     return (
@@ -39,6 +40,7 @@ const App = () => {
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/chat" element={<Chat />} />
                 <Route path="/logout" element={<LogoutPage />} />
+                <Route path="/password-reset" element={<PasswordReset />} />
                 <Route
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}

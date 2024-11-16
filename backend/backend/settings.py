@@ -14,6 +14,11 @@ from pathlib import Path
 import os
 import dj_database_url
 from decouple import config
+from dotenv import load_dotenv
+
+load_dotenv()
+
+BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -175,3 +180,14 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 #     True if ENV == "production" else False
 # )  # Set to True only if using HTTPS
 # CSRF_COOKIE_SAMESITE = "Lax"  # You can use 'Strict' if you want stricter controls
+
+# Email services
+EMAIL_BACKEND = os.getenv(
+    "EMAIL_BACKEND", "django.core.mail.backends.smtp.EmailBackend"
+)
+EMAIL_HOST = os.getenv("EMAIL_HOST", "")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", True)
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False)
+EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
