@@ -1,7 +1,5 @@
-from django.urls import path
-
-from .custom_views.password_forgot_view import PasswordForgotView
+from django.urls import path, include
 
 urlpatterns = [
-    path("password-forgot/", PasswordForgotView.as_view(), name="forgot_password"),
+    path("password/", include("api.custom_urls.password_urls"), name="password"),
 ]
