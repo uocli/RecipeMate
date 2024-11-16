@@ -30,7 +30,7 @@ const PasswordRecoveryForm = () => {
             setLoading(true);
             axios
                 .post(
-                    "/api/password-reset/",
+                    "/api/password-forgot/",
                     {
                         email,
                     },

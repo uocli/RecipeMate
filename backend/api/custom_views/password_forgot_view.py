@@ -14,7 +14,16 @@ from ..serializers.token_serializer import TokenSerializer
 from ..utils.email_utils import send_email
 
 
-class PasswordResetView(APIView):
+class PasswordForgotView(APIView):
+    def get(self, request, format=None):
+        return Response(
+            {
+                "success": False,
+                "message": "Method not allowed.",
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
     def post(self, request, format=None):
         email = request.data["email"]
         user = User.objects.filter(email=email).first()
@@ -53,7 +62,7 @@ class PasswordResetView(APIView):
             context = {
                 "url": url,
             }
-            send_email(subject, email, "password_reset", context)
+            send_email(subject, email, "password_forgot", context)
             return Response(
                 {
                     "success": True,

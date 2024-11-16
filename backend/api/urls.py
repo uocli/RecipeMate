@@ -1,7 +1,7 @@
 from django.urls import path
 
-from .custom_views.password_reset_view import PasswordResetView
+from .custom_views.password_forgot_view import PasswordForgotView
 
 urlpatterns = [
-    path("password-reset/", PasswordResetView.as_view(), name="forgot_password"),
+    path("password-forgot/", PasswordForgotView.as_view(), name="forgot_password"),
 ]
