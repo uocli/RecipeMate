@@ -32,7 +32,7 @@ const PasswordReset = () => {
             setLoading(true);
             axios
                 .post(
-                    "/api/password-reset/",
+                    "/api/password/reset/",
                     {
                         password,
                         confirmPassword,
