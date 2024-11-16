@@ -30,6 +30,10 @@ const ResponsiveHeader = () => {
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
 
+    const toggleDrawer = (open) => () => {
+        setDrawerOpen(open);
+    };
+
     const NAVIGATION = [
         { text: "Home", path: "/" },
         { text: "About", path: "/about" },
