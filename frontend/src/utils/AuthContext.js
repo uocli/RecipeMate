@@ -15,8 +15,6 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
     const navigate = useNavigate();
 
-    const [user, setUser] = useState({});
-
     const login = (tokens) => {
         setAuthTokens(tokens);
         setIsAuthenticated(true);
@@ -58,7 +56,7 @@ const AuthProvider = ({ children }) => {
                                 Authorization: `Bearer ${authTokens.access}`,
                                 "X-CSRFToken": Cookies.get("csrftoken"),
                             },
-                        }
+                        },
                     );
                     setIsAuthenticated(true);
                 } catch {
@@ -73,7 +71,14 @@ const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ isAuthenticated, login, logout, user, setUser, authTokens }}
+            value={{
+                isAuthenticated,
+                login,
+                logout,
+                user,
+                setUser,
+                authTokens,
+            }}
         >
             {children}
         </AuthContext.Provider>
