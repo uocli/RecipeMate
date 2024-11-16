@@ -53,21 +53,16 @@ const LoginForm = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                width: "300px",
-                margin: "auto",
-                mt: 5,
-            }}
+            sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
-            <Typography variant="h5" textAlign="center">
+            <Typography variant="h5" align="center" gutterBottom>
                 Login
             </Typography>
             <TextField
                 label="Email"
                 variant="outlined"
+                fullWidth
+                margin="normal"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -76,12 +71,20 @@ const LoginForm = () => {
             <TextField
                 label="Password"
                 variant="outlined"
+                fullWidth
+                margin="normal"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
-            <Button variant="contained" color="primary" type="submit">
+            <Button
+                variant="contained"
+                color="primary"
+                fullWidth
+                sx={{ marginTop: 2 }}
+                type="submit"
+            >
                 Login
             </Button>
             {message && <Alert severity="success">{message}</Alert>}
