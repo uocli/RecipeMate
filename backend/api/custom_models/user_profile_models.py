@@ -24,16 +24,6 @@ class UserProfile(models.Model):
         blank=True,
         null=True,
     )
-    cooking_time = models.CharField(
-        max_length=8,
-        choices=(
-            ("limited", "Limited"),
-            ("medium", "Medium"),
-            ("Extended", "Extended"),
-        ),
-        blank=True,
-        null=True,
-    )
 
     # Add more fields as needed
 
