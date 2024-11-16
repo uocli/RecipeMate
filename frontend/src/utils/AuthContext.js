@@ -6,59 +6,73 @@ import Cookies from "js-cookie";
 export const AuthContext = createContext();
 
 const AuthProvider = ({ children }) => {
-    const access_token = Cookies.get("access_token"); // Use a helper function to read cookies
-    const [isAuthenticated, setIsAuthenticated] = useState(!!access_token);
+    const [authTokens, setAuthTokens] = useState(() => {
+        const access = Cookies.get("access_token");
+        const refresh = Cookies.get("refresh_token");
+        return access && refresh ? { access, refresh } : null;
+    });
+    const [isAuthenticated, setIsAuthenticated] = useState(!!authTokens);
+    const [user, setUser] = useState({});
     const navigate = useNavigate();
 
-    const login = () => {
+    const login = (tokens) => {
+        setAuthTokens(tokens);
         setIsAuthenticated(true);
+        Cookies.set("access_token", tokens.access);
+        Cookies.set("refresh_token", tokens.refresh);
     };
 
     const logout = useCallback(async () => {
-        await axios.post("auth/logout/");
+        await axios.post("/auth/logout/");
+        setAuthTokens(null);
         setIsAuthenticated(false);
-        navigate("/login");
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        navigate("/");
     }, [navigate]);
 
-    // Verify token on page load or refresh
+    const refreshToken = useCallback(async () => {
+        try {
+            const response = await axios.post("/auth/token/refresh/", {
+                refresh: authTokens.refresh,
+            });
+            setAuthTokens(response.data);
+            Cookies.set("access_token", response.data.access);
+        } catch (error) {
+            logout();
+        }
+    }, [authTokens, logout]);
+
     useEffect(() => {
-        const verifyToken = () => {
-            if (access_token) {
+        const verifyToken = async () => {
+            if (authTokens) {
                 try {
-                    axios
-                        .post(
-                            "/auth/token/verify/",
-                            {},
-                            {
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    Authorization: `Bearer ${Cookies.get("access_token")}`,
-                                    "X-CSRFToken": Cookies.get("csrftoken"),
-                                },
+                    await axios.post(
+                        "/auth/token/verify/",
+                        {},
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                                Authorization: `Bearer ${authTokens.access}`,
+                                "X-CSRFToken": Cookies.get("csrftoken"),
                             },
-                        )
-                        .then((response) => {
-                            if (response.status === 200) {
-                                setIsAuthenticated(true);
-                            } else {
-                                logout();
-                            }
-                        })
-                        .catch(() => {
-                            logout();
-                        });
-                } catch (_) {
-                    logout();
+                        }
+                    );
+                    setIsAuthenticated(true);
+                } catch {
+                    refreshToken();
                 }
             } else {
                 setIsAuthenticated(false);
             }
         };
         verifyToken();
-    }, [access_token, logout]);
+    }, [authTokens, refreshToken]);
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+        <AuthContext.Provider
+            value={{ isAuthenticated, login, logout, user, setUser, authTokens }}
+        >
             {children}
         </AuthContext.Provider>
     );
