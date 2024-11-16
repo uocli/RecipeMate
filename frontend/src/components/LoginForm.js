@@ -35,7 +35,9 @@ const LoginForm = () => {
             .then(({ status, data }) => {
                 if (status === 200) {
                     setMessage("Logged in successfully!");
-                    login();
+                    const access = Cookies.get("access_token");
+                    const refresh = Cookies.get("refresh_token");
+                    login(access && refresh ? { access, refresh } : null);
                     setUser(data.user || {});
                     navigate(from, { replace: true });
                 } else {
