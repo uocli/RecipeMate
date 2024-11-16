@@ -15,14 +15,6 @@ const AuthProvider = ({ children }) => {
     const [user, setUser] = useState({});
     const navigate = useNavigate();
 
-    const [authTokens, setAuthTokens] = useState(() => {
-        const access = Cookies.get("access_token");
-        const refresh = Cookies.get("refresh_token");
-        return access && refresh ? { access, refresh } : null;
-    });
-    const [isAuthenticated, setIsAuthenticated] = useState(!!authTokens);
-    const [user, setUser] = useState({});
-
     const login = (tokens) => {
         setAuthTokens(tokens);
         setIsAuthenticated(true);

@@ -37,7 +37,7 @@ const App = () => {
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
-                <Route path="/chat" element={<Chat history={chatHistory} />} />
+                <Route path="/chat" element={<Chat />} />
                 <Route path="/logout" element={<LogoutPage />} />
                 <Route
                     path="/password-recovery"
