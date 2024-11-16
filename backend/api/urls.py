@@ -1,3 +1,5 @@
-from django.urls import path
+from django.urls import path, include
 
-urlpatterns = []
+urlpatterns = [
+    path("password/", include("api.custom_urls.password_urls"), name="password"),
+]
