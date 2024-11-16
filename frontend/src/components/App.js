@@ -10,6 +10,7 @@ import LoginForm from "./LoginForm";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
+import PasswordReset from "./PasswordReset";
 
 const App = () => {
     return (
@@ -28,6 +29,7 @@ const App = () => {
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
+                <Route path="/password-reset" element={<PasswordReset />} />
                 <Route
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
