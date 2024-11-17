@@ -1,5 +1,4 @@
 from django.urls import path, include
-
 from .custom_views.user_profile_views import UserProfileView
 
 
