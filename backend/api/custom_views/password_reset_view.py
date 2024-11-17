@@ -1,9 +1,5 @@
-from datetime import timedelta
-import hashlib
-from urllib.parse import urljoin
-import uuid
+import pytz
 
-from django.conf import settings
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -12,8 +8,6 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ..custom_models.token_model import Token
-from ..serializers.token_serializer import TokenSerializer
-from ..utils.email_utils import send_email
 
 
 class ResetPasswordView(APIView):
@@ -34,7 +28,8 @@ class ResetPasswordView(APIView):
                 status=status.HTTP_200_OK,
             )
         # Expired token
-        if token_obj.expires_at < timezone.now():
+        expires_at_aware = token_obj.expires_at.replace(tzinfo=pytz.UTC)
+        if expires_at_aware < timezone.now():
             return Response(
                 {
                     "success": False,
