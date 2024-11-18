@@ -14,6 +14,9 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["email", "first_name", "last_name", "acronym", "profile"]
 
     def get_acronym(self, obj):
+        if obj.is_anonymous:
+            return ""
+
         first_initial = obj.first_name[0].upper() if obj.first_name else ""
         last_initial = obj.last_name[0].upper() if obj.last_name else ""
 
