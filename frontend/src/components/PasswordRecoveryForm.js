@@ -5,19 +5,59 @@ import {
     Typography,
     Link,
     Alert,
-    AlertTitle,
     Box,
+    CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import Cookies from "js-cookie";
+
+const ALERT_SEVERITY = {
+    SUCCESS: "success",
+    ERROR: "error",
+};
 
 const PasswordRecoveryForm = () => {
     const [email, setEmail] = useState("");
-    const [showAlert, setShowAlert] = useState(false); // Manage alert visibility
+    const [alertMessage, setAlertMessage] = useState("");
+    const [alertSeverity, setAlertSeverity] = useState(ALERT_SEVERITY.SUCCESS);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        setShowAlert(true);
+        if (email?.trim()) {
+            setLoading(true);
+            axios
+                .post(
+                    "/api/password/forgot/",
+                    {
+                        email,
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRFToken": Cookies.get("csrftoken"),
+                        },
+                    },
+                )
+                .then((response) => {
+                    const { data, status } = response || {},
+                        { success, message } = data || {};
+                    if (status === 200 && success === true) {
+                        setAlertSeverity(ALERT_SEVERITY.SUCCESS);
+                    } else {
+                        setAlertSeverity(ALERT_SEVERITY.ERROR);
+                    }
+                    setAlertMessage(message);
+                })
+                .finally(() => {
+                    setLoading(false);
+                    setTimeout(() => {
+                        setAlertMessage("");
+                    }, 3000);
+                });
+        }
     };
 
     return (
@@ -26,26 +66,19 @@ const PasswordRecoveryForm = () => {
             onSubmit={handleSubmit}
             sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
+            {alertMessage && (
+                <Alert severity={alertSeverity}>{alertMessage}</Alert>
+            )}
             <Typography variant="h5" align="center" gutterBottom>
                 Recover Your Password
             </Typography>
-            {showAlert && (
-                <Alert
-                    severity="success"
-                    onClose={() => setShowAlert(false)}
-                    style={{ marginBottom: "16px" }}
-                >
-                    <AlertTitle>Success</AlertTitle>A password recovery link has
-                    been sent to <strong>{email}</strong>!
-                </Alert>
-            )}
-
             <TextField
                 label="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
                 required
+                disabled={loading}
                 margin="normal"
                 type="email"
             />
@@ -54,9 +87,10 @@ const PasswordRecoveryForm = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
-                style={{ marginTop: "16px" }}
+                disabled={loading}
+                startIcon={loading && <CircularProgress size={20} />}
             >
-                Submit
+                {loading ? "Submitting..." : "Submit"}
             </Button>
             <Typography
                 variant="body2"

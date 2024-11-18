@@ -5,6 +5,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from ..serializers.user_serializer import UserSerializer
+
 
 class LoginView(APIView):
     def post(self, request, format=None):
@@ -24,7 +26,9 @@ class LoginView(APIView):
             access_token = refresh.access_token
             refresh_token = str(refresh)
             response = Response(
-                {"success": True, "message": "You are now logged in!"},
+                {
+                    "user": UserSerializer(user).data,
+                },
                 status=status.HTTP_200_OK,
             )
 
