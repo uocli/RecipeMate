@@ -1,114 +1,34 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Alert, Box, Button, Link, TextField, Typography } from "@mui/material";
-import { AuthContext } from "../utils/AuthContext";
-import { AlertContext } from "../utils/AlertContext";
-import { useLocation, useNavigate } from "react-router-dom";
-import axios from "axios";
-import Cookies from "js-cookie";
+import { createContext, useState } from "react";
 
-const LoginForm = () => {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
-    const { login, setUser, isAuthenticated } = useContext(AuthContext);
-    const { showAlert } = useContext(AlertContext);
+export const AlertContext = createContext();
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
+export const AlertProvider = ({ children, defaultTimeout = 3000 }) => {
+    const [alert, setAlert] = useState({
+        message: "",
+        severity: "success",
+        open: false,
+    });
 
-    useEffect(() => {
-        if (isAuthenticated) {
-            navigate("/");
+    const showAlert = (
+        message,
+        severity = "success",
+        timeout = defaultTimeout,
+    ) => {
+        setAlert({ message, severity, open: true });
+        if (timeout !== null) {
+            setTimeout(() => {
+                setAlert({ message: "", severity: "success", open: false });
+            }, timeout);
         }
-    }, [isAuthenticated, navigate]);
+    };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        setMessage("");
-        setError("");
-
-        axios
-            .post(
-                "/auth/login/",
-                { email, password },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": Cookies.get("csrftoken"),
-                    },
-                },
-            )
-            .then(({ status, data }) => {
-                if (status === 200) {
-                    showAlert("Logged in successfully!", "success", 5000); // Pass the timeout here
-                    const access = Cookies.get("access_token");
-                    const refresh = Cookies.get("refresh_token");
-                    login(access && refresh ? { access, refresh } : null);
-                    setUser(data.user || {});
-                    navigate(from, { replace: true });
-                } else {
-                    setError(data?.message);
-                }
-            })
-            .catch((error) => {
-                setError(error.response?.data?.message);
-            });
+    const closeAlert = () => {
+        setAlert({ ...alert, open: false });
     };
 
     return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                width: "300px",
-                margin: "auto",
-                mt: 5,
-            }}
-        >
-            <Typography variant="h5" textAlign="center">
-                Login
-            </Typography>
-            <TextField
-                label="Email"
-                variant="outlined"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-            />
-            <TextField
-                label="Password"
-                variant="outlined"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-            />
-            <Button variant="contained" color="primary" type="submit">
-                Login
-            </Button>
-            {message && <Alert severity="success">{message}</Alert>}
-            {error && <Alert severity="error">{error}</Alert>}
-            <Typography
-                variant="body2"
-                align="center"
-                style={{ marginTop: "16px" }}
-            >
-                <Link
-                    component="button"
-                    underline="hover"
-                    onClick={() => navigate("/password-recovery")}
-                >
-                    Forget your password?
-                </Link>
-            </Typography>
-        </Box>
+        <AlertContext.Provider value={{ alert, showAlert, closeAlert }}>
+            {children}
+        </AlertContext.Provider>
     );
 };
-
-export default LoginForm;
