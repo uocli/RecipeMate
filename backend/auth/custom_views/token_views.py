@@ -5,6 +5,8 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.settings import api_settings
 from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTTokenRefreshView
 
+from api.serializers.user_serializers import UserSerializer
+
 
 class VerifyTokenView(APIView):
     permission_classes = [
@@ -14,8 +16,12 @@ class VerifyTokenView(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user  # The authenticated user
         if user.is_authenticated:
+            user_data = UserSerializer(user).data
             return Response(
-                {"success": True},
+                {
+                    "success": True,
+                    "user": user_data,
+                },
                 status=status.HTTP_200_OK,
             )
         else:
@@ -32,4 +38,7 @@ class CustomTokenRefreshView(SimpleJWTTokenRefreshView):
         # Custom logic before refreshing the token
         response = super().post(request, *args, **kwargs)
         # Custom logic after refreshing the token
+        user = request.user
+        user_data = UserSerializer(user).data
+        response.data["user"] = user_data
         return response

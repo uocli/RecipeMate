@@ -6,7 +6,7 @@ import useAxios from "./useAxios";
 
 const ProtectedRoute = ({ children }) => {
     const axios = useAxios();
-    const { isAuthenticated, authTokens, logout, setAuthTokens } =
+    const { isAuthenticated, authTokens, logout, setAuthTokens, setUser } =
         useContext(AuthContext);
     const location = useLocation();
     const [loading, setLoading] = useState(true);
@@ -28,8 +28,9 @@ const ProtectedRoute = ({ children }) => {
                     )
                     .then((response) => {
                         const { status, data } = response || {},
-                            { success } = data || {};
+                            { success, user } = data || {};
                         if (status === 200 && success) {
+                            setUser(user || {});
                         } else {
                             // refresh token
                             axios
@@ -37,7 +38,10 @@ const ProtectedRoute = ({ children }) => {
                                     refresh: authTokens.refresh,
                                 })
                                 .then((response) => {
-                                    setAuthTokens(response.data);
+                                    const { data } = response || {},
+                                        { access, refresh, user } = data || {};
+                                    setAuthTokens({ access, refresh });
+                                    setUser(user || {});
                                     Cookies.set(
                                         "access_token",
                                         response.data.access,
