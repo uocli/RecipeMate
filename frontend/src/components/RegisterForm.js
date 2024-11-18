@@ -7,7 +7,6 @@ import { AlertContext } from "../utils/AlertContext";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const { showAlert } = useContext(AlertContext);
@@ -44,22 +43,22 @@ const RegisterForm = () => {
         if (!validatePassword(password)) {
             showAlert(
                 "Password must contain uppercase, lowercase, numbers, special characters, and be at least 8 characters long.",
-                "error"
+                "error",
             );
             return;
         }
 
-        axios.post("/auth/signup/", formData)
+        axios
+            .post("/auth/signup/", formData)
             .then((response) => {
                 if (response.status === 200) {
                     const { success, message } = response.data || {};
                     if (success) {
-                        setSuccess(true);
                         showAlert(message, "success");
+                        navigate("/login");
                         setFormData({ email: "", password: "" });
                     } else {
                         showAlert(message, "error");
-                        setSuccess(false)
                     }
                 }
             })
@@ -77,62 +76,53 @@ const RegisterForm = () => {
             <Typography variant="h5" align="center" gutterBottom>
                 Register
             </Typography>
-            {success ? (
-                <Alert severity="success">
-                    You have successfully registered. Go to{" "}
-                    <Link underline="hover" onClick={() => navigate("/login")}>
-                        login
-                    </Link>{" "}
-                    page to login.
-                </Alert>
-            ) : (
-                <>
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        required
-                    />
-                    <TextField
-                        label="Password"
-                        type="password"
-                        variant="outlined"
-                        fullWidth
-                        margin="normal"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                    <Button
-                        type="submit"
-                        variant="contained"
-                        color="primary"
-                        fullWidth
-                        sx={{ marginTop: 2 }}
+
+            <>
+                <TextField
+                    label="Email"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                />
+                <TextField
+                    label="Password"
+                    type="password"
+                    variant="outlined"
+                    fullWidth
+                    margin="normal"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                />
+                <Button
+                    type="submit"
+                    variant="contained"
+                    color="primary"
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                >
+                    Register
+                </Button>
+                <Typography
+                    variant="body2"
+                    align="center"
+                    style={{ marginTop: "16px" }}
+                >
+                    Already have an account?{" "}
+                    <Link
+                        component="button"
+                        underline="hover"
+                        onClick={() => navigate("/login")}
                     >
-                        Register
-                    </Button>
-                    <Typography
-                        variant="body2"
-                        align="center"
-                        style={{ marginTop: "16px" }}
-                    >
-                        Already have an account?{" "}
-                        <Link
-                            component="button"
-                            underline="hover"
-                            onClick={() => navigate("/login")}
-                        >
-                            Login
-                        </Link>
-                    </Typography>
-                </>
-            )}
+                        Login
+                    </Link>
+                </Typography>
+            </>
         </Box>
     );
 };
