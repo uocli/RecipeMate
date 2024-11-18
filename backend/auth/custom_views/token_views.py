@@ -2,6 +2,8 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.settings import api_settings
+from rest_framework_simplejwt.views import TokenRefreshView as SimpleJWTTokenRefreshView
 
 
 class VerifyTokenView(APIView):
@@ -21,3 +23,13 @@ class VerifyTokenView(APIView):
                 {"success": False},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
+
+
+class CustomTokenRefreshView(SimpleJWTTokenRefreshView):
+    _serializer_class = api_settings.TOKEN_REFRESH_SERIALIZER
+
+    def post(self, request, *args, **kwargs):
+        # Custom logic before refreshing the token
+        response = super().post(request, *args, **kwargs)
+        # Custom logic after refreshing the token
+        return response
