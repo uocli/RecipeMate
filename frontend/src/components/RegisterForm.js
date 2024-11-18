@@ -3,13 +3,14 @@ import { TextField, Button, Box, Alert, Link, Typography } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
+import { AlertContext } from "../utils/AlertContext";
 
 const RegisterForm = () => {
     const [formData, setFormData] = useState({ email: "", password: "" });
-    const [error, setError] = useState("");
     const [success, setSuccess] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
+    const { showAlert } = useContext(AlertContext);
 
     useEffect(() => {
         if (isAuthenticated) {
@@ -36,13 +37,14 @@ const RegisterForm = () => {
         event.preventDefault();
         const { email, password } = formData;
         if (!validateEmail(email)) {
-            setError("Invalid email format");
+            showAlert("Invalid email format", "error");
             return;
         }
 
         if (!validatePassword(password)) {
-            setError(
+            showAlert(
                 "Password must contain uppercase, lowercase, numbers, special characters, and be at least 8 characters long.",
+                "error"
             );
             return;
         }
@@ -53,16 +55,16 @@ const RegisterForm = () => {
                     const { success, message } = response.data || {};
                     if (success) {
                         setSuccess(true);
+                        showAlert(message, "success");
                         setFormData({ email: "", password: "" });
-                        setError("");
                     } else {
-                        setError(message);
+                        showAlert(message, "error");
                         setSuccess(false)
                     }
                 }
             })
             .catch((error) => {
-                setError(error.response?.data?.message);
+                showAlert(error.response?.data?.message, "error");
             });
     };
 
@@ -75,7 +77,6 @@ const RegisterForm = () => {
             <Typography variant="h5" align="center" gutterBottom>
                 Register
             </Typography>
-            {error && <Alert severity="error">{error}</Alert>}
             {success ? (
                 <Alert severity="success">
                     You have successfully registered. Go to{" "}
