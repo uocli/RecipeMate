@@ -6,7 +6,7 @@ import useAxios from "./useAxios";
 
 const ProtectedRoute = ({ children }) => {
     const axios = useAxios();
-    const { isAuthenticated, authTokens, logout, setAuthTokens, setUser } =
+    const { isAuthenticated, authTokens, logout, setAuthTokens } =
         useContext(AuthContext);
     const location = useLocation();
     const [loading, setLoading] = useState(true);
@@ -28,9 +28,8 @@ const ProtectedRoute = ({ children }) => {
                     )
                     .then((response) => {
                         const { status, data } = response || {},
-                            { success, data: user } = data || {};
+                            { success } = data || {};
                         if (status === 200 && success) {
-                            setUser(user);
                         } else {
                             // refresh token
                             axios
