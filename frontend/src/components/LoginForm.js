@@ -1,11 +1,13 @@
 import React, { useContext, useState } from "react";
-import { Alert, Box, Button, Link, TextField, Typography } from "@mui/material";
+import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
+import { AlertContext } from "../utils/AlertContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const LoginForm = () => {
+    const { showAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [message, setMessage] = useState("");
@@ -18,8 +20,6 @@ const LoginForm = () => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        setMessage("");
-        setError("");
 
         axios
             .post(
@@ -34,18 +34,18 @@ const LoginForm = () => {
             )
             .then(({ status, data }) => {
                 if (status === 200) {
-                    setMessage("Logged in successfully!");
+                    showAlert("Logged in successfully!", "success");
                     const access = Cookies.get("access_token");
                     const refresh = Cookies.get("refresh_token");
                     login(access && refresh ? { access, refresh } : null);
                     setUser(data.user || {});
                     navigate(from, { replace: true });
                 } else {
-                    setError(data?.message);
+                    showAlert(data?.message, "error", null);
                 }
             })
             .catch((error) => {
-                setError(error.response?.data?.message);
+                showAlert(error.response?.data?.message, "error");
             });
     };
 
@@ -84,8 +84,6 @@ const LoginForm = () => {
             <Button variant="contained" color="primary" type="submit">
                 Login
             </Button>
-            {message && <Alert severity="success">{message}</Alert>}
-            {error && <Alert severity="error">{error}</Alert>}
             <Typography
                 variant="body2"
                 align="center"
