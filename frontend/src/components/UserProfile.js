@@ -26,41 +26,41 @@ const UserProfile = () => {
     const [dietaryPreference, setDietaryPreference] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
-    const [disabled, setDisabled] = useState(false);
-
     const [loading, setLoading] = useState(false);
-    const [timeLeft, setTimeLeft] = useState(5); // 5 seconds timer
-
     const [duration, setDuration] = useState("");
 
     // Handle button click
-    const handleChangePassword = () => {
-        // Logic to trigger password reset (e.g., calling your API)
-        // After the API call is successful, show the Snackbar
-        setDisabled(true);
+    const handleChangePassword = (event) => {
+        event.preventDefault();
         setLoading(true);
-        setTimeLeft(5); // Reset the timer to 5 seconds
-        // Simulate an API call or delay
-        const timer = setInterval(() => {
-            setTimeLeft((prevTime) => {
-                if (prevTime <= 1) {
-                    clearInterval(timer); // Clear the interval when time is up
-                    setLoading(false); // Stop the loading spinner
+        axiosInstance
+            .post("/api/password/change/")
+            .then((response) => {
+                const { status, data } = response || {},
+                    { success, message } = data || {};
+                if (status === 200 && success) {
                     setAlertSeverity("success");
-                    setAlertMessage(
-                        "A password reset link has been sent to your email.",
-                    );
-                    setDisabled(false); // Re-enable the button
-                    return 0;
+                } else {
+                    setAlertSeverity("error");
                 }
-                return prevTime - 1;
+                setAlertMessage(message);
+            })
+            .catch((_) => {
+                setAlertMessage("Error changing password!");
+                setAlertSeverity("error");
+            })
+            .finally(() => {
+                setLoading(false);
+                setLoading(false);
+                setTimeout(() => {
+                    setAlertMessage("");
+                }, 3000);
             });
-        }, 1000);
     };
 
     useEffect(() => {
         // Fetch user data from the backend
-        const fetchData = async () => {
+        const initializeData = async () => {
             axiosInstance
                 .get("/api/user-profile/")
                 .then((response) => {
@@ -83,12 +83,21 @@ const UserProfile = () => {
                     setAlertSeverity("error");
                 });
         };
-        fetchData();
+        initializeData()
+            .catch((_) => {
+                setAlertMessage("Error fetching user data!");
+                setAlertSeverity("error");
+            })
+            .finally(() => {
+                setTimeout(() => {
+                    setAlertMessage("");
+                }, 3000);
+            });
     }, [setUser]);
 
     const handleAccountUpdate = (e) => {
         e.preventDefault();
-        setDisabled(true);
+        setLoading(true);
         // Handle account update logic
         axiosInstance
             .post("/api/user-profile/", {
@@ -111,7 +120,7 @@ const UserProfile = () => {
                 setAlertSeverity("error");
             })
             .finally(() => {
-                setDisabled(false);
+                setLoading(false);
                 setTimeout(() => {
                     setAlertMessage("");
                 }, 3000);
@@ -120,6 +129,7 @@ const UserProfile = () => {
 
     const handlePreferenceUpdate = (e) => {
         e.preventDefault();
+        setLoading(true);
         // Handle dietary preference update logic
         axiosInstance
             .put("api/user-profile/", {
@@ -132,12 +142,12 @@ const UserProfile = () => {
                     setAlertSeverity("success");
                 }
             })
-            .catch((error) => {
+            .catch((_) => {
                 setAlertMessage("Error updating preferences!");
                 setAlertSeverity("error");
             })
             .finally(() => {
-                setDisabled(false);
+                setLoading(false);
                 setTimeout(() => {
                     setAlertMessage("");
                 }, 3000);
@@ -166,7 +176,7 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                        disabled={disabled}
+                        disabled={loading}
                     />
                     <TextField
                         label="Last Name"
@@ -174,7 +184,7 @@ const UserProfile = () => {
                         onChange={(e) => setLastName(e.target.value)}
                         fullWidth
                         margin="normal"
-                        disabled={disabled}
+                        disabled={loading}
                     />
                     <TextField
                         label="Email"
@@ -184,14 +194,14 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         required
-                        disabled={disabled}
+                        disabled={loading}
                     />
                     <Button
                         type="submit"
                         variant="contained"
                         color="primary"
                         sx={{ mt: 2 }}
-                        disabled={disabled}
+                        disabled={loading}
                     >
                         Update Account
                     </Button>
@@ -221,19 +231,19 @@ const UserProfile = () => {
                                     value="vegan"
                                     control={<Radio />}
                                     label="Vegan"
-                                    disabled={disabled}
+                                    disabled={loading}
                                 />
                                 <FormControlLabel
                                     value="vegetarian"
                                     control={<Radio />}
                                     label="Vegetarian"
-                                    disabled={disabled}
+                                    disabled={loading}
                                 />
                                 <FormControlLabel
                                     value="glutenFree"
                                     control={<Radio />}
                                     label="Gluten Free"
-                                    disabled={disabled}
+                                    disabled={loading}
                                 />
                             </RadioGroup>
                         </Grid>
@@ -270,7 +280,7 @@ const UserProfile = () => {
                                 variant="contained"
                                 color="primary"
                                 sx={{ mt: 2 }}
-                                disabled={disabled}
+                                disabled={loading}
                             >
                                 Save All Changes
                             </Button>
@@ -284,12 +294,12 @@ const UserProfile = () => {
                 <Typography variant="h5" gutterBottom>
                     Security Settings
                 </Typography>
-                <Box>
+                <Box component="form" onSubmit={handleChangePassword}>
                     <Button
                         variant="contained"
                         color="primary"
-                        onClick={handleChangePassword}
-                        disabled={disabled}
+                        type="submit"
+                        disabled={loading}
                         startIcon={
                             loading && (
                                 <CircularProgress size={24} color="inherit" />
@@ -297,13 +307,7 @@ const UserProfile = () => {
                         }
                         style={{ position: "relative" }}
                     >
-                        {loading ? (
-                            <Typography variant="body2" color="inherit">
-                                {timeLeft}s
-                            </Typography>
-                        ) : (
-                            "Change Password"
-                        )}
+                        Change Password
                     </Button>
                 </Box>
             </Paper>
