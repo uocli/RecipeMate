@@ -1,26 +1,20 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
     TextField,
     Button,
     Typography,
     Link,
-    Alert,
     Box,
     CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
-
-const ALERT_SEVERITY = {
-    SUCCESS: "success",
-    ERROR: "error",
-};
+import { AlertContext } from "../utils/AlertContext";
 
 const PasswordRecoveryForm = () => {
+    const { showAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertSeverity, setAlertSeverity] = useState(ALERT_SEVERITY.SUCCESS);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -45,17 +39,13 @@ const PasswordRecoveryForm = () => {
                     const { data, status } = response || {},
                         { success, message } = data || {};
                     if (status === 200 && success === true) {
-                        setAlertSeverity(ALERT_SEVERITY.SUCCESS);
+                        showAlert(message, "success");
                     } else {
-                        setAlertSeverity(ALERT_SEVERITY.ERROR);
+                        showAlert(message, "error");
                     }
-                    setAlertMessage(message);
                 })
                 .finally(() => {
                     setLoading(false);
-                    setTimeout(() => {
-                        setAlertMessage("");
-                    }, 3000);
                 });
         }
     };
@@ -66,9 +56,6 @@ const PasswordRecoveryForm = () => {
             onSubmit={handleSubmit}
             sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
         >
-            {alertMessage && (
-                <Alert severity={alertSeverity}>{alertMessage}</Alert>
-            )}
             <Typography variant="h5" align="center" gutterBottom>
                 Recover Your Password
             </Typography>
