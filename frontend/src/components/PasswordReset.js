@@ -5,11 +5,6 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { AlertContext } from "../utils/AlertContext";
 
-const LABELS = {
-    PASSWORDS_NOT_MATCH: "Passwords do not match",
-    ERROR_RESETTING_PASSWORD: "Error resetting password",
-};
-
 const PasswordReset = () => {
     const { showAlert } = useContext(AlertContext);
     const [password, setPassword] = useState("");
@@ -50,17 +45,14 @@ const PasswordReset = () => {
                             navigate("/login");
                         }, 500);
                     } else {
-                        message(
-                            message || LABELS.ERROR_RESETTING_PASSWORD,
-                            "error",
-                        );
+                        message(message || "Error resetting password", "error");
                     }
                 })
                 .finally(() => {
                     setLoading(false);
                 });
         } else {
-            showAlert(LABELS.PASSWORDS_NOT_MATCH, "error");
+            showAlert("Passwords do not match", "error");
         }
     };
 
