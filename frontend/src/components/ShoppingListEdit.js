@@ -2,17 +2,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
-import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
+import useAxios from "../utils/useAxios";
 //import './ShoppingList.css';
 
 const ShoppingListEdit = () => {
+    const axiosInstance = useAxios();
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
-        http.get("/api/shopping-list/")
+        axiosInstance.get("/api/shopping-list/")
             .then((response) => {
                 if (response.status === 200) {
                     setShoppingList(response.data);
@@ -52,17 +53,11 @@ const ShoppingListEdit = () => {
 
     const handleSaveAll = async () => {
         if (window.confirm("Are you sure you want to save these changes?")) {
-            const response = await axios.post(
-                '/api/shopping-list/',
-                { items: shoppingList },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRFToken": Cookies.get("csrftoken"),
-                        Authorization: `Bearer ${Cookies.get("access_token")}`,
-                    }
-                }
-            );
+            const response = await axiosInstance.
+                post(
+                    '/api/shopping-list/',
+                    { items: shoppingList },
+                );
             if (response.data.success) {
                 alert("Changes saved successfully!");
                 setTimeout(() => navigate('/shopping-list'), 500);
@@ -79,13 +74,7 @@ const ShoppingListEdit = () => {
     return (
         <div className="shopping-list-container">
             <h1>Edit Shopping List</h1>
-            <div className="buttons-row">
-                <button className="delete-all-button" onClick={handleDeleteAll}>Delete All</button>
-                <div className="right-buttons">
-                    <button className="save-button" onClick={handleSaveAll}>Save</button>
-                    <button className="cancel-button" onClick={handleCancel}>Cancel</button>
-                </div>
-            </div>
+            <button className="delete-all-button" onClick={handleDeleteAll}>Delete All</button>
             <ul>
                 {shoppingList.filter(item => item.quantity >= 0).map((item, index) => (
                     <li key={index} style={{ color: item.is_owned ? 'gray' : 'black' }}>
@@ -103,7 +92,15 @@ const ShoppingListEdit = () => {
                                 type="number"
                                 value={item.quantity}
                                 min="1"
-                                onChange={(e) => handleQuantityChange(index, Math.max(1, parseInt(e.target.value)))}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    handleQuantityChange(index, value === '' ? '' : Math.max(1, parseInt(value)));
+                                }}
+                                onBlur={(e) => {
+                                    if (e.target.value === '') {
+                                        handleQuantityChange(index, 1);
+                                    }
+                                }}
                             />
                             <button onClick={() => handleQuantityChange(index, item.quantity + 1)}>+</button>
                             <span>{item.unit}</span>
@@ -114,6 +111,12 @@ const ShoppingListEdit = () => {
                     </li>
                 ))}
             </ul>
+            <div className="buttons-row">
+                <div className="right-buttons">
+                    <button className="cancel-button" onClick={handleCancel}>Discard Changes</button>
+                    <button className="save-button" onClick={handleSaveAll}>Save</button>
+                </div>
+            </div>
         </div>
     );
 };

@@ -56,7 +56,7 @@ class ShoppingListView(APIView):
                     )
                     if not created:
                         # If the item already exists, update its quantity, unit, and is_owned status
-                        item.quantity += new_quantity
+                        item.quantity = new_quantity
                         item.unit = unit
                         item.is_owned = is_owned
                         item.save()

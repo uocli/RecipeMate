@@ -2,18 +2,19 @@ import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
 import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
-import http from "../utils/Http";
 import { AuthContext } from "../utils/AuthContext";
+import useAxios from "../utils/useAxios";
 //import './ShoppingList.css';
 
 const ShoppingList = () => {
+    const axiosInstance = useAxios();
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
     const [newItem, setNewItem] = useState({ ingredient: '', quantity: 1, unit: '' });
     const navigate = useNavigate();
 
     useEffect(() => {
-        http.get("/api/shopping-list/")
+        axiosInstance.get("/api/shopping-list/")
             .then((response) => {
                 if (response.status === 200) {
                     setShoppingList(response.data);
@@ -26,33 +27,31 @@ const ShoppingList = () => {
         updatedList[index].is_owned = isOwned;
         setShoppingList(updatedList);
 
-        axios.post(
-            '/api/shopping-list/',
-            { items: updatedList },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": Cookies.get("csrftoken"),
-                    Authorization: `Bearer ${Cookies.get("access_token")}`,
-                }
-            }
-        );
+        await axiosInstance.
+            post(
+                '/api/shopping-list/',
+                { items: updatedList },
+            );
     };
 
     const handleAddItem = async () => {
-        const updatedList = [...shoppingList, { ...newItem, is_owned: false }];
+        const existingItemIndex = shoppingList.findIndex(item => item.ingredient.toLowerCase() === newItem.ingredient.toLowerCase());
+        let updatedList;
+
+        if (existingItemIndex !== -1) {
+            // Item already exists, update its quantity
+            updatedList = [...shoppingList];
+            updatedList[existingItemIndex].quantity += newItem.quantity;
+        } else {
+            // Item does not exist, add as new item
+            updatedList = [...shoppingList, { ...newItem, is_owned: false }];
+        }
+
         setShoppingList(updatedList);
 
-        await axios.post(
+        await axiosInstance.post(
             '/api/shopping-list/',
             { items: updatedList },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "X-CSRFToken": Cookies.get("csrftoken"),
-                    Authorization: `Bearer ${Cookies.get("access_token")}`,
-                }
-            }
         );
 
         setNewItem({ ingredient: '', quantity: 1, unit: '' });
@@ -81,7 +80,7 @@ const ShoppingList = () => {
                     value={newItem.unit}
                     onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
                 />
-                <button onClick={handleAddItem}>Add Item</button>
+                <button onClick={handleAddItem}>Add</button>
             </div>
             <button onClick={() => navigate('/shopping-list-edit')}>Edit</button>
             <ul>
