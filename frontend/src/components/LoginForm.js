@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
@@ -10,11 +10,17 @@ const LoginForm = () => {
     const { showAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login, setUser } = useContext(AuthContext);
+    const { login, setUser, isAuthenticated } = useContext(AuthContext);
 
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate("/");
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
