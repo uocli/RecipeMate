@@ -4,10 +4,8 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.contrib.auth import login
 
 from ..serializers.user_serializer import UserSerializer
-
 
 class LoginView(APIView):
     def post(self, request, format=None):
