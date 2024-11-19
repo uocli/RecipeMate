@@ -7,7 +7,6 @@ import {
     RadioGroup,
     FormControlLabel,
     Paper,
-    Alert,
     Tabs,
     Tab,
     Box,
@@ -15,20 +14,17 @@ import {
     Grid2 as Grid,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
+import { AlertContext } from "../utils/AlertContext";
 import useAxios from "../utils/useAxios";
 
 const UserProfile = () => {
     const axiosInstance = useAxios();
+    const { showAlert } = useContext(AlertContext);
     const { setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
     const [dietaryPreference, setDietaryPreference] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertSeverity, setAlertSeverity] = useState("success");
-
     const [loading, setLoading] = useState(false);
-
     const [duration, setDuration] = useState("");
 
     // Handle button click
@@ -41,22 +37,16 @@ const UserProfile = () => {
                 const { status, data } = response || {},
                     { success, message } = data || {};
                 if (status === 200 && success) {
-                    setAlertSeverity("success");
+                    showAlert(message, "success");
                 } else {
-                    setAlertSeverity("error");
+                    showAlert(message, "error");
                 }
-                setAlertMessage(message);
             })
             .catch((_) => {
-                setAlertMessage("Error changing password!");
-                setAlertSeverity("error");
+                showAlert("Error changing password!", "error");
             })
             .finally(() => {
                 setLoading(false);
-                setLoading(false);
-                setTimeout(() => {
-                    setAlertMessage("");
-                }, 3000);
             });
     };
 
@@ -74,27 +64,18 @@ const UserProfile = () => {
                                 profile || {};
                         setFirstName(first_name);
                         setLastName(last_name);
-                        setEmail(email);
                         setUser(user || {});
                         setDietaryPreference(dietary_preference || "");
                         setDuration(cooking_time || "");
                     }
                 })
                 .catch((_) => {
-                    setAlertMessage("Error fetching user data!");
-                    setAlertSeverity("error");
+                    showAlert("Error fetching user data!", "error");
                 });
         };
-        initializeData()
-            .catch((_) => {
-                setAlertMessage("Error fetching user data!");
-                setAlertSeverity("error");
-            })
-            .finally(() => {
-                setTimeout(() => {
-                    setAlertMessage("");
-                }, 3000);
-            });
+        initializeData().catch((_) => {
+            showAlert("Error fetching user data!", "error");
+        });
     }, [setUser]);
 
     const handleAccountUpdate = (e) => {
@@ -105,27 +86,20 @@ const UserProfile = () => {
             .post("/api/user-profile/", {
                 first_name: firstName,
                 last_name: lastName,
-                email: email,
             })
             .then((response) => {
                 if (response.status === 200) {
                     setUser(response.data?.user);
-                    setAlertMessage("Account updated successfully!");
-                    setAlertSeverity("success");
+                    showAlert("Account updated successfully!", "success");
                 } else {
-                    setAlertMessage("Error updating account!");
-                    setAlertSeverity("error");
+                    showAlert("Error updating account!", "error");
                 }
             })
             .catch((_) => {
-                setAlertMessage("Error updating account!");
-                setAlertSeverity("error");
+                showAlert("Error updating account!", "error");
             })
             .finally(() => {
                 setLoading(false);
-                setTimeout(() => {
-                    setAlertMessage("");
-                }, 3000);
             });
     };
 
@@ -140,19 +114,14 @@ const UserProfile = () => {
             })
             .then((r) => {
                 if (r.status === 200) {
-                    setAlertMessage("Preferences updated successfully!");
-                    setAlertSeverity("success");
+                    showAlert("Preferences updated successfully!", "success");
                 }
             })
             .catch((_) => {
-                setAlertMessage("Error updating preferences!");
-                setAlertSeverity("error");
+                showAlert("Error updating preferences!", "error");
             })
             .finally(() => {
                 setLoading(false);
-                setTimeout(() => {
-                    setAlertMessage("");
-                }, 3000);
             });
     };
 
@@ -186,16 +155,6 @@ const UserProfile = () => {
                         onChange={(e) => setLastName(e.target.value)}
                         fullWidth
                         margin="normal"
-                        disabled={loading}
-                    />
-                    <TextField
-                        label="Email"
-                        type="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        required
                         disabled={loading}
                     />
                     <Button
@@ -336,15 +295,6 @@ const UserProfile = () => {
                     <Tab label={label} key={index} {...a11yProps(index)} />
                 ))}
             </Tabs>
-            {alertMessage && (
-                <Alert
-                    severity={alertSeverity}
-                    onClose={() => setAlertMessage("")}
-                    sx={{ mb: 2 }}
-                >
-                    {alertMessage}
-                </Alert>
-            )}
             {tabLabels.map((label, index) => (
                 <div
                     role="tabpanel"
