@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Box, Button, Link, TextField, Typography } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
@@ -10,8 +10,6 @@ const LoginForm = () => {
     const { showAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [message, setMessage] = useState("");
-    const [error, setError] = useState("");
     const { login, setUser } = useContext(AuthContext);
 
     const navigate = useNavigate();
