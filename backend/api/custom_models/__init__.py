@@ -1,1 +1,0 @@
-from shopping_list_models import ShoppingListItem
