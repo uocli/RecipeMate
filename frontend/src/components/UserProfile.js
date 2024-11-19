@@ -26,9 +26,7 @@ const UserProfile = () => {
     const [dietaryPreference, setDietaryPreference] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
     const [alertSeverity, setAlertSeverity] = useState("success");
-
     const [loading, setLoading] = useState(false);
-
     const [duration, setDuration] = useState("");
 
     // Handle button click
