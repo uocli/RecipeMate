@@ -1,13 +1,9 @@
-import React, { useState } from "react";
-import { TextField, Button, Alert, Box, CircularProgress } from "@mui/material";
+import { useContext, useState } from "react";
+import { TextField, Button, Box, CircularProgress } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Cookies from "js-cookie";
-
-const ALERT_SEVERITY = {
-    SUCCESS: "success",
-    ERROR: "error",
-};
+import { AlertContext } from "../utils/AlertContext";
 
 const LABELS = {
     PASSWORDS_NOT_MATCH: "Passwords do not match",
@@ -15,10 +11,9 @@ const LABELS = {
 };
 
 const PasswordReset = () => {
+    const { showAlert } = useContext(AlertContext);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    const [alertMessage, setAlertMessage] = useState("");
-    const [alertSeverity, setAlertSeverity] = useState(ALERT_SEVERITY.SUCCESS);
     const [loading, setLoading] = useState(false);
 
     const [searchParams] = useSearchParams();
@@ -50,36 +45,27 @@ const PasswordReset = () => {
                     const { data, status } = response || {},
                         { success, message } = data || {};
                     if (status === 200 && success === true) {
-                        setAlertMessage(message);
-                        setAlertSeverity(ALERT_SEVERITY.SUCCESS);
+                        showAlert(message, "success");
                         setTimeout(() => {
                             navigate("/login");
                         }, 500);
                     } else {
-                        setAlertMessage(
+                        message(
                             message || LABELS.ERROR_RESETTING_PASSWORD,
+                            "error",
                         );
-                        setAlertSeverity(ALERT_SEVERITY.ERROR);
                     }
                 })
                 .finally(() => {
                     setLoading(false);
-                    setTimeout(() => {
-                        setAlertSeverity("");
-                        setAlertMessage("");
-                    }, 3000);
                 });
         } else {
-            setAlertMessage(LABELS.PASSWORDS_NOT_MATCH);
-            setAlertSeverity(ALERT_SEVERITY.ERROR);
+            showAlert(LABELS.PASSWORDS_NOT_MATCH, "error");
         }
     };
 
     return (
         <Box sx={{ maxWidth: 400, mx: "auto", mt: 5 }}>
-            {alertMessage && (
-                <Alert severity={alertSeverity}>{alertMessage}</Alert>
-            )}
             <form onSubmit={handleSubmit}>
                 <TextField
                     label="Password"
