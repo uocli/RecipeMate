@@ -54,7 +54,7 @@ const RegisterForm = () => {
                 if (response.status === 200) {
                     const { success, message } = response.data || {};
                     if (success) {
-                        showAlert(message, "success");
+                        showAlert(message, "success", 5000);
                         navigate("/login");
                         setFormData({ email: "", password: "" });
                     } else {
