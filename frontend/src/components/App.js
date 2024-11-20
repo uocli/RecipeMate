@@ -12,6 +12,7 @@ import UserProfile from "./UserProfile";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+import RecipeGenerator from './RecipeGenerator';
 
 const App = () => {
     return (
@@ -35,6 +36,7 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/recipe-generator" element={<RecipeGenerator />} />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
