@@ -12,6 +12,7 @@ import UserProfile from "./UserProfile";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+import Favorites from "./Favorites";
 
 const App = () => {
     return (
@@ -43,6 +44,7 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
+                <Route path="/favorites" element={<Favorites />} />
                 {/* Logout route */}
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
