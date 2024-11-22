@@ -7,7 +7,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from ..serializers.user_serializer import UserSerializer
 
-
 class LoginView(APIView):
     def post(self, request, format=None):
         email = request.data["email"]

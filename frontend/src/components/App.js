@@ -13,6 +13,8 @@ import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+import ShoppingList from "./ShoppingList";
+import ShoppingListEdit from "./ShoppingListEdit";
 
 const App = () => {
     return (
@@ -33,6 +35,22 @@ const App = () => {
                     element={
                         <ProtectedRoute>
                             <UserProfile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list-edit"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingListEdit />
                         </ProtectedRoute>
                     }
                 />
