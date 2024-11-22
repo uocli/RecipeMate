@@ -1,13 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react';
-import axios from 'axios';
-import Cookies from "js-cookie";
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../utils/AuthContext";
+import { AlertContext } from "../utils/AlertContext";
 import useAxios from "../utils/useAxios";
-//import './ShoppingList.css';
+import {
+    Button,
+    TextField,
+    Typography,
+    Paper,
+    Box,
+    Grid,
+} from "@mui/material";
 
 const ShoppingList = () => {
     const axiosInstance = useAxios();
+    const { showAlert } = useContext(AlertContext);
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
     const [newItem, setNewItem] = useState({ ingredient: '', quantity: 1, unit: '' });
@@ -35,6 +42,12 @@ const ShoppingList = () => {
     };
 
     const handleAddItem = async () => {
+        if (!newItem.ingredient || newItem.quantity <= 0 || isNaN(newItem.quantity)) {
+            showAlert("Ingredient name and quantity should not be empty.", "error");
+            setNewItem({ ingredient: '', quantity: 1, unit: '' });
+            return;
+        }
+
         const existingItemIndex = shoppingList.findIndex(item => item.ingredient.toLowerCase() === newItem.ingredient.toLowerCase());
         let updatedList;
 
@@ -58,44 +71,75 @@ const ShoppingList = () => {
     };
 
     return (
-        <div className="shopping-list-container">
-            <h1>Shopping List</h1>
-            <div className="add-item-form">
-                <input
-                    type="text"
-                    placeholder="Ingredient"
+        <Box sx={{ maxWidth: '600px', margin: '0 auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px', backgroundColor: '#f9f9f9' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Typography variant="h4" component="h1" sx={{ color: '#333' }}>
+                    Shopping List
+                </Typography>
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => navigate('/shopping-list-edit')}
+                >
+                    Edit
+                </Button>
+            </Box>
+            <Box component="form" sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <TextField
+                    label="Ingredient"
+                    size="small"
                     value={newItem.ingredient}
                     onChange={(e) => setNewItem({ ...newItem, ingredient: e.target.value })}
+                    fullWidth
+                    margin="normal"
+                    sx={{ marginRight: '10px' }}
                 />
-                <input
+                <TextField
+                    label="Quantity"
+                    size="small"
                     type="number"
-                    placeholder="Quantity"
                     value={newItem.quantity}
-                    min="1"
                     onChange={(e) => setNewItem({ ...newItem, quantity: Math.max(1, parseInt(e.target.value)) })}
+                    fullWidth
+                    margin="normal"
+                    sx={{ marginRight: '10px' }}
                 />
-                <input
-                    type="text"
-                    placeholder="Unit"
+                <TextField
+                    label="Unit"
+                    size="small"
                     value={newItem.unit}
                     onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+                    fullWidth
+                    margin="normal"
+                    sx={{ marginRight: '10px' }}
                 />
-                <button onClick={handleAddItem}>Add</button>
-            </div>
-            <button onClick={() => navigate('/shopping-list-edit')}>Edit</button>
-            <ul>
-                {shoppingList.map((item, index) => (
-                    <li key={index} style={{ textDecoration: item.is_owned ? 'line-through' : 'none', color: item.is_owned ? 'gray' : 'black' }}>
-                        <input
-                            type="checkbox"
-                            checked={item.is_owned}
-                            onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
-                        />
-                        {item.ingredient} ({item.quantity} {item.unit})
-                    </li>
-                ))}
-            </ul>
-        </div>
+                <Button
+                    variant="text"
+                    color="primary"
+                    onClick={handleAddItem}
+                >
+                    Add
+                </Button>
+            </Box>
+            <Paper elevation={3} sx={{ padding: 2 }}>
+                <ul style={{ listStyleType: 'none', padding: '0' }}>
+                    {shoppingList.map((item, index) => (
+                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #ddd', textDecoration: item.is_owned ? 'line-through' : 'none', color: item.is_owned ? 'gray' : 'black' }}>
+                            <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <input
+                                    type="checkbox"
+                                    checked={item.is_owned}
+                                    onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
+                                    style={{ marginRight: '10px' }}
+                                />
+                                <span>{item.ingredient}</span>
+                            </div>
+                            <span>{item.quantity} {item.unit}</span>
+                        </li>
+                    ))}
+                </ul>
+            </Paper>
+        </Box>
     );
 };
 

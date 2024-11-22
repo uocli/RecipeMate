@@ -13,18 +13,18 @@ class ShoppingListView(APIView):
 
     def get(self, request):
         user = request.user
-        print(f"Authenticated user: {user.username} (ID: {user.id})")  # Debug statement
+        #print(f"Authenticated user: {user.username} (ID: {user.id})")  # Debug statement
         shopping_list = ShoppingListItem.objects.filter(user_id=user.id).order_by('is_owned')
-        print (shopping_list)
+        #print (shopping_list)
         data = [{"id": item.id, "ingredient": item.ingredient, "quantity": item.quantity, "unit": item.unit, "is_owned": item.is_owned} for item in shopping_list]
         print(f"User {user.username} retrieved their shopping list.")
-        print(data)
+        #print(data)
         return JsonResponse(data, safe=False, status=200)
     
     def post(self, request):
         user = request.user
         data = json.loads(request.body)
-        print(data)
+        #print(data)
         items = data.get('items')
 
         if items:
