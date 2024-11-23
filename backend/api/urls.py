@@ -11,6 +11,6 @@ urlpatterns = [
     path('favorites/', FavoriteListView.as_view(), name='favorites-list'),
     path('favorites/<int:pk>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
     path('shopping-list/', ShoppingListView.as_view(), name='shopping-list'),
-    path("recipes", RecipeListView.as_view(), name="recipe-list"),
+    path("recipes/", RecipeListView.as_view(), name="recipe-list"),
     path("recipe/{uuid}", RecipeDetailView.as_view(), name="recipe-detail"),
 ]
