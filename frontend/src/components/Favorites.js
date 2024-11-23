@@ -19,7 +19,7 @@ const Favorites = () => {
         };
 
         fetchFavorites();
-    }, [axios, showAlert]);
+    }, []);
 
     const handleRemoveFromFavorites = async (id) => {
         try {
