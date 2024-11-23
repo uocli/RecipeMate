@@ -15,6 +15,7 @@ import PasswordReset from "./PasswordReset";
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+import Contact from "./Contact";
 
 const App = () => {
     return (
@@ -46,6 +47,7 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
+                <Route path="/contact" element={<Contact />} />
                 <Route
                     path="/shopping-list-edit"
                     element={
@@ -62,7 +64,6 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
-                {/* <Route path="/favorites" element={<Favorites />} /> */}
                 <Route path="/favorites" element={
                     <ProtectedRoute>
                         <Favorites />
