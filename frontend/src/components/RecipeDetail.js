@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
@@ -9,22 +9,29 @@ import {
     CardMedia,
     Chip,
     Rating,
+    Tooltip,
 } from "@mui/material";
 import { AlertContext } from "../utils/AlertContext";
+import { AuthContext } from "../utils/AuthContext";
+import useAxios from "../utils/useAxios";
 
 const RecipeDetail = () => {
     const { uuid } = useParams();
     const [recipe, setRecipe] = useState(null);
     const [rating, setRating] = useState(0);
-    const { showAlert } = React.useContext(AlertContext);
+    const { showAlert } = useContext(AlertContext);
+    const { isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
+    const axiosInstance = useAxios();
 
     useEffect(() => {
         axios
             .get(`/api/recipe/${uuid}/`)
             .then((response) => {
-                setRecipe(response.data);
-                setRating(response.data.user_rating || 0); // Assuming user_rating is returned from the API
+                const { data } = response || {},
+                    { average_rating } = data || {};
+                setRecipe(data || {});
+                setRating(average_rating || 0);
             })
             .catch((error) => {
                 showAlert(
@@ -39,8 +46,7 @@ const RecipeDetail = () => {
 
     const handleRatingChange = (event, newValue) => {
         setRating(newValue);
-        // Send the new rating to the server
-        axios
+        axiosInstance
             .post(`/api/recipe/${uuid}/rate/`, { rating: newValue })
             .then((response) => {
                 console.log("Rating updated successfully");
@@ -92,12 +98,25 @@ const RecipeDetail = () => {
                     <Typography variant="h5" component="div">
                         Rate this recipe
                     </Typography>
-                    <Rating
-                        name="recipe-rating"
-                        value={rating}
-                        onChange={handleRatingChange}
-                        size="large"
-                    />
+                    {isAuthenticated ? (
+                        <Rating
+                            name="recipe-rating"
+                            value={rating}
+                            onChange={handleRatingChange}
+                            size="large"
+                        />
+                    ) : (
+                        <Tooltip title="Please log in to rate this recipe">
+                            <span>
+                                <Rating
+                                    name="recipe-rating"
+                                    value={rating}
+                                    readOnly
+                                    size="large"
+                                />
+                            </span>
+                        </Tooltip>
+                    )}
                 </CardContent>
             </Card>
         </Container>
