@@ -9,7 +9,7 @@ import {
     CardMedia,
     Chip,
     Rating,
-    Tooltip,
+    Button,
 } from "@mui/material";
 import { AlertContext } from "../utils/AlertContext";
 import { AuthContext } from "../utils/AuthContext";
@@ -48,12 +48,16 @@ const RecipeDetail = () => {
         setRating(newValue);
         axiosInstance
             .post(`/api/recipe/${uuid}/rate/`, { rating: newValue })
-            .then((response) => {
-                console.log("Rating updated successfully");
+            .then((_) => {
+                showAlert("Rating updated successfully", "success");
             })
             .catch((error) => {
                 console.error("There was an error updating the rating!", error);
             });
+    };
+
+    const handleAnonymousRating = () => {
+        showAlert("Please log in to rate this recipe!", "warning");
     };
 
     if (!recipe) {
@@ -106,16 +110,14 @@ const RecipeDetail = () => {
                             size="large"
                         />
                     ) : (
-                        <Tooltip title="Please log in to rate this recipe">
-                            <span>
-                                <Rating
-                                    name="recipe-rating"
-                                    value={rating}
-                                    readOnly
-                                    size="large"
-                                />
-                            </span>
-                        </Tooltip>
+                        <Button onClick={handleAnonymousRating}>
+                            <Rating
+                                name="recipe-rating"
+                                value={rating}
+                                readOnly
+                                size="large"
+                            />
+                        </Button>
                     )}
                 </CardContent>
             </Card>
