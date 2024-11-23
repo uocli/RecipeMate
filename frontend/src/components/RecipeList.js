@@ -9,6 +9,7 @@ import {
     CardActionArea,
     CardContent,
     CardMedia,
+    Chip,
 } from "@mui/material";
 
 const RecipeList = () => {
@@ -40,7 +41,7 @@ const RecipeList = () => {
                             style={{
                                 width: "100%",
                                 maxWidth: "300px",
-                                height: "300px",
+                                height: "auto",
                             }}
                         >
                             <CardActionArea
@@ -63,6 +64,18 @@ const RecipeList = () => {
                                     >
                                         {recipe.name}
                                     </Typography>
+                                    <div>
+                                        {recipe.ingredients.map(
+                                            (ingredient, index) => (
+                                                <Chip
+                                                    key={index}
+                                                    label={ingredient.name}
+                                                    size="small"
+                                                    style={{ margin: "2px" }}
+                                                />
+                                            ),
+                                        )}
+                                    </div>
                                 </CardContent>
                             </CardActionArea>
                         </Card>
