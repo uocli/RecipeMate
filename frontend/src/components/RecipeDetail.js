@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import {
     Container,
@@ -9,10 +9,13 @@ import {
     CardMedia,
     Chip,
 } from "@mui/material";
+import { AlertContext } from "../utils/AlertContext";
 
 const RecipeDetail = () => {
     const { uuid } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const { showAlert } = React.useContext(AlertContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios
@@ -21,7 +24,13 @@ const RecipeDetail = () => {
                 setRecipe(response.data);
             })
             .catch((error) => {
-                console.error("There was an error fetching the recipe!", error);
+                showAlert(
+                    error?.response?.data?.message ||
+                        "Error getting the recipe!",
+                    "error",
+                    5000,
+                );
+                navigate("/");
             });
     }, [uuid]);
 

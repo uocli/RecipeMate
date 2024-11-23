@@ -19,4 +19,7 @@ class RecipeDetailView(APIView):
             serializer = RecipeSerializer(recipe)
             return Response(serializer.data)
         except Recipe.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"message": "Recipe could not be found!"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
