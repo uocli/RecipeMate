@@ -6,15 +6,6 @@ const Home = () => {
         <div>
             <h1>Welcome to RecipeMate</h1>
             <p>Your go-to app for managing recipes!</p>
-
-            {/* Navigation Links */}
-            <nav>
-                <ul>
-                    <li>
-                        <Link to="/favorites">View Favorites</Link>
-                    </li>
-                </ul>
-            </nav>
         </div>
     );
 };
