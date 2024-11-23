@@ -1,3 +1,4 @@
+from django.db.models import Avg
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +8,9 @@ from ..serializers.recipe_serializers import RecipeSerializer
 
 class RecipeListView(APIView):
     def get(self, request):
-        recipes = Recipe.objects.all()
+        recipes = Recipe.objects.annotate(
+            average_rating=Avg("ratings__rating")
+        ).order_by("-average_rating")
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data)
 
