@@ -8,12 +8,14 @@ import {
     CardContent,
     CardMedia,
     Chip,
+    Rating,
 } from "@mui/material";
 import { AlertContext } from "../utils/AlertContext";
 
 const RecipeDetail = () => {
     const { uuid } = useParams();
     const [recipe, setRecipe] = useState(null);
+    const [rating, setRating] = useState(0);
     const { showAlert } = React.useContext(AlertContext);
     const navigate = useNavigate();
 
@@ -22,6 +24,7 @@ const RecipeDetail = () => {
             .get(`/api/recipe/${uuid}/`)
             .then((response) => {
                 setRecipe(response.data);
+                setRating(response.data.user_rating || 0); // Assuming user_rating is returned from the API
             })
             .catch((error) => {
                 showAlert(
@@ -33,6 +36,19 @@ const RecipeDetail = () => {
                 navigate("/");
             });
     }, [uuid]);
+
+    const handleRatingChange = (event, newValue) => {
+        setRating(newValue);
+        // Send the new rating to the server
+        axios
+            .post(`/api/recipe/${uuid}/rate/`, { rating: newValue })
+            .then((response) => {
+                console.log("Rating updated successfully");
+            })
+            .catch((error) => {
+                console.error("There was an error updating the rating!", error);
+            });
+    };
 
     if (!recipe) {
         return <Typography>Loading...</Typography>;
@@ -73,6 +89,15 @@ const RecipeDetail = () => {
                     <Typography variant="body1" component="p">
                         {recipe.instructions}
                     </Typography>
+                    <Typography variant="h5" component="div">
+                        Rate this recipe
+                    </Typography>
+                    <Rating
+                        name="recipe-rating"
+                        value={rating}
+                        onChange={handleRatingChange}
+                        size="large"
+                    />
                 </CardContent>
             </Card>
         </Container>
