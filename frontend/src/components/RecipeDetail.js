@@ -7,6 +7,7 @@ import {
     Card,
     CardContent,
     CardMedia,
+    Chip,
 } from "@mui/material";
 
 const RecipeDetail = () => {
@@ -47,9 +48,16 @@ const RecipeDetail = () => {
                     <Typography variant="h5" component="div">
                         Ingredients
                     </Typography>
-                    <Typography variant="body1" component="p">
-                        {recipe.ingredients}
-                    </Typography>
+                    <div>
+                        {recipe.ingredients.map((ingredient, index) => (
+                            <Chip
+                                key={index}
+                                label={ingredient.name}
+                                size="small"
+                                style={{ margin: "2px" }}
+                            />
+                        ))}
+                    </div>
                     <Typography variant="h5" component="div">
                         Instructions
                     </Typography>
