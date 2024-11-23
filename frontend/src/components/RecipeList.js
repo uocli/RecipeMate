@@ -32,7 +32,7 @@ const RecipeList = () => {
     return (
         <Container>
             <Typography variant="h2" gutterBottom>
-                Recipes
+                Favorite Recipes
             </Typography>
             <Grid container spacing={4}>
                 {recipes.map((recipe) => (
