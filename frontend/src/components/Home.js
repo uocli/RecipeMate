@@ -1,12 +1,15 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Container, Typography } from "@mui/material";
+import RecipeList from "./RecipeList";
 
 const Home = () => {
     return (
-        <div>
-            <h1>Welcome to RecipeMate</h1>
-            <p>Your go-to app for managing recipes!</p>
-        </div>
+        <Container>
+            <Typography variant="h1" gutterBottom>
+                Welcome to Recipe Mate!
+            </Typography>
+            <RecipeList />
+        </Container>
     );
 };
 
