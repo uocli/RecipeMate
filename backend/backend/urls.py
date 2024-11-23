@@ -20,7 +20,7 @@ from django.urls import path, re_path, include
 from .views import index
 
 urlpatterns = [
-    path("admin/web/", admin.site.urls),
+    path("admin/", admin.site.urls),
     path("api/", include("api.urls")),
     path("auth/", include("auth.urls")),
     re_path(r"^.*$", index),
