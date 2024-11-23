@@ -13,6 +13,7 @@ import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
 
@@ -63,6 +64,7 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
+                <Route path="/favorites" element={<Favorites />} />
                 {/* Logout route */}
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
