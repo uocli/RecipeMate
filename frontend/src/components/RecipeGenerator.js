@@ -1,66 +1,62 @@
 // frontend/src/components/RecipeGenerator.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TextField,
-  Chip,
   Button,
-  Stack,
   Typography,
   Paper,
-  ToggleButton,
-  ToggleButtonGroup
+  Chip,
+  Stack,
+  CircularProgress
 } from '@mui/material';
 import axios from 'axios';
+import Cookies from "js-cookie";
 
 const RecipeGenerator = () => {
   const [ingredients, setIngredients] = useState([]);
   const [inputValue, setInputValue] = useState('');
-  const [preferences, setPreferences] = useState([]);
-  const [selectedPreferences, setSelectedPreferences] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [recipe, setRecipe] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Fetch user preferences from backend
-  useEffect(() => {
-    const fetchPreferences = async () => {
-      try {
-        const response = await axios.get('/api/user/preferences/');
-        setPreferences(response.data);
-      } catch (error) {
-        console.error('Error fetching preferences:', error);
-      }
-    };
-    fetchPreferences();
-  }, []);
-
-  // Handle ingredient input
   const handleKeyDown = (event) => {
-    if (event.key === 'Enter' && inputValue) {
+    if (event.key === 'Enter' && inputValue.trim()) {
       setIngredients([...ingredients, inputValue.trim()]);
       setInputValue('');
     }
   };
 
-  // Handle preference selection
-  const handlePreferenceChange = (event, newPreferences) => {
-    setSelectedPreferences(newPreferences);
-  };
-
-  // Handle generate recipe
   const handleGenerateRecipe = async () => {
     try {
-      const response = await axios.post('/api/custom/generate-recipe/', {
+      setLoading(true);
+      setError(null);
+      
+      const response = await axios.post('/api/recipe/generate/', {
         ingredients,
-        preferences: selectedPreferences
-      });
-      // Handle the generated recipe response
-      console.log(response.data);
+        preferences: []  // Add preferences if needed
+      },
+      {
+          headers: {
+              "Content-Type": "application/json",
+              "X-CSRFToken": Cookies.get("csrftoken"),
+          },
+      },
+    );
+
+      if (response.data.success) {
+        setRecipe(response.data.data);
+      }
     } catch (error) {
-      console.error('Error generating recipe:', error);
+      setError(error.response?.data?.message || 'Failed to generate recipe');
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto', mt: 4, p: 3 }}>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 8, p: 3 }}>
       <Typography variant="h4" gutterBottom>
         Recipe Generator
       </Typography>
@@ -90,32 +86,37 @@ const RecipeGenerator = () => {
         </Stack>
       </Paper>
 
-      <Paper sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          Dietary Preferences
-        </Typography>
-        <ToggleButtonGroup
-          value={selectedPreferences}
-          onChange={handlePreferenceChange}
-          multiple
-        >
-          {preferences.map((pref) => (
-            <ToggleButton key={pref.id} value={pref.id}>
-              {pref.name}
-            </ToggleButton>
-          ))}
-        </ToggleButtonGroup>
-      </Paper>
-
       <Button
         variant="contained"
-        size="large"
         fullWidth
         onClick={handleGenerateRecipe}
-        disabled={ingredients.length === 0}
+        disabled={ingredients.length === 0 || loading}
       >
-        Generate Recipe
+        {loading ? <CircularProgress size={24} /> : 'Generate Recipe'}
       </Button>
+
+      {error && (
+        <Typography color="error" sx={{ mt: 2 }}>
+          {error}
+        </Typography>
+      )}
+
+      {recipe && (
+        <Paper sx={{ p: 3, mt: 3 }}>
+          <Typography variant="h5">{recipe.title}</Typography>
+          <Typography variant="subtitle1" sx={{ mt: 2 }}>
+            Cooking Time: {recipe.cooking_time}
+          </Typography>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Instructions:
+          </Typography>
+          <ol>
+            {recipe.instructions.map((step, index) => (
+              <li key={index}>{step}</li>
+            ))}
+          </ol>
+        </Paper>
+      )}
     </Box>
   );
 };

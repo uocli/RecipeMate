@@ -36,7 +36,13 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
-                <Route path="/recipe-generator" element={<RecipeGenerator />} />
+                <Route path="/generate" 
+                    element={
+                        <ProtectedRoute>
+                            <RecipeGenerator />
+                        </ProtectedRoute>
+                    } 
+                />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
