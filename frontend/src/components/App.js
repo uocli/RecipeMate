@@ -64,6 +64,7 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
+                {/* <Route path="/favorites" element={<Favorites />} /> */}
                 <Route path="/favorites" element={
                     <ProtectedRoute>
                         <Favorites />

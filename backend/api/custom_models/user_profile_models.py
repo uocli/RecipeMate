@@ -19,7 +19,7 @@ class UserProfile(models.Model):
         choices=(
             ("limited", "Limited"),
             ("medium", "Medium"),
-            ("Extended", "Extended"),
+            ("extended", "Extended"),
         ),
         blank=True,
         null=True,
