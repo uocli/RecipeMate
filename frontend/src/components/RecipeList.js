@@ -31,7 +31,7 @@ const RecipeList = () => {
 
     return (
         <Container>
-            <Typography variant="h2" gutterBottom>
+            <Typography variant="h5" gutterBottom>
                 Favorite Recipes
             </Typography>
             <Grid container spacing={4}>

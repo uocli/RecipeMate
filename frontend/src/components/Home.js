@@ -1,14 +1,18 @@
 import React from "react";
-import { Container, Typography } from "@mui/material";
+import { Container, Box } from "@mui/material";
 import RecipeList from "./RecipeList";
 
 const Home = () => {
     return (
         <Container>
-            <Typography variant="h1" gutterBottom>
-                Welcome to Recipe Mate!
-            </Typography>
-            <RecipeList />
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <RecipeList />
+            </Box>
         </Container>
     );
 };
