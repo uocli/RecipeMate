@@ -1,7 +1,7 @@
-from rest_framework import status
+from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..custom_models.recipe_models import Recipe
+from ..custom_models.recipe_models import Recipe, Rating
 from ..serializers.recipe_serializers import RecipeSerializer
 
 
@@ -22,4 +22,32 @@ class RecipeDetailView(APIView):
             return Response(
                 {"message": "Recipe could not be found!"},
                 status=status.HTTP_404_NOT_FOUND,
+            )
+
+
+class RecipeRateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, uuid):
+        try:
+            recipe = Recipe.objects.get(uuid=uuid)
+            rating_value = request.data.get("rating")
+            user = request.user
+
+            rating, created = Rating.objects.update_or_create(
+                user=user,
+                recipe=recipe,
+                defaults={"rating": rating_value},
+            )
+
+            return Response({"message": "Rating updated successfully"})
+        except Recipe.DoesNotExist:
+            return Response(
+                {"message": "Recipe could not be found!"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+        except Exception as e:
+            return Response(
+                {"message": str(e)},
+                status=status.HTTP_400_BAD_REQUEST,
             )
