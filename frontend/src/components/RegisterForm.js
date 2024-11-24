@@ -36,15 +36,16 @@ const RegisterForm = () => {
         axios
             .post("/auth/send-invite/", { email })
             .then((response) => {
-                if (response.status === 200) {
-                    showAlert(
-                        "Invite email sent successfully!",
-                        "success",
-                        5000,
-                    );
-                    setEmail("");
+                const { data, status } = response || {},
+                    { message, success } = data || {};
+                if (status === 200 && success === true) {
+                    showAlert(message, "success", 5000);
+                    navigate("/login");
                 } else {
-                    showAlert("Failed to send invite email!", "error");
+                    showAlert(
+                        message || "Failed to send invite email!",
+                        "error",
+                    );
                 }
             })
             .catch((error) => {
