@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Header from "./Header";
 import Home from "./Home";
@@ -9,12 +9,17 @@ import RegisterForm from "./RegisterForm";
 import LoginForm from "./LoginForm";
 import ProtectedRoute from "../utils/ProtectedRoute";
 import UserProfile from "./UserProfile";
+import Chat from "./Chat";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+
+import RecipeGenerator from './RecipeGenerator';
+
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+
 
 const App = () => {
     return (
@@ -38,6 +43,14 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
+
+                <Route path="/generate" 
+                    element={
+                        <ProtectedRoute>
+                            <RecipeGenerator />
+                        </ProtectedRoute>
+                    } 
+                />
                 <Route
                     path="/shopping-list"
                     element={
@@ -53,11 +66,22 @@ const App = () => {
                             <ShoppingListEdit />
                         </ProtectedRoute>
                     }
+
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/chat" element={<Chat />} />
                 <Route path="/logout" element={<LogoutPage />} />
-                <Route path="/password-reset" element={<PasswordReset />} />
+                <Route
+                    path="/password-reset"
+                    element={<PasswordReset endpoint="/api/password/reset/" />}
+                />
+                <Route
+                    path="/complete-signup"
+                    element={
+                        <PasswordReset endpoint="/auth/complete-signup/" />
+                    }
+                />
                 <Route
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
@@ -66,7 +90,8 @@ const App = () => {
                 <Route path="/favorites" element={
                     <ProtectedRoute>
                         <Favorites />
-                    </ProtectedRoute>} />
+                    </ProtectedRoute>
+                } />
                 {/* Logout route */}
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
