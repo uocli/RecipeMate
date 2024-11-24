@@ -40,7 +40,7 @@ const RegisterForm = () => {
                     { message, success } = data || {};
                 if (status === 200 && success === true) {
                     showAlert(message, "success", 5000);
-                    navigate("/login");
+                    setEmail("");
                 } else {
                     showAlert(
                         message || "Failed to send invite email!",
