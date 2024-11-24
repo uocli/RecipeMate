@@ -69,6 +69,7 @@ const PasswordReset = ({ endpoint }) => {
                     label="Password"
                     type="password"
                     fullWidth
+                    required
                     margin="normal"
                     value={password}
                     disabled={loading}
@@ -78,6 +79,7 @@ const PasswordReset = ({ endpoint }) => {
                     label="Confirm Password"
                     type="password"
                     fullWidth
+                    required
                     margin="normal"
                     value={confirmPassword}
                     disabled={loading}
