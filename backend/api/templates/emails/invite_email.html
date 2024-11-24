@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Welcome to Our Service</title>
+</head>
+<body>
+<p>Welcome to Recipe Mate!</p>
+<p>Please click the following link to complete your registration:</p>
+<p>
+    <a href="{{ url }}" target="_blank">
+        <button style="background-color: #444394; border: 0; width: 200px; height: 30px; border-radius: 6px; color: #fff;">
+            Set Password
+        </button>
+    </a>
+<p style="text-align: left;">
+    If you are unable to click the above button, copy and paste the URL below into your browser.
+</p>
+<a href="{{ url }}" target="_blank">
+    <p style="margin: 0; text-align: left; font-size: 10px; text-decoration: none;">{{ url }}</p>
+</a>
+<p>Thank you!</p>
+</body>
+</html>
