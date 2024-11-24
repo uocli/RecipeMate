@@ -11,13 +11,12 @@ class Token(models.Model):
     token = models.CharField(max_length=255)
     created_at = models.DateTimeField()
     expires_at = models.DateTimeField()
-    email = models.EmailField(null=True, blank=True)
+    email = models.EmailField(null=True)
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="tokens",
         null=True,
-        blank=True,
     )
     is_used = models.BooleanField(default=False)
 
