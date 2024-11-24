@@ -3,6 +3,7 @@ from django.urls import path, include
 from .custom_views.user_profile_views import UserProfileView
 from .custom_views.favorites_view import FavoriteListView, FavoriteDeleteView
 from .custom_views.shopping_list_views import ShoppingListView
+from api.custom_views.favorites_view import AddToShoppingListView
 
 urlpatterns = [
     path("user-profile/", UserProfileView.as_view(), name="csrf-token"),
@@ -10,4 +11,6 @@ urlpatterns = [
     path('favorites/', FavoriteListView.as_view(), name='favorites-list'),
     path('favorites/<int:pk>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
     path('shopping-list/', ShoppingListView.as_view(), name='shopping-list'),
+    path("favorites/<int:pk>/add-to-shopping-list/", AddToShoppingListView.as_view(), name="add-to-shopping-list"),
+
 ]
