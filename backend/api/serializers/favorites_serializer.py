@@ -1,6 +1,5 @@
-# backend/api/serializers/favorites_serializer.py
 from rest_framework import serializers
-from ..models import Favorite
+from ..custom_models.favorites_model import Favorite
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
