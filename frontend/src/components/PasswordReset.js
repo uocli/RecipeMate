@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { AlertContext } from "../utils/AlertContext";
 
-const PasswordReset = () => {
+const PasswordReset = ({ endpoint }) => {
     const { showAlert } = useContext(AlertContext);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,10 +22,9 @@ const PasswordReset = () => {
             setLoading(true);
             axios
                 .post(
-                    "/api/password/reset/",
+                    endpoint,
                     {
                         password,
-                        confirmPassword,
                         id,
                         token,
                     },
