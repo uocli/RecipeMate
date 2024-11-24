@@ -50,7 +50,7 @@ const App = () => {
                             <RecipeGenerator />
                         </ProtectedRoute>
                     } 
-
+                />
                 <Route
                     path="/shopping-list"
                     element={
