@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import Header from "./Header";
 import Home from "./Home";
@@ -15,6 +15,7 @@ import PasswordReset from "./PasswordReset";
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+import RecipeDetail from "./RecipeDetail";
 
 const App = () => {
     return (
@@ -71,6 +72,7 @@ const App = () => {
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
                 <Route path="*" element={<NotFound />} />
+                <Route path="/recipe/:uuid" element={<RecipeDetail />} />
             </Routes>
         </>
     );
