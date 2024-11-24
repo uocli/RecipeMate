@@ -12,6 +12,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from api.custom_models.token_model import Token
 from backend import settings
 from api.serializers.token_serializer import TokenSerializer
 from api.utils.email_utils import send_email
@@ -57,7 +58,16 @@ class SendInviteView(APIView):
 
         serializer = TokenSerializer(data=token_obj)
         if serializer.is_valid():
-            serializer.save()
+            try:
+                serializer.save()
+            except Exception as e:
+                return Response(
+                    {
+                        "success": False,
+                        "message": str(e),
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
             # Send email
             subject = "Welcome to Recipe Mate!"
             url = urljoin(settings.BASE_URL, f"/complete-signup?token={token}")
@@ -83,3 +93,59 @@ class SendInviteView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class CompleteSignupView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        return Response(
+            {
+                "success": False,
+                "message": "Method not allowed.",
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def post(self, request, format=None):
+        token = request.data.get("token")
+        password = request.data.get("password")
+        token_obj = Token.objects.filter(token=token).first()
+        if token_obj is None or token_obj.email is None:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid token!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if token_obj.expires_at > timezone.now():
+            return Response(
+                {
+                    "success": False,
+                    "message": "Token has expired!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = token_obj.email
+        try:
+            user = User.objects.create_user(email=email, password=password)
+            user.save()
+        except Exception as e:
+            return Response(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Registration completed successfully.",
+            },
+            status=status.HTTP_200_OK,
+        )
