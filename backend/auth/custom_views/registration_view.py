@@ -44,7 +44,7 @@ class SendInviteView(APIView):
             )
 
         created_at = timezone.now()
-        expires_at = timezone.now() + timedelta(days=1)
+        expires_at = created_at + timedelta(days=1)
         salt = uuid.uuid4().hex
         token = hashlib.sha512(
             (email + created_at.isoformat() + salt).encode("utf-8")
@@ -120,7 +120,7 @@ class CompleteSignupView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        if token_obj.expires_at > timezone.now():
+        if timezone.now() > token_obj.expires_at:
             return Response(
                 {
                     "success": False,
@@ -131,8 +131,11 @@ class CompleteSignupView(APIView):
 
         email = token_obj.email
         try:
-            user = User.objects.create_user(email=email, password=password)
+            user = User.objects.create_user(
+                username=email, email=email, password=password
+            )
             user.save()
+            token_obj.delete()
         except Exception as e:
             return Response(
                 {
