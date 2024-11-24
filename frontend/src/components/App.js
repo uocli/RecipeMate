@@ -19,6 +19,7 @@ import RecipeGenerator from './RecipeGenerator';
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+import RecipeDetail from "./RecipeDetail";
 
 
 const App = () => {
@@ -96,6 +97,7 @@ const App = () => {
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
                 <Route path="*" element={<NotFound />} />
+                <Route path="/recipe/:uuid" element={<RecipeDetail />} />
             </Routes>
         </>
     );
