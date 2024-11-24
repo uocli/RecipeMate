@@ -22,10 +22,15 @@ class PublicRecipe(models.Model):
     def __str__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = "Public Recipes"
+
 
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(PublicRecipe, on_delete=models.CASCADE, related_name="ratings")
+    recipe = models.ForeignKey(
+        PublicRecipe, on_delete=models.CASCADE, related_name="ratings"
+    )
     rating = models.IntegerField()
 
     class Meta:
