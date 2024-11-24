@@ -1,6 +1,9 @@
 // frontend/src/components/RecipeGenerator.js
-import React, { useState } from 'react';
+import React, { useContext,useEffect, useState } from "react";
 import {
+  List,
+  ListItem,
+  ListItemText,
   Box,
   TextField,
   Button,
@@ -10,15 +13,23 @@ import {
   Stack,
   CircularProgress
 } from '@mui/material';
-import axios from 'axios';
-import Cookies from "js-cookie";
+import useAxios from '../utils/useAxios'; 
+import { AuthContext } from "../utils/AuthContext";
+import { AlertContext } from "../utils/AlertContext";
 
 const RecipeGenerator = () => {
+  const axiosInstance = useAxios();
+  const { showAlert } = useContext(AlertContext);
   const [ingredients, setIngredients] = useState([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
+  const { setUser } = useContext(AuthContext);
   const [error, setError] = useState(null);
+  const [preferences, setPreferences] = useState({
+    dietary_preference: '',
+    cooking_time: ''
+  });
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && inputValue.trim()) {
@@ -27,33 +38,62 @@ const RecipeGenerator = () => {
     }
   };
 
-  const handleGenerateRecipe = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const response = await axios.post('/api/recipe/generate/', {
-        ingredients,
-        preferences: []  // Add preferences if needed
-      },
-      {
-          headers: {
-              "Content-Type": "application/json",
-              "X-CSRFToken": Cookies.get("csrftoken"),
-          },
-      },
-    );
+  // Fetch user preferences
+  useEffect(() => {
+    axiosInstance
+      .get("/api/user-profile/")
+      .then((response) => {
+        if (response.status === 200) {
+          const { user } = response.data || {},
+                { profile } = user || {},
+                { dietary_preference, cooking_time } = profile || {};
+          setPreferences({
+            dietary_preference: dietary_preference || '',
+            cooking_time: cooking_time || ''
+          });
+        }
+      })
+      .catch((_) => {
+        showAlert("Error fetching preferences!", "error");
+      });
+  }, [setUser]);
 
-      if (response.data.success) {
-        setRecipe(response.data.data);
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || 'Failed to generate recipe');
-      console.error('Error:', error);
-    } finally {
-      setLoading(false);
-    }
+  const handleGenerateRecipe = (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    axiosInstance
+      .post("/api/generate/", {
+        ingredients,
+        preferences: {
+          dietary_preference: preferences.dietary_preference,
+          cooking_time: preferences.cooking_time
+        }
+      })
+      .then((response) => {
+        const { status, data } = response || {};
+        const { success, data: recipeData } = data || {};
+        
+        if (status === 200 && success) {
+          setRecipe(recipeData);
+          showAlert("Recipe generated successfully!", "success");
+        } else {
+          setError(data?.message || "Failed to generate recipe");
+          showAlert(data?.message || "Failed to generate recipe", "error");
+        }
+      })
+      .catch((error) => {
+        const errorMessage = error.response?.data?.message || "Failed to generate recipe";
+        setError(errorMessage);
+        showAlert(errorMessage, "error");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
+
+  
 
   return (
     <Box sx={{ maxWidth: 800, mx: 'auto', mt: 8, p: 3 }}>
@@ -100,13 +140,25 @@ const RecipeGenerator = () => {
           {error}
         </Typography>
       )}
-
       {recipe && (
         <Paper sx={{ p: 3, mt: 3 }}>
           <Typography variant="h5">{recipe.title}</Typography>
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             Cooking Time: {recipe.cooking_time}
           </Typography>
+          <Typography variant="h6" sx={{ mt: 2 }}>
+            Ingredients:
+          </Typography>
+          <List>
+            {recipe.ingredients.map((item, index) => (
+              <ListItem key={index} sx={{ py: 0.5 }}>
+                <ListItemText 
+                  primary={`${item.ingredient} - ${item.quantity}`}
+                />
+              </ListItem>
+            ))}
+          </List>
+
           <Typography variant="h6" sx={{ mt: 2 }}>
             Instructions:
           </Typography>

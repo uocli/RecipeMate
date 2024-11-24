@@ -193,4 +193,4 @@ EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
 # backend/backend/settings.py
-OPENAI_API_KEY = os.getenv("OPENAI_API", "")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
