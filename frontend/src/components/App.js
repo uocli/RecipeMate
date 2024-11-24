@@ -58,7 +58,16 @@ const App = () => {
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
-                <Route path="/password-reset" element={<PasswordReset />} />
+                <Route
+                    path="/password-reset"
+                    element={<PasswordReset endpoint="/api/password/reset/" />}
+                />
+                <Route
+                    path="/complete-signup"
+                    element={
+                        <PasswordReset endpoint="/auth/complete-signup/" />
+                    }
+                />
                 <Route
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
