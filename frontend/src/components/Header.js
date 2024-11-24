@@ -37,9 +37,14 @@ const ResponsiveHeader = () => {
     const NAVIGATION = [
         { text: "Home", path: "/" },
         { text: "About", path: "/about" },
+        { text: "Chat", path: "/chat" },
         { text: "Services", path: "/services" },
+        { text: "Shopping List", path: "/shopping-list" },
         { text: "Contact", path: "/contact" },
         { text: "Recipe", path: "/generate" },
+        { text: "Favorites", path: "/favorites" },
+        
+
     ];
 
     const handleAvatarClick = (event) => {
