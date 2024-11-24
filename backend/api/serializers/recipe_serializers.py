@@ -1,6 +1,6 @@
 from django.db.models import Avg
 from rest_framework import serializers
-from ..custom_models.recipe_models import Ingredient, Recipe, Rating
+from ..custom_models.public_recipe_models import Ingredient, PublicRecipe, Rating
 
 
 class IngredientSerializer(serializers.ModelSerializer):
@@ -14,7 +14,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     average_rating = serializers.SerializerMethodField()
 
     class Meta:
-        model = Recipe
+        model = PublicRecipe
         fields = [
             "uuid",
             "name",

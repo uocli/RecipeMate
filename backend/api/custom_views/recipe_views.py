@@ -2,13 +2,13 @@ from django.db.models import Avg
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from ..custom_models.recipe_models import Recipe, Rating
+from ..custom_models.public_recipe_models import PublicRecipe, Rating
 from ..serializers.recipe_serializers import RecipeSerializer
 
 
 class RecipeListView(APIView):
     def get(self, request):
-        recipes = Recipe.objects.annotate(
+        recipes = PublicRecipe.objects.annotate(
             average_rating=Avg("ratings__rating")
         ).order_by("-average_rating")
         serializer = RecipeSerializer(recipes, many=True)
@@ -18,10 +18,10 @@ class RecipeListView(APIView):
 class RecipeDetailView(APIView):
     def get(self, request, uuid):
         try:
-            recipe = Recipe.objects.get(uuid=uuid)
+            recipe = PublicRecipe.objects.get(uuid=uuid)
             serializer = RecipeSerializer(recipe)
             return Response(serializer.data)
-        except Recipe.DoesNotExist:
+        except PublicRecipe.DoesNotExist:
             return Response(
                 {"message": "Recipe could not be found!"},
                 status=status.HTTP_404_NOT_FOUND,
@@ -33,7 +33,7 @@ class RecipeRateView(APIView):
 
     def post(self, request, uuid):
         try:
-            recipe = Recipe.objects.get(uuid=uuid)
+            recipe = PublicRecipe.objects.get(uuid=uuid)
             rating_value = request.data.get("rating")
             user = request.user
 
@@ -44,7 +44,7 @@ class RecipeRateView(APIView):
             )
 
             return Response({"message": "Rating updated successfully"})
-        except Recipe.DoesNotExist:
+        except PublicRecipe.DoesNotExist:
             return Response(
                 {"message": "Recipe could not be found!"},
                 status=status.HTTP_404_NOT_FOUND,

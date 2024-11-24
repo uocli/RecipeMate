@@ -11,7 +11,7 @@ class Ingredient(models.Model):
         return self.name
 
 
-class Recipe(models.Model):
+class PublicRecipe(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
     image_url = models.URLField(max_length=200)
@@ -25,7 +25,7 @@ class Recipe(models.Model):
 
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name="ratings")
+    recipe = models.ForeignKey(PublicRecipe, on_delete=models.CASCADE, related_name="ratings")
     rating = models.IntegerField()
 
     class Meta:

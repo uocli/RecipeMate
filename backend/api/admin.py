@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .custom_models.user_profile_models import UserProfile
-from .custom_models.recipe_models import Recipe, Ingredient
+from .custom_models.public_recipe_models import PublicRecipe, Ingredient
 
 
 class RecipeAdmin(admin.ModelAdmin):
@@ -11,5 +11,5 @@ class RecipeAdmin(admin.ModelAdmin):
 
 
 admin.site.register(UserProfile)
-admin.site.register(Recipe, RecipeAdmin)
+admin.site.register(PublicRecipe, RecipeAdmin)
 admin.site.register(Ingredient)
