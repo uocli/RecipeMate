@@ -44,8 +44,15 @@ const PasswordReset = ({ endpoint }) => {
                             navigate("/login");
                         }, 500);
                     } else {
-                        message(message || "Error resetting password", "error");
+                        message(message || "Error setting password", "error");
                     }
+                })
+                .catch((error) => {
+                    showAlert(
+                        error.response?.data?.message ||
+                            "Error setting password",
+                        "error",
+                    );
                 })
                 .finally(() => {
                     setLoading(false);
