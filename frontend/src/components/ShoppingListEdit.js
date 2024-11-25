@@ -115,7 +115,7 @@ const ShoppingListEdit = () => {
                             <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
                                 <IconButton
                                     aria-label="decrease"
-                                    onClick={() => handleQuantityChange(index, Math.max(1, item.quantity - 1))}
+                                    onClick={() => handleQuantityChange(index, Math.max(0, item.quantity - 1))}
                                     sx={{ minWidth: '40px', marginRight: '10px', height: '40px' }}
                                 >
                                     <ArrowBackIosIcon />
@@ -127,11 +127,11 @@ const ShoppingListEdit = () => {
                                     min="1"
                                     onChange={(e) => {
                                         const value = e.target.value;
-                                        handleQuantityChange(index, value === '' ? '' : Math.max(1, parseInt(value)));
+                                        handleQuantityChange(index, value === '' ? '' : Math.max(0, parseInt(value)));
                                     }}
                                     onBlur={(e) => {
                                         if (e.target.value === '') {
-                                            handleQuantityChange(index, 1);
+                                            handleQuantityChange(index, 0);
                                         }
                                     }}
                                     sx={{ width: '80px', marginRight: '10px' }}
@@ -144,7 +144,6 @@ const ShoppingListEdit = () => {
                                 >
                                     <ArrowForwardIosIcon />
                                 </IconButton>
-                                <span style={{ marginLeft: '10px', marginRight: '10px', width: '60px', textAlign: 'left' }}>{item.unit}</span>
                                 <IconButton
                                     aria-label="delete"
                                     onClick={() => handleDeleteItem(index)}
