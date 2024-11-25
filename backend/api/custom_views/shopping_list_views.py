@@ -40,6 +40,7 @@ class ShoppingListView(APIView):
                         if new_quantity == -1:
                             item.delete()
                         else:
+                            item.ingredient = ingredient
                             item.quantity = new_quantity
                             item.is_owned = is_owned
                             item.save()
