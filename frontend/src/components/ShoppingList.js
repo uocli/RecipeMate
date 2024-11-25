@@ -9,7 +9,6 @@ import {
     Typography,
     Paper,
     Box,
-    Grid,
 } from "@mui/material";
 
 const ShoppingList = () => {
@@ -42,8 +41,10 @@ const ShoppingList = () => {
     };
 
     const handleAddItem = async () => {
+        newItem.ingredient = newItem.ingredient.trim();
+
         if (!newItem.ingredient) {
-            showAlert("Ingredient name should not be empty.", "error");
+            showAlert("Ingredient name should not be empty!", "error");
             setNewItem({ ingredient: '', quantity: 0 });
             return;
         }
