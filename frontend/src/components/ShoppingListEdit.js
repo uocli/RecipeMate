@@ -33,6 +33,26 @@ const ShoppingListEdit = () => {
             })
     }, []);
 
+    const checkDuplidatedIngredients = () => {
+        let newWarnings = [...warnings];
+
+        // Check for duplicated ingredients
+        shoppingList.forEach((item, i) => {
+            if (item.ingredient !== '' && item.quantity >= 0) {
+                const count = shoppingList.filter((itm, idx) => itm.ingredient.toLowerCase() === item.ingredient.toLowerCase()
+                    && idx !== i
+                    && itm.quantity >= 0).length;
+                if (count > 0) {
+                    newWarnings[i] = "Duplicated item!";
+                } else {
+                    newWarnings[i] = "";
+                }
+            }
+        });
+
+        setWarnings(newWarnings);
+    }
+
     const handleIngredientChange = (index, newIngredient) => {
         setShoppingList(prevList => {
             const updatedList = [...prevList];
@@ -44,30 +64,33 @@ const ShoppingListEdit = () => {
     const verifyIngredientChange = (index, newIngredient) => {
         // Trim leading and trailing whitespaces
         newIngredient = newIngredient.trim();
-
-        let newWarnings = [...warnings];
-
-        // Check if the ingredient name is empty or already exists
-        if (newIngredient === '') {
-            newWarnings[index] = "Empty item!";
-        } else {
-            const existingItemIndex = shoppingList.findIndex((item, i) => i !== index
-                && item.ingredient.toLowerCase() === newIngredient.toLowerCase()
-                && warnings[i] === "");
-            if (existingItemIndex !== -1) {
-                newWarnings[index] = "Duplicated item!";
-            } else {
-                newWarnings[index] = "";
-            }
-        }
-
-        setWarnings(newWarnings);
-
         setShoppingList(prevList => {
             const updatedList = [...prevList];
             updatedList[index].ingredient = newIngredient;
             return updatedList;
         });
+
+        let newWarnings = [...warnings];
+
+        // Check for empty ingredient
+        if (newIngredient === '') {
+            newWarnings[index] = "Empty item!";
+        }
+
+        shoppingList.forEach((item, i) => {
+            if (item.ingredient !== '' && item.quantity >= 0) {
+                const count = shoppingList.filter((itm, idx) => itm.ingredient.toLowerCase() === item.ingredient.toLowerCase()
+                    && idx !== i
+                    && itm.quantity >= 0).length;
+                if (count > 0) {
+                    newWarnings[i] = "Duplicated item!";
+                } else {
+                    newWarnings[i] = "";
+                }
+            }
+        });
+
+        setWarnings(newWarnings);
     }
 
     const handleQuantityChange = (index, newQuantity) => {
@@ -92,6 +115,8 @@ const ShoppingListEdit = () => {
             updatedList[index].quantity = -1;
             return updatedList;
         });
+
+        checkDuplidatedIngredients();
     };
 
     const handleDeleteAll = () => {
