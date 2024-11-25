@@ -11,10 +11,14 @@ import UserProfile from "./UserProfile";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+
+import RecipeGenerator from './RecipeGenerator';
+
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
 import RecipeDetail from "./RecipeDetail";
+
 
 const App = () => {
     return (
@@ -31,6 +35,14 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
+
+                <Route path="/generate" 
+                    element={
+                        <ProtectedRoute>
+                            <RecipeGenerator />
+                        </ProtectedRoute>
+                    } 
+                />
                 <Route
                     path="/shopping-list"
                     element={
@@ -46,6 +58,7 @@ const App = () => {
                             <ShoppingListEdit />
                         </ProtectedRoute>
                     }
+
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
