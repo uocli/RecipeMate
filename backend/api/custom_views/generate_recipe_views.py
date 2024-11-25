@@ -26,15 +26,10 @@ class RecipeGeneratorView(APIView):
         """Validate that ingredients are non-empty strings"""
         return all(isinstance(item, str) and item.strip() for item in ingredients)
 
-    def validate_preferences(self, preferences: Dict) -> bool:
-        """Validate preferences dictionary format"""
-        required_keys = {'dietary_preference', 'cooking_time'}
-        if not isinstance(preferences, dict):
-            return False
-        return all(key in preferences for key in required_keys)
     
     def create_prompt(self, ingredients: List[str], preferences: Dict) -> str:
         ingredients_list = ", ".join(ingredients)
+
         dietary_pref = preferences.get('dietary_preference', '')
         cooking_time = preferences.get('cooking_time', '')
         
@@ -71,17 +66,8 @@ class RecipeGeneratorView(APIView):
         - Difficulty is one of: easy/medium/hard
         """
 
-    def _get_preferences_text(self, preference_ids: List[int]) -> str:
-        # Map preference IDs to text (implement based on your preference model)
-        preferences_map = {
-            1: "vegetarian",
-            2: "vegan",
-            3: "gluten-free",
-            4: "dairy-free"
-        }
-        return ", ".join(preferences_map.get(p, "") for p in preference_ids)
 
-    def generate_recipe(self, ingredients: List[str], preferences: List[int]) -> Dict:
+    def generate_recipe(self, ingredients: List[str], preferences: Dict) -> Dict:
         try:
             prompt = self.create_prompt(ingredients, preferences)
             
@@ -106,7 +92,7 @@ class RecipeGeneratorView(APIView):
             print(f"OpenAI API Error: {str(e)}")
             raise Exception("Failed to generate recipe")
         
-    def save_recipe(self, recipe_data: Dict, user: User) -> Recipe:
+    def save_recipe(self, recipe_data: Dict, user: User, preferences: Dict) -> Recipe:
         """Save generated recipe to database"""
         try:
             cooking_time = self._convert_cooking_time(recipe_data.get('cooking_time', ''))
@@ -119,27 +105,36 @@ class RecipeGeneratorView(APIView):
                 instructions=recipe_data['instructions'],
                 cooking_time=cooking_time,
                 difficulty=recipe_data.get('difficulty', 'medium'),
-                dietary_preference=recipe_data.get('dietary_preference')
+                dietary_preference=preferences.get('dietary_preference', '')
             )
             return recipe
         except Exception as e:
             print(f"Error saving recipe: {str(e)}")
             raise Exception("Failed to save recipe")
+        
+    def get_user_preferences(self, user: User) -> Dict:
+        """Fetch user preferences from profile"""
+        try:
+            profile = user.profile
+            return {
+                'dietary_preference': profile.dietary_preference or '',
+                'cooking_time': profile.cooking_time or ''
+            }
+        except Exception as e:
+            print(f"Error fetching user preferences: {str(e)}")
+            return {'dietary_preference': '', 'cooking_time': ''}
+
 
     def post(self, request):
         try:
             ingredients = request.data.get('ingredients', [])
-            preferences = request.data.get('preferences', {})
+            user = request.user
+            preferences = self.get_user_preferences(user)
+            print(f"User preferences from profile: {preferences}")
 
             if not self.validate_ingredients(ingredients):
                 return Response(
                     {"success": False, "message": "Invalid ingredients"},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
-            if not self.validate_preferences(preferences):
-                return Response(
-                    {"success": False, "message": "Invalid preferences format"},
                     status=status.HTTP_400_BAD_REQUEST
                 )
 
@@ -157,7 +152,7 @@ class RecipeGeneratorView(APIView):
                     status=status.HTTP_500_INTERNAL_SERVER_ERROR
                 )
 
-            saved_recipe = self.save_recipe(recipe_data, request.user)
+            saved_recipe = self.save_recipe(recipe_data, user, preferences)
             return Response({
                 "success": True,
                 "message": "Recipe generated and saved successfully",
