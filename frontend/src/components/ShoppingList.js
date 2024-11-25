@@ -17,7 +17,7 @@ const ShoppingList = () => {
     const { showAlert } = useContext(AlertContext);
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
-    const [newItem, setNewItem] = useState({ ingredient: '', quantity: 1, unit: '' });
+    const [newItem, setNewItem] = useState({ ingredient: '', quantity: 0 });
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -42,10 +42,14 @@ const ShoppingList = () => {
     };
 
     const handleAddItem = async () => {
-        if (!newItem.ingredient || newItem.quantity <= 0 || isNaN(newItem.quantity)) {
-            showAlert("Ingredient name and quantity should not be empty.", "error");
-            setNewItem({ ingredient: '', quantity: 1, unit: '' });
+        if (!newItem.ingredient) {
+            showAlert("Ingredient name should not be empty.", "error");
+            setNewItem({ ingredient: '', quantity: 0 });
             return;
+        }
+
+        if (isNaN(newItem.quantity)) {
+            newItem.quantity = 0;
         }
 
         const existingItemIndex = shoppingList.findIndex(item => item.ingredient.toLowerCase() === newItem.ingredient.toLowerCase());
@@ -67,7 +71,7 @@ const ShoppingList = () => {
             { items: updatedList },
         );
 
-        setNewItem({ ingredient: '', quantity: 1, unit: '' });
+        setNewItem({ ingredient: '', quantity: 0 });
     };
 
     return (
@@ -99,16 +103,7 @@ const ShoppingList = () => {
                     size="small"
                     type="number"
                     value={newItem.quantity}
-                    onChange={(e) => setNewItem({ ...newItem, quantity: Math.max(1, parseInt(e.target.value)) })}
-                    fullWidth
-                    margin="normal"
-                    sx={{ marginRight: '10px' }}
-                />
-                <TextField
-                    label="Unit"
-                    size="small"
-                    value={newItem.unit}
-                    onChange={(e) => setNewItem({ ...newItem, unit: e.target.value })}
+                    onChange={(e) => setNewItem({ ...newItem, quantity: Math.max(0, parseInt(e.target.value)) })}
                     fullWidth
                     margin="normal"
                     sx={{ marginRight: '10px' }}
@@ -134,7 +129,9 @@ const ShoppingList = () => {
                                 />
                                 <span>{item.ingredient}</span>
                             </div>
-                            <span>{item.quantity} {item.unit}</span>
+                            {item.quantity > 0 && (
+                                <span>{item.quantity}</span>
+                            )}
                         </li>
                     ))}
                 </ul>
