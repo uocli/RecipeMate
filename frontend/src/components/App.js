@@ -1,6 +1,5 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-
 import Header from "./Header";
 import Home from "./Home";
 import About from "./About";
@@ -23,14 +22,7 @@ const App = () => {
             <Header />
             <Routes>
                 <Route path="/" exact element={<Home />} />
-                <Route
-                    path="/about"
-                    element={
-                        <ProtectedRoute>
-                            <About />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route path="/about" element={<About />} />
                 <Route
                     path="/profile"
                     element={
@@ -72,14 +64,14 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
-                {/* <Route path="/favorites" element={<Favorites />} /> */}
-                <Route path="/favorites" element={
-                    <ProtectedRoute>
-                        <Favorites />
-                    </ProtectedRoute>} />
-                {/* Logout route */}
-                {/*<Route path="/tasks" component={Tasks} />*/}
-                {/*<Route path="/task/:id" component={Task} />*/}
+                <Route
+                    path="/favorites"
+                    element={
+                        <ProtectedRoute>
+                            <Favorites />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="*" element={<NotFound />} />
                 <Route path="/recipe/:uuid" element={<RecipeDetail />} />
             </Routes>
