@@ -1,11 +1,19 @@
+import React from "react";
+import { Container, Box } from "@mui/material";
+import RecipeList from "./RecipeList";
+
 const Home = () => {
     return (
-        <div>
-            <h1>Welcome to the Home Page</h1>
-            <h1>Test PB</h1>
-            <h1>Test #2 PB</h1>
-
-        </div>
+        <Container>
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <RecipeList />
+            </Box>
+        </Container>
     );
 };
 

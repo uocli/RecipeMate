@@ -1,8 +1,15 @@
-from django.urls import path
-from .views import signup_view, login_view, verify_token_view
+from django.urls import path, include
+
+from .custom_views.login_view import LoginView
+from .custom_views.logout_view import LogoutView
+from .custom_views.registration_view import SendInviteView, CompleteSignupView
+from .custom_views.csrf_token_view import CSRFTokenView
 
 urlpatterns = [
-    path("signup/", signup_view, name="signup"),
-    path("login/", login_view, name="login"),
-    path("verify-token/", verify_token_view, name="verify-token"),
+    path("csrf-token/", CSRFTokenView.as_view(), name="csrf-token"),
+    path("token/", include("auth.custom_urls.token_urls")),
+    path("send-invite/", SendInviteView.as_view(), name="send-invite"),
+    path("complete-signup/", CompleteSignupView.as_view(), name="complete-signup"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("logout/", LogoutView.as_view(), name="logout"),
 ]

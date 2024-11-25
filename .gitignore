@@ -191,3 +191,8 @@ cython_debug/
 .idea/
 staticfiles/
 /qodana.yaml
+
+# To omit the files under migrations directory
+**/migrations/
+!**/migrations/__init__.py
+

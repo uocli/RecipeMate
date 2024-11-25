@@ -1,0 +1,67 @@
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    text-align: center;
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.list {
+    list-style: none;
+    padding: 0;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.title {
+    font-size: 1.5rem;
+    color: #444;
+    margin-bottom: 10px;
+}
+
+.subheading {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.text {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+.button {
+    padding: 10px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px; /* Add spacing between buttons */
+}
+
+.button:first-of-type {
+    background-color: #ff4d4d; /* Red for "Remove from Favorites" */
+    color: white;
+}
+
+.button:last-of-type {
+    background-color: #4CAF50; /* Green for "Add Ingredients to Shopping List" */
+    color: white;
+}
+
+.button:hover {
+    opacity: 0.8;
+}
