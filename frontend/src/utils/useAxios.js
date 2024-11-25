@@ -3,6 +3,8 @@ import { AuthContext } from "./AuthContext";
 import { useContext } from "react";
 import Cookies from "js-cookie";
 
+let refresh = false;
+
 const useAxios = () => {
     const { authTokens, setAuthTokens, logoutUser } = useContext(AuthContext);
 
@@ -45,30 +47,32 @@ const useAxios = () => {
     );
 
     axiosInstance.interceptors.response.use(
-        (response) => {
-            return response;
-        },
+        (resp) => resp,
         async (error) => {
-            const originalRequest = error.config;
-
-            if (error.response.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
-
-                try {
-                    const response = await axios.post(
-                        "/auth/token/refresh/",
-                        { refresh: authTokens.refresh },
-                    );
-                    setAuthTokens(response.data);
+            if (error.response.status === 401 && !refresh) {
+                refresh = true;
+                const response = await axios.post(
+                    "/auth/token/refresh/",
+                    {
+                        refresh: Cookies.get("refresh_token"),
+                    },
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                    },
+                    { withCredentials: true },
+                );
+                if (response.status === 200) {
                     axios.defaults.headers.common["Authorization"] =
-                        `Bearer ${response.data.access}`;
-                    return axiosInstance(originalRequest);
-                } catch (error) {
-                    logoutUser();
+                        `Bearer ${response.data["access"]}`;
+                    Cookies.set("access_token", response.data.access);
+                    Cookies.set("refresh_token", response.data.refresh);
+                    return axios(error.config);
                 }
             }
-
-            return Promise.reject(error);
+            refresh = false;
+            return error;
         },
     );
 
