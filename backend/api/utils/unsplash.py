@@ -9,7 +9,7 @@ class UnsplashAPI:
     access_key = settings.UNSPLASH_ACCESS_KEY
 
     @classmethod
-    def search_photos(cls, keyword, page=1, per_page=1, size="small"):
+    def search_photos(cls, keyword, page=1, per_page=1, size="regular"):
         # size can be "small", "regular", "full", "raw"
         endpoint = urljoin(cls.base_url, "search/photos")
 
