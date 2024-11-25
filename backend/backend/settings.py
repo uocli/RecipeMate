@@ -192,6 +192,10 @@ EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
 
+# Unsplash API
+UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY", "")
+UNSPLASH_BASE_URL = os.getenv("UNSPLASH_BASE_URL", "")
+
 # Simple JWT settings
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
