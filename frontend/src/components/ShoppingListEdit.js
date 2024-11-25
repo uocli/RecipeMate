@@ -10,7 +10,6 @@ import {
     Typography,
     Paper,
     Box,
-    Grid,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -21,6 +20,7 @@ const ShoppingListEdit = () => {
     const { showAlert } = useContext(AlertContext);
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
+    const [warnings, setWarnings] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,6 +31,42 @@ const ShoppingListEdit = () => {
                 }
             })
     }, [setUser]);
+
+    const handleIngredientChange = (index, newIngredient) => {
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].ingredient = newIngredient;
+            return updatedList;
+        });
+    }
+
+    const verifyIngredientChange = (index, newIngredient) => {
+        // Trim leading and trailing whitespaces
+        newIngredient = newIngredient.trim();
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].ingredient = newIngredient;
+            return updatedList;
+        });
+
+        let newWarnings = [...warnings];
+
+        // Check if the ingredient name is empty or already exists
+        if (newIngredient === '') {
+            newWarnings[index] = "Ingredient name should not be empty.";
+        } else {
+            const existingItemIndex = shoppingList.findIndex((item, i) => i !== index
+                && item.ingredient.toLowerCase() === newIngredient.toLowerCase()
+                && warnings[i] === "");
+            if (existingItemIndex !== -1) {
+                newWarnings[index] = "Ingredient with the same name already exists.";
+            } else {
+                newWarnings[index] = "";
+            }
+        }
+
+        setWarnings(newWarnings);
+    }
 
     const handleQuantityChange = (index, newQuantity) => {
         setShoppingList(prevList => {
@@ -63,6 +99,11 @@ const ShoppingListEdit = () => {
     };
 
     const handleSaveAll = async () => {
+        if (warnings.some(warning => warning !== "")) {
+            showAlert("Please resolve all warnings before saving.", "error");
+            return;
+        }
+
         if (window.confirm("Are you sure you want to save these changes?")) {
             const response = await axiosInstance.
                 post(
@@ -102,56 +143,69 @@ const ShoppingListEdit = () => {
                     {shoppingList.filter(item => item.quantity >= 0).map((item, index) => (
                         <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #ddd', color: item.is_owned ? 'gray' : 'black' }}>
                             <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={item.is_owned}
-                                    onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
-                                    style={{ marginRight: '10px' }}
-                                />
-                                <span style={{ textDecoration: item.is_owned ? 'line-through' : 'none' }}>
-                                    {item.ingredient}
-                                </span>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <input
+                                        type="checkbox"
+                                        checked={item.is_owned}
+                                        onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
+                                        style={{ marginRight: '10px' }}
+                                    />
+                                    <TextField
+                                        id="ingredient"
+                                        variant="standard"
+                                        value={item.ingredient}
+                                        onChange={(e) => handleIngredientChange(index, e.target.value)}
+                                        onBlur={(e) => verifyIngredientChange(index, e.target.value)}
+                                        sx={{ marginRight: '10px', width: '200px' }}
+                                    />
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+                                    <IconButton
+                                        aria-label="decrease"
+                                        onClick={() => handleQuantityChange(index, Math.max(0, item.quantity - 1))}
+                                        sx={{ minWidth: '40px', marginRight: '10px', height: '40px' }}
+                                    >
+                                        <ArrowBackIosIcon />
+                                    </IconButton>
+                                    <TextField
+                                        id="quantity"
+                                        type="number"
+                                        size="small"
+                                        value={item.quantity}
+                                        min="1"
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            handleQuantityChange(index, value === '' ? '' : Math.max(0, parseInt(value)));
+                                        }}
+                                        onBlur={(e) => {
+                                            if (e.target.value === '') {
+                                                handleQuantityChange(index, 0);
+                                            }
+                                        }}
+                                        sx={{ width: '80px', marginRight: '10px' }}
+                                        InputProps={{ sx: { textAlign: 'left' } }}
+                                    />
+                                    <IconButton
+                                        aria-label="increase"
+                                        onClick={() => handleQuantityChange(index, item.quantity + 1)}
+                                        sx={{ minWidth: '40px', height: '40px' }}
+                                    >
+                                        <ArrowForwardIosIcon />
+                                    </IconButton>
+                                    <IconButton
+                                        aria-label="delete"
+                                        onClick={() => handleDeleteItem(index)}
+                                        sx={{ minWidth: '40px', height: '40px' }}
+                                    >
+                                        <DeleteIcon />
+                                    </IconButton>
+                                </div>
                             </div>
-                            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
-                                <IconButton
-                                    aria-label="decrease"
-                                    onClick={() => handleQuantityChange(index, Math.max(0, item.quantity - 1))}
-                                    sx={{ minWidth: '40px', marginRight: '10px', height: '40px' }}
-                                >
-                                    <ArrowBackIosIcon />
-                                </IconButton>
-                                <TextField
-                                    type="number"
-                                    size="small"
-                                    value={item.quantity}
-                                    min="1"
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        handleQuantityChange(index, value === '' ? '' : Math.max(0, parseInt(value)));
-                                    }}
-                                    onBlur={(e) => {
-                                        if (e.target.value === '') {
-                                            handleQuantityChange(index, 0);
-                                        }
-                                    }}
-                                    sx={{ width: '80px', marginRight: '10px' }}
-                                    InputProps={{ sx: { textAlign: 'left' } }}
-                                />
-                                <IconButton
-                                    aria-label="increase"
-                                    onClick={() => handleQuantityChange(index, item.quantity + 1)}
-                                    sx={{ minWidth: '40px', height: '40px' }}
-                                >
-                                    <ArrowForwardIosIcon />
-                                </IconButton>
-                                <IconButton
-                                    aria-label="delete"
-                                    onClick={() => handleDeleteItem(index)}
-                                    sx={{ minWidth: '40px', height: '40px' }}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </div>
+                            {warnings[index] && (
+                                <Typography variant="body2" color="error" sx={{ marginTop: '5px' }}>
+                                    {warnings[index]}
+                                </Typography>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -174,7 +228,7 @@ const ShoppingListEdit = () => {
                     Save
                 </Button>
             </Box>
-        </Box>
+        </Box >
     );
 };
 
