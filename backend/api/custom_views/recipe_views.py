@@ -7,6 +7,9 @@ from ..serializers.recipe_serializers import RecipeSerializer
 
 
 class RecipeListView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # No permissions required
+
     def get(self, request):
         recipes = PublicRecipe.objects.annotate(
             average_rating=Avg("ratings__rating")
@@ -16,6 +19,9 @@ class RecipeListView(APIView):
 
 
 class RecipeDetailView(APIView):
+    authentication_classes = []  # No authentication required
+    permission_classes = []  # No permissions required
+
     def get(self, request, uuid):
         try:
             recipe = PublicRecipe.objects.get(uuid=uuid)
