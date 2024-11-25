@@ -20,7 +20,7 @@ class Ingredient(models.Model):
 class PublicRecipe(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
-    image_url = models.URLField(max_length=200, blank=True)
+    image_url = models.URLField(max_length=500, blank=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(Ingredient, related_name="ingredients")
     instructions = models.TextField()
