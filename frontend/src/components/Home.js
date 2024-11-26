@@ -1,12 +1,19 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Container, Box } from "@mui/material";
+import RecipeList from "./RecipeList";
 
 const Home = () => {
     return (
-        <div>
-            <h1>Welcome to RecipeMate</h1>
-            <p>Your go-to app for managing recipes!</p>
-        </div>
+        <Container>
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                minHeight="100vh"
+            >
+                <RecipeList />
+            </Box>
+        </Container>
     );
 };
 

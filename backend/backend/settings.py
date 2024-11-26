@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from datetime import timedelta
 from pathlib import Path
 import os
 import dj_database_url
@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "api",
 ]
 
@@ -74,10 +75,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "backend.urls"
 
+# Define the frontend base directory
+FRONTEND_ROOT_DIR = os.path.join(BASE_DIR.parent, "frontend", "build")
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR.parent, "frontend", "build")],
+        "DIRS": [FRONTEND_ROOT_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -143,7 +147,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR.parent, "frontend", "build", "static"),
+    os.path.join(FRONTEND_ROOT_DIR, "static"),
 ]
 
 # Default primary key field type
@@ -190,5 +194,19 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False)
 EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-# backend/backend/settings.py
+
+
+# Unsplash API
+UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_ACCESS_KEY", "")
+UNSPLASH_BASE_URL = os.getenv("UNSPLASH_BASE_URL", "")
+
+# Simple JWT settings
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(hours=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
+}
+
+
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

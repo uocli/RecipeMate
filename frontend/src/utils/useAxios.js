@@ -2,9 +2,13 @@ import axios from "axios";
 import { AuthContext } from "./AuthContext";
 import { useContext } from "react";
 import Cookies from "js-cookie";
+import { AlertContext } from "./AlertContext";
+
+let refresh = false;
 
 const useAxios = () => {
-    const { authTokens, setAuthTokens, logoutUser } = useContext(AuthContext);
+    const { authTokens, setAuthTokens, logout } = useContext(AuthContext);
+    const { showAlert } = useContext(AlertContext);
 
     const axiosInstance = axios.create({
         baseURL: "/",
@@ -23,17 +27,27 @@ const useAxios = () => {
             }
 
             const now = Math.floor(Date.now() / 1000);
-            const tokenExpiry = authTokens.access_expiry;
+            const tokenExpiry = Math.floor(
+                new Date(authTokens.access_expiry).getTime() / 1000,
+            );
 
             if (tokenExpiry < now) {
                 try {
-                    const response = await axios.post("/api/token/refresh/", {
+                    const response = await axios.post("/auth/token/refresh/", {
                         refresh: authTokens.refresh,
                     });
                     setAuthTokens(response.data);
+                    Cookies.set("access_token", response.data.access);
+                    Cookies.set("refresh_token", response.data.refresh);
+                    Cookies.set("access_expiry", response.data.access_expiry);
                     config.headers.Authorization = `Bearer ${response.data.access}`;
                 } catch (error) {
-                    logoutUser();
+                    showAlert(
+                        "Session expired. Please log in again.",
+                        "error",
+                        5000,
+                    );
+                    logout();
                 }
             }
 
@@ -45,29 +59,45 @@ const useAxios = () => {
     );
 
     axiosInstance.interceptors.response.use(
-        (response) => {
-            return response;
-        },
+        (resp) => resp,
         async (error) => {
-            const originalRequest = error.config;
-
-            if (error.response.status === 401 && !originalRequest._retry) {
-                originalRequest._retry = true;
-
+            if (error.response.status === 401 && !refresh) {
+                refresh = true;
                 try {
                     const response = await axios.post(
                         "/auth/token/refresh/",
-                        { refresh: authTokens.refresh },
+                        {
+                            refresh: Cookies.get("refresh_token"),
+                        },
+                        {
+                            headers: {
+                                "Content-Type": "application/json",
+                            },
+                        },
+                        { withCredentials: true },
                     );
-                    setAuthTokens(response.data);
-                    axios.defaults.headers.common["Authorization"] =
-                        `Bearer ${response.data.access}`;
-                    return axiosInstance(originalRequest);
+                    if (response.status === 200) {
+                        axios.defaults.headers.common["Authorization"] =
+                            `Bearer ${response.data["access"]}`;
+                        setAuthTokens(response.data);
+                        Cookies.set("access_token", response.data.access);
+                        Cookies.set("refresh_token", response.data.refresh);
+                        Cookies.set(
+                            "access_expiry",
+                            response.data.access_expiry,
+                        );
+                        return axios(error.config);
+                    }
                 } catch (error) {
-                    logoutUser();
+                    showAlert(
+                        "Session expired. Please log in again.",
+                        "error",
+                        5000,
+                    );
+                    logout();
                 }
             }
-
+            refresh = false;
             return Promise.reject(error);
         },
     );
