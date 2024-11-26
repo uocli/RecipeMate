@@ -18,9 +18,7 @@ const UserProfile = () => {
     const { setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [dietaryPreference, setDietaryPreference] = useState("");
     const [loading, setLoading] = useState(false);
-    const [duration, setDuration] = useState("");
 
     // Handle button click
     const handleChangePassword = (event) => {
