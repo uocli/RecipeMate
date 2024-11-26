@@ -59,3 +59,23 @@ class AddToShoppingListView(APIView):
             return Response({"error": "Favorite recipe not found."}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+class AddToFavoritesView(APIView):
+
+    def post(self, request):
+        try:
+            favorite = Favorite.objects.create(
+                user=request.user,
+                name=request.data.get('name'),
+                ingredients=request.data.get('ingredients'),
+                recipe=request.data.get('recipe')
+            )
+            return Response({
+                'success': True,
+                'message': 'Added to favorites'
+            })
+        except Exception as e:
+            return Response({
+                'success': False,
+                'message': str(e)
+            }, status=status.HTTP_400_BAD_REQUEST)

@@ -11,11 +11,13 @@ import {
   Paper,
   Chip,
   Stack,
-  CircularProgress
+  CircularProgress,
+  Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import useAxios from '../utils/useAxios'; 
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 const RecipeGenerator = () => {
   const axiosInstance = useAxios();
@@ -24,6 +26,7 @@ const RecipeGenerator = () => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
+  const [openDialog, setOpenDialog] = useState(false);
   const { setUser } = useContext(AuthContext);
   // const [error, setError] = useState(null);
   // const [preferences, setPreferences] = useState({
@@ -35,6 +38,23 @@ const RecipeGenerator = () => {
     if (event.key === 'Enter' && inputValue.trim()) {
       setIngredients([...ingredients, inputValue.trim()]);
       setInputValue('');
+    }
+  };
+
+  const handleFavorite = async () => {
+    try {
+      const response = await axiosInstance.post('/api/favorites/add/', {
+        name: recipe.title,
+        ingredients: JSON.stringify(recipe.ingredients),
+        recipe: JSON.stringify(recipe.instructions)
+      });
+      
+      if (response.data.success) {
+        showAlert('Recipe added to favorites!', 'success');
+        setOpenDialog(false);
+      }
+    } catch (error) {
+      showAlert('Failed to add to favorites', 'error');
     }
   };
 
@@ -112,7 +132,16 @@ const RecipeGenerator = () => {
 
       {recipe && (
         <Paper sx={{ p: 3, mt: 3 }}>
-          <Typography variant="h5">{recipe.title}</Typography>
+          <Box display="flex" justifyContent="space-between" alignItems="center">
+            <Typography variant="h5">{recipe.title}</Typography>
+            <Button
+              startIcon={<FavoriteIcon />}
+              onClick={() => setOpenDialog(true)}
+              color="primary"
+            >
+              Add to Favorites
+            </Button>
+          </Box>
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             Cooking Time: {recipe.cooking_time}
           </Typography>
@@ -142,6 +171,19 @@ const RecipeGenerator = () => {
           </ol>
         </Paper>
       )}
+
+      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
+        <DialogTitle>Add to Favorites</DialogTitle>
+        <DialogContent>
+          Do you want to add "{recipe?.title}" to your favorites?
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
+          <Button onClick={handleFavorite} color="primary">
+            Add
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

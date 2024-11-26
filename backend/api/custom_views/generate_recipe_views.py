@@ -130,7 +130,7 @@ class RecipeGeneratorView(APIView):
             ingredients = request.data.get('ingredients', [])
             user = request.user
             preferences = self.get_user_preferences(user)
-            print(f"User preferences from profile: {preferences}")
+            # print(f"User preferences from profile: {preferences}")
 
             if not self.validate_ingredients(ingredients):
                 return Response(
@@ -140,7 +140,7 @@ class RecipeGeneratorView(APIView):
 
             # Generate recipe logic here
             recipe_data = self.generate_recipe(ingredients, preferences)
-            print(f"recipe_data: {recipe_data}")
+            # print(f"recipe_data: {recipe_data}")
             # Check if generation was successful
             if recipe_data.get('title') == "Recipe Generation Error":
                 return Response(
