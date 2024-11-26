@@ -54,6 +54,7 @@ class SendInviteView(APIView):
             "created_at": created_at,
             "expires_at": expires_at,
             "email": email,
+            "type": Token.TYPE_REGISTRATION,
         }
 
         serializer = TokenSerializer(data=token_obj)
@@ -135,7 +136,14 @@ class CompleteSignupView(APIView):
                 username=email, email=email, password=password
             )
             user.save()
-            token_obj.delete()
+            token_obj.user_id = user.id
+            token_obj.is_used = True
+            token_obj.save(
+                update_fields=[
+                    "user_id",
+                    "is_used",
+                ]
+            )
         except Exception as e:
             return Response(
                 {
