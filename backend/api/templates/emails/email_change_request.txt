@@ -1,0 +1,8 @@
+Hi,
+
+An email change request has been made from {{ old_email }} to {{ new_email }}.
+
+If this request was not made intentionally, please contact our admin team immediately at hirecipatemate@gmail.com.
+
+Regards,
+Recipe Mate
