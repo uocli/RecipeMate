@@ -14,7 +14,9 @@ import PasswordReset from "./PasswordReset";
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+import RecipeGenerator from './RecipeGenerator';
 import RecipeDetail from "./RecipeDetail";
+
 
 const App = () => {
     return (
@@ -30,6 +32,13 @@ const App = () => {
                             <UserProfile />
                         </ProtectedRoute>
                     }
+                />
+                <Route path="/generate" 
+                    element={
+                        <ProtectedRoute>
+                            <RecipeGenerator />
+                        </ProtectedRoute>
+                    } 
                 />
                 <Route
                     path="/shopping-list"

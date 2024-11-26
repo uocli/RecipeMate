@@ -16,7 +16,7 @@ class ShoppingListView(APIView):
         #print(f"Authenticated user: {user.username} (ID: {user.id})")  # Debug statement
         shopping_list = ShoppingListItem.objects.filter(user_id=user.id).order_by('is_owned')
         #print (shopping_list)
-        data = [{"id": item.id, "ingredient": item.ingredient, "quantity": item.quantity, "unit": item.unit, "is_owned": item.is_owned} for item in shopping_list]
+        data = [{"id": item.id, "ingredient": item.ingredient, "quantity": item.quantity, "is_owned": item.is_owned} for item in shopping_list]
         print(f"User {user.username} retrieved their shopping list.")
         #print(data)
         return JsonResponse(data, safe=False, status=200)
@@ -32,7 +32,6 @@ class ShoppingListView(APIView):
                 item_id = item_data.get('id')
                 ingredient = item_data.get('ingredient')
                 new_quantity = item_data.get('quantity')
-                unit = item_data.get('unit')
                 is_owned = item_data.get('is_owned')
                 
                 if item_id:
@@ -41,8 +40,8 @@ class ShoppingListView(APIView):
                         if new_quantity == -1:
                             item.delete()
                         else:
+                            item.ingredient = ingredient
                             item.quantity = new_quantity
-                            item.unit = unit
                             item.is_owned = is_owned
                             item.save()
                     except ShoppingListItem.DoesNotExist:
@@ -52,12 +51,11 @@ class ShoppingListView(APIView):
                     item, created = ShoppingListItem.objects.get_or_create(
                         user=user,
                         ingredient=ingredient,
-                        defaults={'quantity': new_quantity, 'unit': unit, 'is_owned': is_owned}
+                        defaults={'quantity': new_quantity, 'is_owned': is_owned}
                     )
                     if not created:
-                        # If the item already exists, update its quantity, unit, and is_owned status
+                        # If the item already exists, update its quantity, and is_owned status
                         item.quantity = new_quantity
-                        item.unit = unit
                         item.is_owned = is_owned
                         item.save()
             return JsonResponse({"success": True})

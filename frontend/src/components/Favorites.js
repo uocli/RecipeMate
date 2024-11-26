@@ -31,6 +31,16 @@ const Favorites = () => {
         }
     };
 
+    const handleAddToShoppingList = async (id) => {
+        try {
+            const response = await axios.post(`/api/favorites/${id}/add-to-shopping-list/`);
+            showAlert(response.data.message, "success");
+        } catch (error) {
+            showAlert("Failed to add ingredients to the shopping list.", "error");
+        }
+    };
+
+    
     return (
         <div className="container">
             <h1 className="header">Your Favorite Recipes</h1>
@@ -51,6 +61,12 @@ const Favorites = () => {
                             >
                                 Remove from Favorites
                             </button>
+                            <button
+                                onClick={() => handleAddToShoppingList(favorite.id)}
+                                className="button"
+                            >
+                                Add Ingredients to Shopping List
+                            </button>
                         </li>
                     ))}
                 </ul>
@@ -60,3 +76,4 @@ const Favorites = () => {
 };
 
 export default Favorites;
+
