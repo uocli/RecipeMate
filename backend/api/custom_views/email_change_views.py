@@ -96,18 +96,18 @@ class EmailChangeView(APIView):
             "new_email": new_email,
         }
 
-        # Email to the old email address
+        # Email to the new email address
         send_email(
             "Confirm Email Change",
-            user.email,
+            new_email,
             "confirm_email_change",
             context,
         )
 
-        # Email to the new email address
+        # Email to the old email address
         send_email(
             "Email Change Request",
-            new_email,
+            user.email,
             "email_change_request",
             context,
         )
@@ -165,6 +165,7 @@ class CompleteEmailChangeView(APIView):
 
         # Update the user's email
         user.email = new_email
+        user.username = new_email
         user.save()
 
         # Mark the token as used
