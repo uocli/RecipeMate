@@ -54,7 +54,7 @@ const UserProfile = () => {
         event.preventDefault();
         setLoading(true);
         axiosInstance
-            .post("/api/email/update-request/", { new_email: newEmail })
+            .post("/api/email/change/", { new_email: newEmail })
             .then((response) => {
                 const { status, data } = response || {},
                     { success, message } = data || {};
@@ -172,7 +172,10 @@ const UserProfile = () => {
         Securities: (
             <Paper elevation={3} sx={{ padding: 2 }}>
                 <Grid container spacing={2}>
-                    <Grid item xs={12} md={4}>
+                    <Grid
+                        component="form"
+                        onSubmit={handleChangePassword}
+                        item xs={12} md={4}>
                         <Button
                             variant="contained"
                             color="primary"
