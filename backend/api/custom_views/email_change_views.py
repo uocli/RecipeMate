@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
 from django.utils.timezone import now
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -109,4 +110,71 @@ class EmailChangeView(APIView):
             new_email,
             "email_change_request",
             context,
+        )
+
+
+class CompleteEmailChangeView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        return Response(
+            {
+                "success": False,
+                "message": "Method not allowed.",
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def post(self, request):
+        token = request.query_params.get("token")
+
+        if not token:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Token is required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        try:
+            token_obj = Token.objects.get(
+                token=token,
+                type=Token.TYPE_EMAIL_CHANGE,
+            )
+        except Token.DoesNotExist:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid or expired token!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        if token_obj.is_used or token_obj.expires_at < now():
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid or expired token!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = token_obj.user
+        new_email = token_obj.email
+
+        # Update the user's email
+        user.email = new_email
+        user.save()
+
+        # Mark the token as used
+        token_obj.is_used = True
+        token_obj.save(update_fields=["is_used"])
+
+        return Response(
+            {
+                "success": True,
+                "message": "Email address has been updated successfully!",
+            },
+            status=status.HTTP_200_OK,
         )
