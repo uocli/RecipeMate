@@ -2,15 +2,18 @@ from django.urls import path, include
 
 from .custom_views.recipe_views import RecipeListView, RecipeDetailView, RecipeRateView
 from .custom_views.user_profile_views import UserProfileView
+from .custom_views.generate_recipe_views import RecipeGeneratorView
 from .custom_views.favorites_view import FavoriteListView, FavoriteDeleteView
 from .custom_views.shopping_list_views import ShoppingListView
 from api.custom_views.favorites_view import AddToShoppingListView
 from .custom_views.generate_recipe_views import RecipeGeneratorView
 from .custom_views.favorites_view import AddToFavoritesView
 
+
 urlpatterns = [
     path("user-profile/", UserProfileView.as_view(), name="csrf-token"),
     path("password/", include("api.custom_urls.password_urls"), name="password"),
+    path("generate/", RecipeGeneratorView.as_view(), name="recipe_generate"),
     path('favorites/', FavoriteListView.as_view(), name='favorites-list'),
     path('favorites/<int:pk>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
     path('shopping-list/', ShoppingListView.as_view(), name='shopping-list'),
@@ -21,4 +24,3 @@ urlpatterns = [
     path("recipe/<str:uuid>/", RecipeDetailView.as_view(), name="recipe-detail"),
     path("recipe/<str:uuid>/rate/", RecipeRateView.as_view(), name="recipe-detail"),
 ]
-

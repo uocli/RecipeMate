@@ -27,6 +27,7 @@ const RecipeGenerator = () => {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+
   const { setUser } = useContext(AuthContext);
   // const [error, setError] = useState(null);
   // const [preferences, setPreferences] = useState({
