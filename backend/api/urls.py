@@ -2,12 +2,10 @@ from django.urls import path, include
 
 from .custom_views.recipe_views import RecipeListView, RecipeDetailView, RecipeRateView
 from .custom_views.user_profile_views import UserProfileView
-
 from .custom_views.generate_recipe_views import RecipeGeneratorView
 from .custom_views.favorites_view import FavoriteListView, FavoriteDeleteView
 from .custom_views.shopping_list_views import ShoppingListView
 from api.custom_views.favorites_view import AddToShoppingListView
-
 
 
 urlpatterns = [
