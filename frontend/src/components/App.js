@@ -11,15 +11,10 @@ import UserProfile from "./UserProfile";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
-
-import RecipeGenerator from './RecipeGenerator';
-
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
-
 import RecipeGenerator from './RecipeGenerator';
-
 import RecipeDetail from "./RecipeDetail";
 
 
