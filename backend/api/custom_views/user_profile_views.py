@@ -34,15 +34,21 @@ class UserProfileView(APIView):
 
     def put(self, request):
         user = request.user
+
         dietary_preference = request.data.get("dietary_preference", "")
+        if dietary_preference == "":
+            dietary_preference = None
+
         cooking_time = request.data.get("cooking_time", "")
+        if dietary_preference == "":
+            dietary_preference = None
 
         # Validate dietary_preference
-        if dietary_preference not in ["vegetarian", "vegan", "glutenFree", ""]:
+        if dietary_preference not in ["vegetarian", "vegan", "glutenFree", None]:
             raise ValidationError("Invalid dietary preference")
 
         # Validate cooking_time
-        if cooking_time not in ["limited", "medium", "extended", ""]:
+        if cooking_time not in ["limited", "medium", "extended", None]:
             raise ValidationError("Invalid cooking time")
 
         UserProfile.objects.update_or_create(

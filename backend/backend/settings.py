@@ -156,8 +156,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Static files (CSS, JavaScript, Images)
 # STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") if ENV == "production" else ""
-
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # Extra places for collectstatic to find static files.
 # STATICFILES_DIRS = [
 #     os.path.join(BASE_DIR, 'frontend', 'build', 'static'),
@@ -191,6 +190,5 @@ EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False)
 EMAIL_PORT = os.getenv("EMAIL_PORT", 587)
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER", "")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD", "")
-
 # backend/backend/settings.py
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")

@@ -38,7 +38,10 @@ const ResponsiveHeader = () => {
         { text: "Home", path: "/" },
         { text: "About", path: "/about" },
         { text: "Services", path: "/services" },
+        { text: "Shopping List", path: "/shopping-list" },
         { text: "Contact", path: "/contact" },
+        { text: "Favorites", path: "/favorites" },
+        
         { text: "Recipe", path: "/generate" },
     ];
 

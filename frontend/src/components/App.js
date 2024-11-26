@@ -12,6 +12,9 @@ import UserProfile from "./UserProfile";
 import LogoutPage from "./Logout";
 import PasswordRecoveryForm from "./PasswordRecoveryForm";
 import PasswordReset from "./PasswordReset";
+import Favorites from "./Favorites";
+import ShoppingList from "./ShoppingList";
+import ShoppingListEdit from "./ShoppingListEdit";
 import RecipeGenerator from './RecipeGenerator';
 
 const App = () => {
@@ -43,6 +46,22 @@ const App = () => {
                         </ProtectedRoute>
                     } 
                 />
+                <Route
+                    path="/shopping-list"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingList />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/shopping-list-edit"
+                    element={
+                        <ProtectedRoute>
+                            <ShoppingListEdit />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
@@ -51,6 +70,11 @@ const App = () => {
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
+                {/* <Route path="/favorites" element={<Favorites />} /> */}
+                <Route path="/favorites" element={
+                    <ProtectedRoute>
+                        <Favorites />
+                    </ProtectedRoute>} />
                 {/* Logout route */}
                 {/*<Route path="/tasks" component={Tasks} />*/}
                 {/*<Route path="/task/:id" component={Task} />*/}
