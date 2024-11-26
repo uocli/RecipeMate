@@ -2,16 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import {
     Button,
     TextField,
-    Typography,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
     Paper,
     Tabs,
     Tab,
     Box,
     CircularProgress,
-    Grid2 as Grid,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
@@ -103,28 +98,6 @@ const UserProfile = () => {
             });
     };
 
-    const handlePreferenceUpdate = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        // Handle dietary preference update logic
-        axiosInstance
-            .put("api/user-profile/", {
-                dietary_preference: dietaryPreference,
-                cooking_time: duration,
-            })
-            .then((r) => {
-                if (r.status === 200) {
-                    showAlert("Preferences updated successfully!", "success");
-                }
-            })
-            .catch((_) => {
-                showAlert("Error updating preferences!", "error");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
     // Used to enhance accessibility (or a11y) for tab components in React.
     const a11yProps = (index) => {
         return {
@@ -136,9 +109,6 @@ const UserProfile = () => {
     const settings = {
         "Account Settings": (
             <Paper elevation={3} sx={{ padding: 2, marginBottom: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                    Account Settings
-                </Typography>
                 <form onSubmit={handleAccountUpdate}>
                     <TextField
                         label="First Name"
@@ -169,92 +139,8 @@ const UserProfile = () => {
                 </form>
             </Paper>
         ),
-        "Dietary Preferences": (
-            <Paper elevation={3} sx={{ padding: 2 }}>
-                <form onSubmit={handlePreferenceUpdate}>
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="h5" gutterBottom>
-                                Dietary Preferences
-                            </Typography>
-                            <RadioGroup
-                                value={dietaryPreference}
-                                onChange={(e) =>
-                                    setDietaryPreference(e.target.value)
-                                }
-                            >
-                                <FormControlLabel
-                                    value=""
-                                    control={<Radio />}
-                                    label="No Preference"
-                                />
-                                <FormControlLabel
-                                    value="vegan"
-                                    control={<Radio />}
-                                    label="Vegan"
-                                    disabled={loading}
-                                />
-                                <FormControlLabel
-                                    value="vegetarian"
-                                    control={<Radio />}
-                                    label="Vegetarian"
-                                    disabled={loading}
-                                />
-                                <FormControlLabel
-                                    value="glutenFree"
-                                    control={<Radio />}
-                                    label="Gluten Free"
-                                    disabled={loading}
-                                />
-                            </RadioGroup>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="h5" gutterBottom>
-                                Cooking Time
-                            </Typography>
-                            <RadioGroup
-                                aria-label="duration"
-                                name="duration"
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                            >
-                                <FormControlLabel
-                                    value="limited"
-                                    control={<Radio />}
-                                    label="Limited (Less than 30 minutes)"
-                                />
-                                <FormControlLabel
-                                    value="medium"
-                                    control={<Radio />}
-                                    label="Medium (About 1 hour)"
-                                />
-                                <FormControlLabel
-                                    value="extended"
-                                    control={<Radio />}
-                                    label="Extended (More than 1 hour)"
-                                />
-                            </RadioGroup>
-                        </Grid>
-                        <Grid spacing={3} size={12}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                sx={{ mt: 2 }}
-                                disabled={loading}
-                            >
-                                Save All Changes
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Paper>
-        ),
         "Security Settings": (
             <Paper elevation={3} sx={{ padding: 2 }}>
-                <Typography variant="h5" gutterBottom>
-                    Security Settings
-                </Typography>
                 <Box component="form" onSubmit={handleChangePassword}>
                     <Button
                         variant="contained"
