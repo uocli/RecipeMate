@@ -17,11 +17,10 @@ urlpatterns = [
     path('favorites/', FavoriteListView.as_view(), name='favorites-list'),
     path('favorites/<int:pk>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
     path('shopping-list/', ShoppingListView.as_view(), name='shopping-list'),
-    path("recipes/", RecipeListView.as_view(), name="recipe-list"),
-    path("recipe/<str:uuid>/", RecipeDetailView.as_view(), name="recipe-detail"),
-    path("recipe/<str:uuid>/rate/", RecipeRateView.as_view(), name="recipe-detail"),
     path("favorites/<int:pk>/add-to-shopping-list/", AddToShoppingListView.as_view(), name="add-to-shopping-list"),
     path("generate/", RecipeGeneratorView.as_view(), name="recipe_generate"),
     path('favorites/add/', AddToFavoritesView.as_view(), name='add-favorite'),
-
+    path("recipes/", RecipeListView.as_view(), name="recipe-list"),
+    path("recipe/<str:uuid>/", RecipeDetailView.as_view(), name="recipe-detail"),
+    path("recipe/<str:uuid>/rate/", RecipeRateView.as_view(), name="recipe-detail"),
 ]

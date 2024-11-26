@@ -13,13 +13,11 @@ import {
   Stack,
   CircularProgress,
   Dialog, DialogTitle, DialogContent, DialogActions
-
 } from '@mui/material';
 import useAxios from '../utils/useAxios'; 
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
 import FavoriteIcon from '@mui/icons-material/Favorite';
-
 
 const RecipeGenerator = () => {
   const axiosInstance = useAxios();
@@ -28,7 +26,6 @@ const RecipeGenerator = () => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
-
   const [openDialog, setOpenDialog] = useState(false);
 
   const { setUser } = useContext(AuthContext);
@@ -44,7 +41,6 @@ const RecipeGenerator = () => {
       setInputValue('');
     }
   };
-
 
   const handleFavorite = async () => {
     try {
@@ -62,7 +58,6 @@ const RecipeGenerator = () => {
       showAlert('Failed to add to favorites', 'error');
     }
   };
-
 
   const handleGenerateRecipe = (e) => {
     e.preventDefault();
@@ -138,7 +133,6 @@ const RecipeGenerator = () => {
 
       {recipe && (
         <Paper sx={{ p: 3, mt: 3 }}>
-
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h5">{recipe.title}</Typography>
             <Button
@@ -149,7 +143,6 @@ const RecipeGenerator = () => {
               Add to Favorites
             </Button>
           </Box>
-
           <Typography variant="subtitle1" sx={{ mt: 2 }}>
             Cooking Time: {recipe.cooking_time}
           </Typography>
@@ -180,7 +173,6 @@ const RecipeGenerator = () => {
         </Paper>
       )}
 
-
       <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
         <DialogTitle>Add to Favorites</DialogTitle>
         <DialogContent>
@@ -193,7 +185,6 @@ const RecipeGenerator = () => {
           </Button>
         </DialogActions>
       </Dialog>
-
     </Box>
   );
 };

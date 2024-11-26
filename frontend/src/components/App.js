@@ -33,14 +33,6 @@ const App = () => {
                         </ProtectedRoute>
                     }
                 />
-
-                <Route path="/generate" 
-                    element={
-                        <ProtectedRoute>
-                            <RecipeGenerator />
-                        </ProtectedRoute>
-                    } 
-                />
                 <Route path="/generate" 
                     element={
                         <ProtectedRoute>
