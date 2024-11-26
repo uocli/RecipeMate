@@ -51,15 +51,10 @@ const UserProfile = () => {
                 .then((response) => {
                     if (response.status === 200) {
                         const { user } = response.data || {},
-                            { first_name, last_name, email, profile } =
-                                user || {},
-                            { dietary_preference, cooking_time } =
-                                profile || {};
+                            { first_name, last_name } = user || {};
                         setFirstName(first_name);
                         setLastName(last_name);
                         setUser(user || {});
-                        setDietaryPreference(dietary_preference || "");
-                        setDuration(cooking_time || "");
                     }
                 })
                 .catch((_) => {
