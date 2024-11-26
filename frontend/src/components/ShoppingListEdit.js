@@ -33,11 +33,16 @@ const ShoppingListEdit = () => {
             })
     }, []);
 
-    const checkDuplidatedIngredients = () => {
+    const updateWarnings = () => {
         let newWarnings = [...warnings];
 
-        // Check for duplicated ingredients
         shoppingList.forEach((item, i) => {
+            // Check for empty ingredient
+            if (item.ingredient === '') {
+                newWarnings[i] = "Empty item!";
+            }
+
+            // Check for duplicated ingredients
             if (item.ingredient !== '' && item.quantity >= 0) {
                 const count = shoppingList.filter((itm, idx) => itm.ingredient.toLowerCase() === item.ingredient.toLowerCase()
                     && idx !== i
@@ -47,6 +52,11 @@ const ShoppingListEdit = () => {
                 } else {
                     newWarnings[i] = "";
                 }
+            }
+
+            // Reset warning if quantity is not valid
+            if (item.quantity < 0) {
+                newWarnings[i] = "";
             }
         });
 
@@ -70,27 +80,7 @@ const ShoppingListEdit = () => {
             return updatedList;
         });
 
-        let newWarnings = [...warnings];
-
-        // Check for empty ingredient
-        if (newIngredient === '') {
-            newWarnings[index] = "Empty item!";
-        }
-
-        shoppingList.forEach((item, i) => {
-            if (item.ingredient !== '' && item.quantity >= 0) {
-                const count = shoppingList.filter((itm, idx) => itm.ingredient.toLowerCase() === item.ingredient.toLowerCase()
-                    && idx !== i
-                    && itm.quantity >= 0).length;
-                if (count > 0) {
-                    newWarnings[i] = "Duplicated item!";
-                } else {
-                    newWarnings[i] = "";
-                }
-            }
-        });
-
-        setWarnings(newWarnings);
+        updateWarnings();
     }
 
     const handleQuantityChange = (index, newQuantity) => {
@@ -116,12 +106,16 @@ const ShoppingListEdit = () => {
             return updatedList;
         });
 
-        checkDuplidatedIngredients();
+        updateWarnings();
     };
 
     const handleDeleteAll = () => {
         if (window.confirm("Are you sure you want to delete all items? This change will only be submitted when you click Save.")) {
             setShoppingList(prevList => prevList.map(item => ({ ...item, quantity: -1 })));
+
+            let newWarnings = [...warnings];
+            newWarnings.fill("");
+            setWarnings(newWarnings);
         }
     };
 
