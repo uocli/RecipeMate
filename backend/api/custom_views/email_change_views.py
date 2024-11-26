@@ -27,7 +27,7 @@ class EmailChangeView(APIView):
         except ValidationError:
             return Response(
                 {"success": False, "message": "Invalid email format!"},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
 
         # Check if the new email is the same as the current one
@@ -37,7 +37,7 @@ class EmailChangeView(APIView):
                     "success": False,
                     "message": "The new email cannot be the same as the current one!",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
 
         # Check if the new email is already in use
@@ -47,7 +47,7 @@ class EmailChangeView(APIView):
                     "success": False,
                     "message": "Bad request! Contact support for assistance.",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
 
         # Create a new email change token
