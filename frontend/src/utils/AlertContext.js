@@ -2,11 +2,12 @@ import { createContext, useState } from "react";
 
 export const AlertContext = createContext();
 
-export const AlertProvider = ({ children, defaultTimeout = 3000 }) => {
+export const AlertProvider = ({ children, defaultTimeout = 5000 }) => {
     const [alert, setAlert] = useState({
         message: "",
         severity: "success",
         open: false,
+        timeout: defaultTimeout,
     });
 
     const showAlert = (
@@ -14,12 +15,7 @@ export const AlertProvider = ({ children, defaultTimeout = 3000 }) => {
         severity = "success",
         timeout = defaultTimeout,
     ) => {
-        setAlert({ message, severity, open: true });
-        if (timeout !== null) {
-            setTimeout(() => {
-                setAlert({ message: "", severity: "success", open: false });
-            }, timeout);
-        }
+        setAlert({ message, severity, open: true, timeout });
     };
 
     const closeAlert = () => {
