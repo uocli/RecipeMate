@@ -38,7 +38,9 @@ const ResponsiveHeader = () => {
         { text: "Home", path: "/" },
         { text: "About", path: "/about" },
         { text: "Shopping List", path: "/shopping-list" },
-        { text: "Favorites", path: "/favorites" },
+        { text: "Favorites", path: "/favorites" },     
+        { text: "Recipe", path: "/generate" },
+
     ];
 
     const handleAvatarClick = (event) => {
