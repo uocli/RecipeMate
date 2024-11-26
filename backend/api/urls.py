@@ -6,6 +6,8 @@ from .custom_views.generate_recipe_views import RecipeGeneratorView
 from .custom_views.favorites_view import FavoriteListView, FavoriteDeleteView
 from .custom_views.shopping_list_views import ShoppingListView
 from api.custom_views.favorites_view import AddToShoppingListView
+from .custom_views.generate_recipe_views import RecipeGeneratorView
+from .custom_views.favorites_view import AddToFavoritesView
 
 
 urlpatterns = [
@@ -19,4 +21,7 @@ urlpatterns = [
     path("recipe/<str:uuid>/", RecipeDetailView.as_view(), name="recipe-detail"),
     path("recipe/<str:uuid>/rate/", RecipeRateView.as_view(), name="recipe-detail"),
     path("favorites/<int:pk>/add-to-shopping-list/", AddToShoppingListView.as_view(), name="add-to-shopping-list"),
+    path("generate/", RecipeGeneratorView.as_view(), name="recipe_generate"),
+    path('favorites/add/', AddToFavoritesView.as_view(), name='add-favorite'),
+
 ]

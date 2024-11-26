@@ -17,6 +17,9 @@ import RecipeGenerator from './RecipeGenerator';
 import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
+
+import RecipeGenerator from './RecipeGenerator';
+
 import RecipeDetail from "./RecipeDetail";
 
 
@@ -36,6 +39,13 @@ const App = () => {
                     }
                 />
 
+                <Route path="/generate" 
+                    element={
+                        <ProtectedRoute>
+                            <RecipeGenerator />
+                        </ProtectedRoute>
+                    } 
+                />
                 <Route path="/generate" 
                     element={
                         <ProtectedRoute>

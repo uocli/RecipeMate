@@ -40,6 +40,7 @@ const ResponsiveHeader = () => {
         { text: "Shopping List", path: "/shopping-list" },
         { text: "Recipe", path: "/generate" },
         { text: "Favorites", path: "/favorites" },
+
     ];
 
     const handleAvatarClick = (event) => {
