@@ -74,10 +74,13 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "backend.urls"
 
+# Define the frontend base directory
+FRONTEND_ROOT_DIR = os.path.join(BASE_DIR.parent, "frontend", "build")
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR.parent, "frontend", "build")],
+        "DIRS": [FRONTEND_ROOT_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -143,7 +146,7 @@ USE_TZ = True
 
 STATIC_URL = "/static/"
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR.parent, "frontend", "build", "static"),
+    os.path.join(FRONTEND_ROOT_DIR, "static"),
 ]
 
 # Default primary key field type
