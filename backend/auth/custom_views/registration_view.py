@@ -1,24 +1,84 @@
-from django.contrib.auth.hashers import make_password
+import hashlib
+import uuid
+from datetime import timedelta
+from urllib.parse import urljoin
+
+from django.contrib.auth.models import User
+from django.utils import timezone
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import status
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from ..serializers.user_registration_serializer import UserRegistrationSerializer
+from api.custom_models.token_model import Token
+from backend import settings
+from api.serializers.token_serializer import TokenSerializer
+from api.utils.email_utils import send_email
 
 
-class RegistrationView(APIView):
-    user_registration_serializer = UserRegistrationSerializer
+@method_decorator(csrf_exempt, name="dispatch")
+class SendInviteView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        return Response(
+            {
+                "success": False,
+                "message": "Method not allowed.",
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
 
     def post(self, request, format=None):
-        request.data["password"] = make_password(password=request.data["password"])
-        request.data["username"] = request.data["email"]
-        serializer = self.user_registration_serializer(data=request.data)
+        email = request.data["email"]
+        user = User.objects.filter(email=email).first()
+        if user is not None:
+            return Response(
+                {
+                    "success": False,
+                    "message": "A user with this email already exists!",
+                },
+                status=status.HTTP_409_CONFLICT,
+            )
+
+        created_at = timezone.now()
+        expires_at = created_at + timedelta(days=1)
+        salt = uuid.uuid4().hex
+        token = hashlib.sha512(
+            (email + created_at.isoformat() + salt).encode("utf-8")
+        ).hexdigest()
+        token_obj = {
+            "token": token,
+            "created_at": created_at,
+            "expires_at": expires_at,
+            "email": email,
+        }
+
+        serializer = TokenSerializer(data=token_obj)
         if serializer.is_valid():
-            serializer.save()
+            try:
+                serializer.save()
+            except Exception as e:
+                return Response(
+                    {
+                        "success": False,
+                        "message": str(e),
+                    },
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                )
+            # Send email
+            subject = "Welcome to Recipe Mate!"
+            url = urljoin(settings.BASE_URL, f"/complete-signup?token={token}")
+            context = {
+                "url": url,
+            }
+            send_email(subject, email, "invite_email", context)
             return Response(
                 {
                     "success": True,
-                    "message": "You hae been successfully registered!",
+                    "message": "An invite link has been sent to your email!",
                 },
                 status=status.HTTP_200_OK,
             )
@@ -27,6 +87,68 @@ class RegistrationView(APIView):
             for key in serializer.errors:
                 error_msg += serializer.errors[key][0]
             return Response(
-                {"success": False, "message": error_msg},
-                status=status.HTTP_200_OK,
+                {
+                    "success": False,
+                    "message": error_msg,
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+
+
+class CompleteSignupView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request, format=None):
+        return Response(
+            {
+                "success": False,
+                "message": "Method not allowed.",
+            },
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+        )
+
+    def post(self, request, format=None):
+        token = request.data.get("token")
+        password = request.data.get("password")
+        token_obj = Token.objects.filter(token=token).first()
+        if token_obj is None or token_obj.email is None:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid token!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if timezone.now() > token_obj.expires_at:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Token has expired!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        email = token_obj.email
+        try:
+            user = User.objects.create_user(
+                username=email, email=email, password=password
+            )
+            user.save()
+            token_obj.delete()
+        except Exception as e:
+            return Response(
+                {
+                    "success": False,
+                    "message": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+        return Response(
+            {
+                "success": True,
+                "message": "Registration completed successfully.",
+            },
+            status=status.HTTP_200_OK,
+        )

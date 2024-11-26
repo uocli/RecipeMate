@@ -5,7 +5,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import Cookies from "js-cookie";
 import { AlertContext } from "../utils/AlertContext";
 
-const PasswordReset = () => {
+const PasswordReset = ({ endpoint }) => {
     const { showAlert } = useContext(AlertContext);
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -22,10 +22,9 @@ const PasswordReset = () => {
             setLoading(true);
             axios
                 .post(
-                    "/api/password/reset/",
+                    endpoint,
                     {
                         password,
-                        confirmPassword,
                         id,
                         token,
                     },
@@ -45,8 +44,15 @@ const PasswordReset = () => {
                             navigate("/login");
                         }, 500);
                     } else {
-                        message(message || "Error resetting password", "error");
+                        message(message || "Error setting password", "error");
                     }
+                })
+                .catch((error) => {
+                    showAlert(
+                        error.response?.data?.message ||
+                            "Error setting password",
+                        "error",
+                    );
                 })
                 .finally(() => {
                     setLoading(false);
@@ -63,6 +69,7 @@ const PasswordReset = () => {
                     label="Password"
                     type="password"
                     fullWidth
+                    required
                     margin="normal"
                     value={password}
                     disabled={loading}
@@ -72,6 +79,7 @@ const PasswordReset = () => {
                     label="Confirm Password"
                     type="password"
                     fullWidth
+                    required
                     margin="normal"
                     value={confirmPassword}
                     disabled={loading}
