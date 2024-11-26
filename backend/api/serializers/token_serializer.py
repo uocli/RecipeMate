@@ -13,4 +13,5 @@ class TokenSerializer(serializers.ModelSerializer):
             "user",
             "email",
             "is_used",
+            "type",
         ]
