@@ -5,8 +5,7 @@ from ..serializers.favorites_serializer import FavoriteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-# from api.custom_models.favorites_model import Favorite
-# from api.custom_models.shopping_list_models import ShoppingListItem
+
 
 class FavoriteListView(generics.ListCreateAPIView):
     serializer_class = FavoriteSerializer
@@ -48,7 +47,7 @@ class AddToShoppingListView(APIView):
                     ShoppingListItem.objects.create(
                         user=request.user,
                         ingredient=ingredient_name,
-                        quantity=1,  # Fixed quantity
+                        quantity=0,  # Fixed quantity
                     )
                     added_ingredients.append(ingredient_name)
 
