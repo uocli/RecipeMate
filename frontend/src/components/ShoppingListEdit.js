@@ -10,7 +10,6 @@ import {
     Typography,
     Paper,
     Box,
-    Grid,
 } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
@@ -21,6 +20,7 @@ const ShoppingListEdit = () => {
     const { showAlert } = useContext(AlertContext);
     const { setUser } = useContext(AuthContext);
     const [shoppingList, setShoppingList] = useState([]);
+    const [warnings, setWarnings] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -28,9 +28,60 @@ const ShoppingListEdit = () => {
             .then((response) => {
                 if (response.status === 200) {
                     setShoppingList(response.data);
+                    setWarnings(response.data.map(() => ""));
                 }
             })
-    }, [setUser]);
+    }, []);
+
+    const updateWarnings = () => {
+        let newWarnings = [...warnings];
+
+        shoppingList.forEach((item, i) => {
+            // Check for empty ingredient
+            if (item.ingredient === '') {
+                newWarnings[i] = "Empty item!";
+            }
+
+            // Check for duplicated ingredients
+            if (item.ingredient !== '' && item.quantity >= 0) {
+                const count = shoppingList.filter((itm, idx) => itm.ingredient.toLowerCase() === item.ingredient.toLowerCase()
+                    && idx !== i
+                    && itm.quantity >= 0).length;
+                if (count > 0) {
+                    newWarnings[i] = "Duplicated item!";
+                } else {
+                    newWarnings[i] = "";
+                }
+            }
+
+            // Reset warning if quantity is not valid
+            if (item.quantity < 0) {
+                newWarnings[i] = "";
+            }
+        });
+
+        setWarnings(newWarnings);
+    }
+
+    const handleIngredientChange = (index, newIngredient) => {
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].ingredient = newIngredient;
+            return updatedList;
+        });
+    }
+
+    const verifyIngredientChange = (index, newIngredient) => {
+        // Trim leading and trailing whitespaces
+        newIngredient = newIngredient.trim();
+        setShoppingList(prevList => {
+            const updatedList = [...prevList];
+            updatedList[index].ingredient = newIngredient;
+            return updatedList;
+        });
+
+        updateWarnings();
+    }
 
     const handleQuantityChange = (index, newQuantity) => {
         setShoppingList(prevList => {
@@ -54,15 +105,26 @@ const ShoppingListEdit = () => {
             updatedList[index].quantity = -1;
             return updatedList;
         });
+
+        updateWarnings();
     };
 
     const handleDeleteAll = () => {
         if (window.confirm("Are you sure you want to delete all items? This change will only be submitted when you click Save.")) {
             setShoppingList(prevList => prevList.map(item => ({ ...item, quantity: -1 })));
+
+            let newWarnings = [...warnings];
+            newWarnings.fill("");
+            setWarnings(newWarnings);
         }
     };
 
     const handleSaveAll = async () => {
+        if (warnings.some(warning => warning !== "")) {
+            showAlert("Please resolve all warnings before saving.", "error");
+            return;
+        }
+
         if (window.confirm("Are you sure you want to save these changes?")) {
             const response = await axiosInstance.
                 post(
@@ -99,61 +161,77 @@ const ShoppingListEdit = () => {
             </Box>
             <Paper elevation={3} sx={{ padding: 2, marginTop: '20px' }}>
                 <ul style={{ listStyleType: 'none', padding: '0' }}>
-                    {shoppingList.filter(item => item.quantity >= 0).map((item, index) => (
-                        <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #ddd', color: item.is_owned ? 'gray' : 'black' }}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <input
-                                    type="checkbox"
-                                    checked={item.is_owned}
-                                    onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
-                                    style={{ marginRight: '10px' }}
-                                />
-                                <span style={{ textDecoration: item.is_owned ? 'line-through' : 'none' }}>
-                                    {item.ingredient}
-                                </span>
-                            </div>
-                            <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
-                                <IconButton
-                                    aria-label="decrease"
-                                    onClick={() => handleQuantityChange(index, Math.max(1, item.quantity - 1))}
-                                    sx={{ minWidth: '40px', marginRight: '10px', height: '40px' }}
-                                >
-                                    <ArrowBackIosIcon />
-                                </IconButton>
-                                <TextField
-                                    type="number"
-                                    size="small"
-                                    value={item.quantity}
-                                    min="1"
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        handleQuantityChange(index, value === '' ? '' : Math.max(1, parseInt(value)));
-                                    }}
-                                    onBlur={(e) => {
-                                        if (e.target.value === '') {
-                                            handleQuantityChange(index, 1);
-                                        }
-                                    }}
-                                    sx={{ width: '80px', marginRight: '10px' }}
-                                    InputProps={{ sx: { textAlign: 'left' } }}
-                                />
-                                <IconButton
-                                    aria-label="increase"
-                                    onClick={() => handleQuantityChange(index, item.quantity + 1)}
-                                    sx={{ minWidth: '40px', height: '40px' }}
-                                >
-                                    <ArrowForwardIosIcon />
-                                </IconButton>
-                                <span style={{ marginLeft: '10px', marginRight: '10px', width: '60px', textAlign: 'left' }}>{item.unit}</span>
-                                <IconButton
-                                    aria-label="delete"
-                                    onClick={() => handleDeleteItem(index)}
-                                    sx={{ minWidth: '40px', height: '40px' }}
-                                >
-                                    <DeleteIcon />
-                                </IconButton>
-                            </div>
-                        </li>
+                    {shoppingList.map((item, index) => (
+                        item.quantity >= 0 && (
+                            <li key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px', borderBottom: '1px solid #ddd', color: item.is_owned ? 'gray' : 'black' }}>
+                                <div style={{ display: 'flex', alignItems: 'center' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                                        <input
+                                            type="checkbox"
+                                            checked={item.is_owned}
+                                            onChange={(e) => handleIsOwnedChange(index, e.target.checked)}
+                                            style={{ marginRight: '10px' }}
+                                        />
+                                        <TextField
+                                            id="ingredient"
+                                            variant="standard"
+                                            value={item.ingredient}
+                                            onChange={(e) => handleIngredientChange(index, e.target.value)}
+                                            onBlur={(e) => verifyIngredientChange(index, e.target.value)}
+                                            sx={{ marginRight: '10px', width: '200px' }}
+                                        />
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', marginLeft: 'auto' }}>
+                                        <IconButton
+                                            aria-label="decrease"
+                                            onClick={() => handleQuantityChange(index, Math.max(0, item.quantity - 1))}
+                                            sx={{ minWidth: '40px', marginRight: '10px', height: '40px' }}
+                                        >
+                                            <ArrowBackIosIcon />
+                                        </IconButton>
+                                        <TextField
+                                            id="quantity"
+                                            type="number"
+                                            size="small"
+                                            value={item.quantity}
+                                            min="1"
+                                            onChange={(e) => {
+                                                const value = e.target.value;
+                                                handleQuantityChange(index, value === '' ? '' : Math.max(0, parseInt(value)));
+                                            }}
+                                            onBlur={(e) => {
+                                                if (e.target.value === '') {
+                                                    handleQuantityChange(index, 0);
+                                                }
+                                            }}
+                                            sx={{ width: '80px', marginRight: '10px' }}
+                                            InputProps={{ sx: { textAlign: 'left' } }}
+                                        />
+                                        <IconButton
+                                            aria-label="increase"
+                                            onClick={() => handleQuantityChange(index, item.quantity + 1)}
+                                            sx={{ minWidth: '40px', height: '40px' }}
+                                        >
+                                            <ArrowForwardIosIcon />
+                                        </IconButton>
+                                        <IconButton
+                                            aria-label="delete"
+                                            onClick={() => handleDeleteItem(index)}
+                                            sx={{ minWidth: '40px', height: '40px' }}
+                                        >
+                                            <DeleteIcon />
+                                        </IconButton>
+                                    </div>
+                                </div>
+                                {warnings[index] && (
+                                    <div style={{ width: '100%' }}>
+                                        <Typography variant="body2" color="error" sx={{ marginTop: '5px' }}>
+                                            {warnings[index]}
+                                        </Typography>
+                                    </div>
+                                )}
+                            </li>
+                        )
                     ))}
                 </ul>
             </Paper>
@@ -175,7 +253,7 @@ const ShoppingListEdit = () => {
                     Save
                 </Button>
             </Box>
-        </Box>
+        </Box >
     );
 };
 
