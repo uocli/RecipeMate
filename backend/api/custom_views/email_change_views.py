@@ -65,6 +65,7 @@ class EmailChangeView(APIView):
             created_at=created_at,
             expires_at=expires_at,
             email=new_email,
+            type=Token.TYPE_EMAIL_CHANGE,
         )
 
         # Send confirmation emails
