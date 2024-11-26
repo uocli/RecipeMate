@@ -1,6 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-
+import { Route, Routes } from "react-router-dom";
 import Header from "./Header";
 import Home from "./Home";
 import About from "./About";
@@ -16,6 +15,8 @@ import Favorites from "./Favorites";
 import ShoppingList from "./ShoppingList";
 import ShoppingListEdit from "./ShoppingListEdit";
 import RecipeGenerator from './RecipeGenerator';
+import RecipeDetail from "./RecipeDetail";
+
 
 const App = () => {
     return (
@@ -23,14 +24,7 @@ const App = () => {
             <Header />
             <Routes>
                 <Route path="/" exact element={<Home />} />
-                <Route
-                    path="/about"
-                    element={
-                        <ProtectedRoute>
-                            <About />
-                        </ProtectedRoute>
-                    }
-                />
+                <Route path="/about" element={<About />} />
                 <Route
                     path="/profile"
                     element={
@@ -65,20 +59,30 @@ const App = () => {
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
                 <Route path="/logout" element={<LogoutPage />} />
-                <Route path="/password-reset" element={<PasswordReset />} />
+                <Route
+                    path="/password-reset"
+                    element={<PasswordReset endpoint="/api/password/reset/" />}
+                />
+                <Route
+                    path="/complete-signup"
+                    element={
+                        <PasswordReset endpoint="/auth/complete-signup/" />
+                    }
+                />
                 <Route
                     path="/password-recovery"
                     element={<PasswordRecoveryForm />}
                 />
-                {/* <Route path="/favorites" element={<Favorites />} /> */}
-                <Route path="/favorites" element={
-                    <ProtectedRoute>
-                        <Favorites />
-                    </ProtectedRoute>} />
-                {/* Logout route */}
-                {/*<Route path="/tasks" component={Tasks} />*/}
-                {/*<Route path="/task/:id" component={Task} />*/}
+                <Route
+                    path="/favorites"
+                    element={
+                        <ProtectedRoute>
+                            <Favorites />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route path="*" element={<NotFound />} />
+                <Route path="/recipe/:uuid" element={<RecipeDetail />} />
             </Routes>
         </>
     );
