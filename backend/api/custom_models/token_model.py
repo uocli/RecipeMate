@@ -8,6 +8,11 @@ class Token(models.Model):
     Token model for password reset, forgot or email verification
     """
 
+    TOKEN_TYPE_CHOICES = [
+        ("password_reset", "Password Reset"),
+        ("email_change", "Email Change"),
+    ]
+
     token = models.CharField(max_length=255)
     created_at = models.DateTimeField()
     expires_at = models.DateTimeField()
@@ -19,6 +24,11 @@ class Token(models.Model):
         null=True,
     )
     is_used = models.BooleanField(default=False)
+    type = models.CharField(
+        max_length=20,
+        choices=TOKEN_TYPE_CHOICES,
+        default="password_reset",
+    )
 
     def clean(self):
         if not self.email and not self.user:
