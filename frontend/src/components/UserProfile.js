@@ -100,9 +100,19 @@ const UserProfile = () => {
     };
 
     const settings = {
-        "Account Settings": (
+        General: (
             <Paper elevation={3} sx={{ padding: 2, marginBottom: 4 }}>
-                <form onSubmit={handleAccountUpdate}>
+                <Box
+                    component="form"
+                    onSubmit={handleAccountUpdate}
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        width: { xs: "100%", md: "33%" },
+                        margin: 0,
+                    }}
+                >
                     <TextField
                         label="First Name"
                         value={firstName}
@@ -129,12 +139,22 @@ const UserProfile = () => {
                     >
                         Update Account
                     </Button>
-                </form>
+                </Box>
             </Paper>
         ),
-        "Security Settings": (
+        Securities: (
             <Paper elevation={3} sx={{ padding: 2 }}>
-                <Box component="form" onSubmit={handleChangePassword}>
+                <Box
+                    component="form"
+                    onSubmit={handleChangePassword}
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        width: { xs: "100%", md: "33%" },
+                        margin: 0,
+                    }}
+                >
                     <Button
                         variant="contained"
                         color="primary"
