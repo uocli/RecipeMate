@@ -1,4 +1,5 @@
-from django.db.models import Avg
+from django.db.models import Avg, Value, FloatField
+from django.db.models.functions import Coalesce
 from rest_framework import status, permissions
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -12,7 +13,11 @@ class RecipeListView(APIView):
 
     def get(self, request):
         recipes = PublicRecipe.objects.annotate(
-            average_rating=Avg("ratings__rating")
+            average_rating=Coalesce(
+                Avg("ratings__rating"),
+                Value(0),
+                output_field=FloatField(),
+            )
         ).order_by("-average_rating")
         serializer = RecipeSerializer(recipes, many=True)
         return Response(serializer.data)
