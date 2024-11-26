@@ -8,9 +8,12 @@ class Token(models.Model):
     Token model for password reset, forgot or email verification
     """
 
+    TYPE_PASSWORD_RESET = "password_reset"
+    TYPE_EMAIL_CHANGE = "email_change"
+
     TOKEN_TYPE_CHOICES = [
-        ("password_reset", "Password Reset"),
-        ("email_change", "Email Change"),
+        (TYPE_PASSWORD_RESET, "Password Reset"),
+        (TYPE_EMAIL_CHANGE, "Email Change"),
     ]
 
     token = models.CharField(max_length=255)
@@ -27,7 +30,7 @@ class Token(models.Model):
     type = models.CharField(
         max_length=20,
         choices=TOKEN_TYPE_CHOICES,
-        default="password_reset",
+        default=TYPE_PASSWORD_RESET,
     )
 
     def clean(self):
