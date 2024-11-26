@@ -26,6 +26,7 @@ const UserProfile = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [loading, setLoading] = useState(false);
+    const [emailLoading, setEmailLoading] = useState(false);
     const [newEmail, setNewEmail] = useState("");
     const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -53,7 +54,7 @@ const UserProfile = () => {
 
     const handleUpdateEmail = (event) => {
         event.preventDefault();
-        setLoading(true);
+        setEmailLoading(true);
         axiosInstance
             .post("/api/email/change/", { new_email: newEmail })
             .then((response) => {
@@ -62,6 +63,7 @@ const UserProfile = () => {
                 if (status === 200 && success) {
                     showAlert(message, "success");
                     setIsDialogOpen(false);
+                    setNewEmail("");
                 } else {
                     showAlert(message, "error");
                 }
@@ -70,7 +72,7 @@ const UserProfile = () => {
                 showAlert("Error updating email!", "error");
             })
             .finally(() => {
-                setLoading(false);
+                setEmailLoading(false);
             });
     };
 
@@ -204,7 +206,7 @@ const UserProfile = () => {
                             color="primary"
                             type="button"
                             onClick={() => setIsDialogOpen(true)}
-                            disabled={loading}
+                            disabled={emailLoading}
                         >
                             Change Email
                         </Button>
@@ -291,7 +293,7 @@ const UserProfile = () => {
                         color: "#fff",
                         zIndex: (theme) => theme.zIndex.drawer + 1,
                     }}
-                    open={loading}
+                    open={emailLoading}
                 >
                     <CircularProgress color="inherit" />
                 </Backdrop>
