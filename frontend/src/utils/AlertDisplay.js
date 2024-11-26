@@ -9,9 +9,9 @@ const AlertDisplay = () => {
     return (
         <Snackbar
             open={alert.open}
-            autoHideDuration={null}
+            autoHideDuration={alert.timeout}
             onClose={closeAlert}
-            anchorOrigin={{ vertical: "top", horizontal: "center" }} // Set the position to top center
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
             action={
                 <IconButton
                     size="small"
