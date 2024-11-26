@@ -12,6 +12,7 @@ import {
     DialogContent,
     DialogContentText,
     DialogTitle,
+    Backdrop,
     Grid2 as Grid,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
@@ -175,7 +176,10 @@ const UserProfile = () => {
                     <Grid
                         component="form"
                         onSubmit={handleChangePassword}
-                        item xs={12} md={4}>
+                        item
+                        xs={12}
+                        md={4}
+                    >
                         <Button
                             variant="contained"
                             color="primary"
@@ -282,6 +286,15 @@ const UserProfile = () => {
                         Confirm
                     </Button>
                 </DialogActions>
+                <Backdrop
+                    sx={{
+                        color: "#fff",
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                    open={loading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
             </Dialog>
         </Box>
     );
