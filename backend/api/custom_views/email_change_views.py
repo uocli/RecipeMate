@@ -50,6 +50,15 @@ class EmailChangeView(APIView):
                 status=status.HTTP_200_OK,
             )
 
+        # Expire the old unused tokens
+        for t in Token.objects.filter(
+            user_id=user.id,
+            type=Token.TYPE_EMAIL_CHANGE,
+            is_used=False,
+        ):
+            t.is_used = True
+            t.save(update_fields=["is_used"])
+
         # Create a new email change token
         created_at = now()
         expires_at = created_at + timedelta(hours=1)
