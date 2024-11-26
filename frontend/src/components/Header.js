@@ -36,11 +36,10 @@ const ResponsiveHeader = () => {
 
     const NAVIGATION = [
         { text: "Home", path: "/" },
-        { text: "About", path: "/about" },
+        { text: "Recipe Generator", path: "/generate" },
+        { text: "Favorites", path: "/favorites" },
         { text: "Shopping List", path: "/shopping-list" },
-        { text: "Favorites", path: "/favorites" },     
-        { text: "Recipe", path: "/generate" },
-
+        { text: "About", path: "/about" },
     ];
 
     const handleAvatarClick = (event) => {
