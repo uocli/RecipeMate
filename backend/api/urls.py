@@ -11,6 +11,7 @@ from .custom_views.favorites_view import AddToFavoritesView
 urlpatterns = [
     path("user-profile/", UserProfileView.as_view(), name="csrf-token"),
     path("password/", include("api.custom_urls.password_urls"), name="password"),
+    path("email/", include("api.custom_urls.email_request_urls"), name="email-requests"),
     path('favorites/', FavoriteListView.as_view(), name='favorites-list'),
     path('favorites/<int:pk>/', FavoriteDeleteView.as_view(), name='favorite-delete'),
     path('shopping-list/', ShoppingListView.as_view(), name='shopping-list'),

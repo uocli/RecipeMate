@@ -2,15 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import {
     Button,
     TextField,
-    Typography,
-    Radio,
-    RadioGroup,
-    FormControlLabel,
     Paper,
     Tabs,
     Tab,
     Box,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Backdrop,
     Grid2 as Grid,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
@@ -23,11 +25,11 @@ const UserProfile = () => {
     const { setUser } = useContext(AuthContext);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
-    const [dietaryPreference, setDietaryPreference] = useState("");
     const [loading, setLoading] = useState(false);
-    const [duration, setDuration] = useState("");
+    const [emailLoading, setEmailLoading] = useState(false);
+    const [newEmail, setNewEmail] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // Handle button click
     const handleChangePassword = (event) => {
         event.preventDefault();
         setLoading(true);
@@ -50,23 +52,41 @@ const UserProfile = () => {
             });
     };
 
+    const handleUpdateEmail = (event) => {
+        event.preventDefault();
+        setEmailLoading(true);
+        axiosInstance
+            .post("/api/email/change/", { new_email: newEmail })
+            .then((response) => {
+                const { status, data } = response || {},
+                    { success, message } = data || {};
+                if (status === 200 && success) {
+                    showAlert(message, "success");
+                    setIsDialogOpen(false);
+                    setNewEmail("");
+                } else {
+                    showAlert(message, "error");
+                }
+            })
+            .catch((_) => {
+                showAlert("Error updating email!", "error");
+            })
+            .finally(() => {
+                setEmailLoading(false);
+            });
+    };
+
     useEffect(() => {
-        // Fetch user data from the backend
         const initializeData = async () => {
             axiosInstance
                 .get("/api/user-profile/")
                 .then((response) => {
                     if (response.status === 200) {
                         const { user } = response.data || {},
-                            { first_name, last_name, email, profile } =
-                                user || {},
-                            { dietary_preference, cooking_time } =
-                                profile || {};
+                            { first_name, last_name } = user || {};
                         setFirstName(first_name);
                         setLastName(last_name);
                         setUser(user || {});
-                        setDietaryPreference(dietary_preference || "");
-                        setDuration(cooking_time || "");
                     }
                 })
                 .catch((_) => {
@@ -81,7 +101,6 @@ const UserProfile = () => {
     const handleAccountUpdate = (e) => {
         e.preventDefault();
         setLoading(true);
-        // Handle account update logic
         axiosInstance
             .post("/api/user-profile/", {
                 first_name: firstName,
@@ -103,29 +122,6 @@ const UserProfile = () => {
             });
     };
 
-    const handlePreferenceUpdate = (e) => {
-        e.preventDefault();
-        setLoading(true);
-        // Handle dietary preference update logic
-        axiosInstance
-            .put("api/user-profile/", {
-                dietary_preference: dietaryPreference,
-                cooking_time: duration,
-            })
-            .then((r) => {
-                if (r.status === 200) {
-                    showAlert("Preferences updated successfully!", "success");
-                }
-            })
-            .catch((_) => {
-                showAlert("Error updating preferences!", "error");
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
-    // Used to enhance accessibility (or a11y) for tab components in React.
     const a11yProps = (index) => {
         return {
             id: `tab-${index}`,
@@ -134,12 +130,19 @@ const UserProfile = () => {
     };
 
     const settings = {
-        "Account Settings": (
+        General: (
             <Paper elevation={3} sx={{ padding: 2, marginBottom: 4 }}>
-                <Typography variant="h5" gutterBottom>
-                    Account Settings
-                </Typography>
-                <form onSubmit={handleAccountUpdate}>
+                <Box
+                    component="form"
+                    onSubmit={handleAccountUpdate}
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 2,
+                        width: { xs: "100%", md: "33%" },
+                        margin: 0,
+                    }}
+                >
                     <TextField
                         label="First Name"
                         value={firstName}
@@ -166,111 +169,49 @@ const UserProfile = () => {
                     >
                         Update Account
                     </Button>
-                </form>
-            </Paper>
-        ),
-        "Dietary Preferences": (
-            <Paper elevation={3} sx={{ padding: 2 }}>
-                <form onSubmit={handlePreferenceUpdate}>
-                    <Grid container spacing={2}>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="h5" gutterBottom>
-                                Dietary Preferences
-                            </Typography>
-                            <RadioGroup
-                                value={dietaryPreference}
-                                onChange={(e) =>
-                                    setDietaryPreference(e.target.value)
-                                }
-                            >
-                                <FormControlLabel
-                                    value=""
-                                    control={<Radio />}
-                                    label="No Preference"
-                                />
-                                <FormControlLabel
-                                    value="vegan"
-                                    control={<Radio />}
-                                    label="Vegan"
-                                    disabled={loading}
-                                />
-                                <FormControlLabel
-                                    value="vegetarian"
-                                    control={<Radio />}
-                                    label="Vegetarian"
-                                    disabled={loading}
-                                />
-                                <FormControlLabel
-                                    value="glutenFree"
-                                    control={<Radio />}
-                                    label="Gluten Free"
-                                    disabled={loading}
-                                />
-                            </RadioGroup>
-                        </Grid>
-                        <Grid size={{ xs: 12, md: 6 }}>
-                            <Typography variant="h5" gutterBottom>
-                                Cooking Time
-                            </Typography>
-                            <RadioGroup
-                                aria-label="duration"
-                                name="duration"
-                                value={duration}
-                                onChange={(e) => setDuration(e.target.value)}
-                            >
-                                <FormControlLabel
-                                    value="limited"
-                                    control={<Radio />}
-                                    label="Limited (Less than 30 minutes)"
-                                />
-                                <FormControlLabel
-                                    value="medium"
-                                    control={<Radio />}
-                                    label="Medium (About 1 hour)"
-                                />
-                                <FormControlLabel
-                                    value="extended"
-                                    control={<Radio />}
-                                    label="Extended (More than 1 hour)"
-                                />
-                            </RadioGroup>
-                        </Grid>
-                        <Grid spacing={3} size={12}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                color="primary"
-                                sx={{ mt: 2 }}
-                                disabled={loading}
-                            >
-                                Save All Changes
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </form>
-            </Paper>
-        ),
-        "Security Settings": (
-            <Paper elevation={3} sx={{ padding: 2 }}>
-                <Typography variant="h5" gutterBottom>
-                    Security Settings
-                </Typography>
-                <Box component="form" onSubmit={handleChangePassword}>
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={loading}
-                        startIcon={
-                            loading && (
-                                <CircularProgress size={24} color="inherit" />
-                            )
-                        }
-                        style={{ position: "relative" }}
-                    >
-                        Change Password
-                    </Button>
                 </Box>
+            </Paper>
+        ),
+        Securities: (
+            <Paper elevation={3} sx={{ padding: 2 }}>
+                <Grid container spacing={2}>
+                    <Grid
+                        component="form"
+                        onSubmit={handleChangePassword}
+                        item
+                        xs={12}
+                        md={4}
+                    >
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            disabled={loading}
+                            startIcon={
+                                loading && (
+                                    <CircularProgress
+                                        size={24}
+                                        color="inherit"
+                                    />
+                                )
+                            }
+                            style={{ position: "relative" }}
+                        >
+                            Change Password
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="button"
+                            onClick={() => setIsDialogOpen(true)}
+                            disabled={emailLoading}
+                        >
+                            Change Email
+                        </Button>
+                    </Grid>
+                </Grid>
             </Paper>
         ),
     };
@@ -306,6 +247,57 @@ const UserProfile = () => {
                     {value === index && settings[label]}
                 </div>
             ))}
+            <Dialog
+                open={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle
+                    sx={{ backgroundColor: "primary.main", color: "white" }}
+                >
+                    Change Email
+                </DialogTitle>
+                <DialogContent sx={{ padding: 3 }}>
+                    <DialogContentText sx={{ marginBottom: 2 }}>
+                        Please enter your new email address.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="New Email"
+                        type="email"
+                        fullWidth
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ padding: 2 }}>
+                    <Button
+                        onClick={() => setIsDialogOpen(false)}
+                        color="primary"
+                        variant="outlined"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleUpdateEmail}
+                        color="primary"
+                        variant="contained"
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+                <Backdrop
+                    sx={{
+                        color: "#fff",
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                    open={emailLoading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </Dialog>
         </Box>
     );
 };
