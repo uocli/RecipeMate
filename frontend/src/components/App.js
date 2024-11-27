@@ -56,6 +56,7 @@ const App = () => {
                             <ShoppingListEdit />
                         </ProtectedRoute>
                     }
+
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
