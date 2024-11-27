@@ -17,7 +17,12 @@ class ResetPasswordView(APIView):
         password = request.data["password"]
         # Invalid token
         token_obj = (
-            Token.objects.filter(user_id=user_id).order_by("-created_at").first()
+            Token.objects.filter(
+                user_id=user_id,
+                type=Token.TYPE_PASSWORD_RESET,
+            )
+            .order_by("-created_at")
+            .first()
         )
         if token_obj is None or token != token_obj.token or token_obj.is_used:
             return Response(

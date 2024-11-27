@@ -7,6 +7,13 @@ import {
     Tab,
     Box,
     CircularProgress,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Backdrop,
+    Grid2 as Grid,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
@@ -19,8 +26,10 @@ const UserProfile = () => {
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [loading, setLoading] = useState(false);
+    const [emailLoading, setEmailLoading] = useState(false);
+    const [newEmail, setNewEmail] = useState("");
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-    // Handle button click
     const handleChangePassword = (event) => {
         event.preventDefault();
         setLoading(true);
@@ -43,8 +52,31 @@ const UserProfile = () => {
             });
     };
 
+    const handleUpdateEmail = (event) => {
+        event.preventDefault();
+        setEmailLoading(true);
+        axiosInstance
+            .post("/api/email/change/", { new_email: newEmail })
+            .then((response) => {
+                const { status, data } = response || {},
+                    { success, message } = data || {};
+                if (status === 200 && success) {
+                    showAlert(message, "success");
+                    setIsDialogOpen(false);
+                    setNewEmail("");
+                } else {
+                    showAlert(message, "error");
+                }
+            })
+            .catch((_) => {
+                showAlert("Error updating email!", "error");
+            })
+            .finally(() => {
+                setEmailLoading(false);
+            });
+    };
+
     useEffect(() => {
-        // Fetch user data from the backend
         const initializeData = async () => {
             axiosInstance
                 .get("/api/user-profile/")
@@ -69,7 +101,6 @@ const UserProfile = () => {
     const handleAccountUpdate = (e) => {
         e.preventDefault();
         setLoading(true);
-        // Handle account update logic
         axiosInstance
             .post("/api/user-profile/", {
                 first_name: firstName,
@@ -91,7 +122,6 @@ const UserProfile = () => {
             });
     };
 
-    // Used to enhance accessibility (or a11y) for tab components in React.
     const a11yProps = (index) => {
         return {
             id: `tab-${index}`,
@@ -144,32 +174,44 @@ const UserProfile = () => {
         ),
         Securities: (
             <Paper elevation={3} sx={{ padding: 2 }}>
-                <Box
-                    component="form"
-                    onSubmit={handleChangePassword}
-                    sx={{
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 2,
-                        width: { xs: "100%", md: "33%" },
-                        margin: 0,
-                    }}
-                >
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        type="submit"
-                        disabled={loading}
-                        startIcon={
-                            loading && (
-                                <CircularProgress size={24} color="inherit" />
-                            )
-                        }
-                        style={{ position: "relative" }}
+                <Grid container spacing={2}>
+                    <Grid
+                        component="form"
+                        onSubmit={handleChangePassword}
+                        item
+                        xs={12}
+                        md={4}
                     >
-                        Change Password
-                    </Button>
-                </Box>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="submit"
+                            disabled={loading}
+                            startIcon={
+                                loading && (
+                                    <CircularProgress
+                                        size={24}
+                                        color="inherit"
+                                    />
+                                )
+                            }
+                            style={{ position: "relative" }}
+                        >
+                            Change Password
+                        </Button>
+                    </Grid>
+                    <Grid item xs={12} md={4}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            type="button"
+                            onClick={() => setIsDialogOpen(true)}
+                            disabled={emailLoading}
+                        >
+                            Change Email
+                        </Button>
+                    </Grid>
+                </Grid>
             </Paper>
         ),
     };
@@ -205,6 +247,57 @@ const UserProfile = () => {
                     {value === index && settings[label]}
                 </div>
             ))}
+            <Dialog
+                open={isDialogOpen}
+                onClose={() => setIsDialogOpen(false)}
+                maxWidth="md"
+                fullWidth
+            >
+                <DialogTitle
+                    sx={{ backgroundColor: "primary.main", color: "white" }}
+                >
+                    Change Email
+                </DialogTitle>
+                <DialogContent sx={{ padding: 3 }}>
+                    <DialogContentText sx={{ marginBottom: 2 }}>
+                        Please enter your new email address.
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        label="New Email"
+                        type="email"
+                        fullWidth
+                        value={newEmail}
+                        onChange={(e) => setNewEmail(e.target.value)}
+                    />
+                </DialogContent>
+                <DialogActions sx={{ padding: 2 }}>
+                    <Button
+                        onClick={() => setIsDialogOpen(false)}
+                        color="primary"
+                        variant="outlined"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleUpdateEmail}
+                        color="primary"
+                        variant="contained"
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+                <Backdrop
+                    sx={{
+                        color: "#fff",
+                        zIndex: (theme) => theme.zIndex.drawer + 1,
+                    }}
+                    open={emailLoading}
+                >
+                    <CircularProgress color="inherit" />
+                </Backdrop>
+            </Dialog>
         </Box>
     );
 };
