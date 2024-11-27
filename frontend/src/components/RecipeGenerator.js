@@ -12,12 +12,17 @@ import {
   Chip,
   Stack,
   CircularProgress,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,Grid2 as Grid,
   Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import useAxios from '../utils/useAxios'; 
 import { AuthContext } from "../utils/AuthContext";
 import { AlertContext } from "../utils/AlertContext";
-import FavoriteIcon from '@mui/icons-material/Favorite';
+import { FavoriteBorder, Favorite as FavoriteIcon } from '@mui/icons-material';
 
 const RecipeGenerator = () => {
   const axiosInstance = useAxios();
@@ -27,19 +32,42 @@ const RecipeGenerator = () => {
   const [loading, setLoading] = useState(false);
   const [recipe, setRecipe] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [preferences, setPreferences] = useState({
+    dietary_preference: '',
+    cooking_time: ''
+  });
 
-  const { setUser } = useContext(AuthContext);
-  // const [error, setError] = useState(null);
-  // const [preferences, setPreferences] = useState({
-  //   dietary_preference: '',
-  //   cooking_time: ''
-  // });
+  const dietaryOptions = [
+    { value: 'gluten_free', label: 'Gluten Free & Coeliac' },
+    { value: 'dairy_free', label: 'Dairy Free & Lactose Free' },
+    { value: 'vegetarian', label: 'Vegetarian' },
+    { value: 'vegan', label: 'Vegan' },
+    { value: 'paleo', label: 'Paleo' },
+    { value: 'fodmap', label: 'FODMAP' },
+    { value: 'nut_free', label: 'Tree Nut & Peanut Free' },
+    { value: 'fish_free', label: 'Fish & Shellfish Free' },
+    { value: 'keto', label: 'Ketogenic' }
+  ];
+
+  const cookingTimeOptions = [
+    { value: 'limited', label: 'Limited (< 30 mins)' },
+    { value: 'medium', label: 'Medium (~ 1 hour)' },
+    { value: 'Extended', label: 'Extended (> 1 hour)' }
+  ];
 
   const handleKeyDown = (event) => {
     if (event.key === 'Enter' && inputValue.trim()) {
       setIngredients([...ingredients, inputValue.trim()]);
       setInputValue('');
     }
+  };
+
+  const handlePreferenceChange = (event) => {
+    setPreferences({
+      ...preferences,
+      [event.target.name]: event.target.value
+    });
   };
 
   const handleFavorite = async () => {
@@ -51,6 +79,7 @@ const RecipeGenerator = () => {
       });
       
       if (response.data.success) {
+        setIsFavorite(true);
         showAlert('Recipe added to favorites!', 'success');
         setOpenDialog(false);
       }
@@ -65,7 +94,8 @@ const RecipeGenerator = () => {
 
     axiosInstance
       .post("/api/generate/", {
-        ingredients
+        ingredients,
+        preferences: preferences
       })
       .then((response) => {
         const { status, data } = response || {};
@@ -122,6 +152,48 @@ const RecipeGenerator = () => {
         </Stack>
       </Paper>
 
+      <Grid container spacing={2} sx={{ mt: 3, mb: 3 }}>
+        <Grid item xs={12} sm={6}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Dietary Preference</FormLabel>
+            <RadioGroup
+              name="dietary_preference"
+              value={preferences.dietary_preference}
+              onChange={handlePreferenceChange}
+            >
+              {dietaryOptions.map((option) => (
+                <FormControlLabel
+                  key={option.value}
+                  value={option.value}
+                  control={<Radio />}
+                  label={option.label}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+        
+        <Grid item xs={12} sm={6}>
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Cooking Time</FormLabel>
+            <RadioGroup
+              name="cooking_time"
+              value={preferences.cooking_time}
+              onChange={handlePreferenceChange}
+            >
+              {cookingTimeOptions.map((option) => (
+                <FormControlLabel
+                  key={option.value}
+                  value={option.value}
+                  control={<Radio />}
+                  label={option.label}
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        </Grid>
+      </Grid>
+
       <Button
         variant="contained"
         fullWidth
@@ -136,11 +208,11 @@ const RecipeGenerator = () => {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h5">{recipe.title}</Typography>
             <Button
-              startIcon={<FavoriteIcon />}
+              startIcon={isFavorite ? <FavoriteIcon color="error" /> : <FavoriteBorder />}
               onClick={() => setOpenDialog(true)}
               color="primary"
             >
-              Add to Favorites
+              {isFavorite ? 'Added to Favorites' : 'Add to Favorites'}
             </Button>
           </Box>
           <Typography variant="subtitle1" sx={{ mt: 2 }}>

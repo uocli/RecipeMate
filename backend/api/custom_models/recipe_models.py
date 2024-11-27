@@ -29,9 +29,15 @@ class Recipe(models.Model):
     dietary_preference = models.CharField(
         max_length=20,
         choices=(
-            ("vegetarian", "Vegetarian"),
-            ("vegan", "Vegan"),
-            ("glutenFree", "Gluten Free"),
+            ('gluten_free', 'Gluten Free & Coeliac'),
+            ('dairy_free', 'Dairy Free & Lactose Free'),
+            ('vegetarian', 'Vegetarian'),
+            ('vegan', 'Vegan'),
+            ('paleo', 'Paleo'),
+            ('fodmap', 'FODMAP'),
+            ('nut_free', 'Tree Nut & Peanut Free'),
+            ('fish_free', 'Fish & Shellfish Free'),
+            ('keto', 'Ketogenic'),
         ),
         blank=True,
         null=True,

@@ -32,9 +32,23 @@ class RecipeGeneratorView(APIView):
 
         dietary_pref = preferences.get('dietary_preference', '')
         cooking_time = preferences.get('cooking_time', '')
-        
+
+        dietary_instructions = {
+            'gluten_free': "Ensure no gluten-containing ingredients",
+            'dairy_free': "Exclude all dairy and lactose",
+            'vegetarian': "No meat products",
+            'vegan': "No animal products",
+            'paleo': "Follow paleo diet guidelines",
+            'fodmap': "Use only low FODMAP ingredients",
+            'nut_free': "No tree nuts or peanuts",
+            'fish_free': "No fish or shellfish",
+            'keto': "High fat, low carb ingredients only"
+        }
+
+        dietary_instruction = dietary_instructions.get(dietary_pref, "")
+
         return f"""Create a recipe using these ingredients: {ingredients_list}.
-        Dietary preferences: {dietary_pref}
+        Dietary restriction: {dietary_pref} - {dietary_instruction}
         Cooking time preference: {cooking_time}
         
        Format the response EXACTLY as this JSON object example:
@@ -129,9 +143,9 @@ class RecipeGeneratorView(APIView):
         try:
             ingredients = request.data.get('ingredients', [])
             user = request.user
-            preferences = self.get_user_preferences(user)
 
-            # print(f"User preferences from profile: {preferences}")
+            preferences = request.data.get('preferences', {})
+            # print(f"User preferences from front: {preferences}")
 
             if not self.validate_ingredients(ingredients):
                 return Response(
