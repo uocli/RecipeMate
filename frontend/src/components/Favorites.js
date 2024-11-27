@@ -40,7 +40,7 @@ const Favorites = () => {
         }
     };
 
-    
+
     return (
         <div className="container">
             <h1 className="header">Your Favorite Recipes</h1>
@@ -52,9 +52,17 @@ const Favorites = () => {
                         <li key={favorite.id} className="card">
                             <h2 className="title">{favorite.name}</h2>
                             <h3 className="subheading">Ingredients</h3>
-                            <p className="text">{favorite.ingredients}</p>
+                            <div className="text">
+                                {JSON.parse(favorite.ingredients).map((ingredient, index) => (
+                                    <p key={index}>{ingredient.ingredient} - {ingredient.quantity}</p>
+                                ))}
+                            </div>
                             <h3 className="subheading">Recipe</h3>
-                            <p className="text">{favorite.recipe}</p>
+                            <div className="text">
+                                {JSON.parse(favorite.recipe).map((step, index) => (
+                                    <p key={index}>{index + 1}. {step}</p>
+                                ))}
+                            </div>
                             <button
                                 onClick={() => handleRemoveFromFavorites(favorite.id)}
                                 className="button"

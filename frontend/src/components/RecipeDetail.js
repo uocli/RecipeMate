@@ -10,6 +10,8 @@ import {
     Chip,
     Rating,
     Button,
+    Box,
+    CircularProgress,
 } from "@mui/material";
 import { AlertContext } from "../utils/AlertContext";
 import { AuthContext } from "../utils/AuthContext";
@@ -61,7 +63,16 @@ const RecipeDetail = () => {
     };
 
     if (!recipe) {
-        return <Typography>Loading...</Typography>;
+        return (
+            <Box
+                display="flex"
+                justifyContent="center"
+                alignItems="center"
+                height="100vh"
+            >
+                <CircularProgress />
+            </Box>
+        );
     }
 
     return (

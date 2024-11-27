@@ -143,6 +143,7 @@ class RecipeGeneratorView(APIView):
         try:
             ingredients = request.data.get('ingredients', [])
             user = request.user
+
             preferences = request.data.get('preferences', {})
             # print(f"User preferences from front: {preferences}")
 
@@ -154,7 +155,9 @@ class RecipeGeneratorView(APIView):
 
             # Generate recipe logic here
             recipe_data = self.generate_recipe(ingredients, preferences)
+
             # print(f"recipe_data: {recipe_data}")
+
             # Check if generation was successful
             if recipe_data.get('title') == "Recipe Generation Error":
                 return Response(

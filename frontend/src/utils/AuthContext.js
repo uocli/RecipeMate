@@ -21,9 +21,21 @@ const AuthProvider = ({ children }) => {
             : null;
     });
     const [isAuthenticated, setIsAuthenticated] = useState(!!authTokens);
-    const [user, setUser] = useState({});
+    const [user, setNewUser] = useState(() => {
+        const acronym = Cookies.get("acronym");
+        return (acronym && { acronym }) || {};
+    });
 
     const { showAlert } = useContext(AlertContext);
+
+    const setUser = (user) => {
+        const { acronym } = user || {};
+        if (acronym) {
+            Cookies.set("acronym", acronym, { expires: 1 });
+        }
+        setNewUser(user);
+        setIsAuthenticated(!!user);
+    };
 
     const login = (tokens) => {
         setAuthTokens(tokens);

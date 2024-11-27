@@ -33,8 +33,6 @@ const RecipeGenerator = () => {
   const [recipe, setRecipe] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-
-  // const [error, setError] = useState(null);
   const [preferences, setPreferences] = useState({
     dietary_preference: '',
     cooking_time: ''

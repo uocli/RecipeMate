@@ -10,11 +10,13 @@ import {
     CardContent,
     CardMedia,
     Chip,
+    CircularProgress,
+    Box,
 } from "@mui/material";
 
 const RecipeList = () => {
     const [recipes, setRecipes] = useState([]);
-
+    const [loading, setLoading] = useState(true);
     useEffect(() => {
         axios
             .get("/api/recipes/")
@@ -26,14 +28,30 @@ const RecipeList = () => {
                     "There was an error fetching the recipes!",
                     error,
                 );
+            })
+            .finally(() => {
+                setLoading(false);
             });
     }, []);
 
-    return (
+    return loading ? (
+        <Box
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            height="100vh"
+        >
+            <CircularProgress />
+        </Box>
+    ) : (
         <Container>
-            <Typography variant="h5" gutterBottom>
-                Favorite Recipes
-            </Typography>
+            {recipes.length === 0 ? (
+                <></>
+            ) : (
+                <Typography variant="h5" gutterBottom>
+                    Favorite Recipes
+                </Typography>
+            )}
             <Grid container spacing={4}>
                 {recipes.map((recipe) => (
                     <Grid item key={recipe.uuid} xs={12} sm={6} md={4}>

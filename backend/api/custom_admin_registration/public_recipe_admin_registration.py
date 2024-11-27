@@ -35,7 +35,9 @@ class PublicRecipeAdmin(admin.ModelAdmin):
             file = request.FILES["file"]
             reader = csv.DictReader(file.read().decode("utf-8").splitlines())
             for row in reader:
-                ingredients_names = row.pop("ingredients").split(",")
+                ingredients_names = [
+                    name.strip().lower() for name in row.pop("ingredients").split(",")
+                ]
                 public_recipe = PublicRecipe.objects.create(**row)
                 for ingredient_name in ingredients_names:
                     ingredient, created = Ingredient.objects.get_or_create(
