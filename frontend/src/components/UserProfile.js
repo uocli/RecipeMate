@@ -96,7 +96,7 @@ const UserProfile = () => {
         initializeData().catch((_) => {
             showAlert("Error fetching user data!", "error");
         });
-    }, [setUser]);
+    }, []);
 
     const handleAccountUpdate = (e) => {
         e.preventDefault();
