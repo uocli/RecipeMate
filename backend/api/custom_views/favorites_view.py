@@ -5,7 +5,7 @@ from ..serializers.favorites_serializer import FavoriteSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
+import json
 
 class FavoriteListView(generics.ListCreateAPIView):
     serializer_class = FavoriteSerializer
@@ -32,23 +32,34 @@ class AddToShoppingListView(APIView):
             # Get the favorite recipe
             favorite = Favorite.objects.get(pk=pk, user=request.user)
             
-            # Split ingredients into a list (assuming they are comma-separated)
-            ingredients = favorite.ingredients.split(",")
+            # Parse the JSON string to get all the ingredient names
+            ingredients_data = json.loads(favorite.ingredients)
+            ingredients = [ingredient['ingredient'] for ingredient in ingredients_data]
 
             # Fetch existing shopping list items for the user
             existing_items = ShoppingListItem.objects.filter(user=request.user)
-            existing_ingredients = set(item.ingredient.lower() for item in existing_items)  # Normalize to lowercase for comparison
 
             added_ingredients = []  # Track successfully added ingredients
             for ingredient in ingredients:
                 ingredient_name = ingredient.strip()  # Remove extra spaces
-                if ingredient_name.lower() not in existing_ingredients:
+                
+                # Get the object with the same name as ingredient_name from existing_ingredients
+                existing_item = existing_items.filter(ingredient__iexact=ingredient_name).first()
+    
+                if not existing_item:
                     # Add to the shopping list if not already present
                     ShoppingListItem.objects.create(
                         user=request.user,
                         ingredient=ingredient_name,
                         quantity=0,  # Fixed quantity
+                        is_owned=False,  # Default to False
                     )
+                    added_ingredients.append(ingredient_name)
+                elif existing_item.is_owned:
+                    # Reset the is_owned status and quantity if the item is already marked is_owned in the shopping list
+                    existing_item.quantity = 0
+                    existing_item.is_owned = False
+                    existing_item.save()
                     added_ingredients.append(ingredient_name)
 
             if added_ingredients:
