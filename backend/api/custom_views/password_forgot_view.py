@@ -63,6 +63,7 @@ class PasswordForgotView(APIView):
             )
             context = {
                 "url": url,
+                "support_email": settings.EMAIL_HOST_USER,
             }
             send_email(subject, email, "password_forgot", context)
             return Response(

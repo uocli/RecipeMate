@@ -1,14 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Confirm Email Change</title>
-</head>
-<body>
-<p>Hi,</p>
-<p>Please confirm your email change by clicking the button below or using the link provided:</p>
-<a href="{{ url }}" style="display: inline-block; padding: 10px 20px; background-color: #4CAF50; color: white; text-decoration: none;">Confirm Email Change</a>
-<p>If the button is not clickable, use the following link:</p>
-<p><a href="{{ url }}">{{ url }}</a></p>
-<p>Regards,<br>Recipe Mate</p>
-</body>
-</html>
+{% extends "emails/base_email.html" %}
+
+{% block title %}Confirm Email Change{% endblock %}
+
+{% block content %}
+    <p>Hi,</p>
+    <p>Please confirm your email change by clicking the button below.</p>
+    <a href="{{ url }}" class="button">Confirm Email Change</a>
+    <p>If the button is not clickable, use the following link:</p>
+    <p><a href="{{ url }}">{{ url }}</a></p>
+    <p>Regards,<br>Recipe Mate</p>
+{% endblock %}

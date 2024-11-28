@@ -40,9 +40,9 @@ const AuthProvider = ({ children }) => {
     const login = (tokens) => {
         setAuthTokens(tokens);
         setIsAuthenticated(true);
-        Cookies.set("access_token", tokens.access);
-        Cookies.set("refresh_token", tokens.refresh);
-        Cookies.set("access_expiry", tokens.access_expiry);
+        Cookies.set("access_token", tokens?.access);
+        Cookies.set("refresh_token", tokens?.refresh);
+        Cookies.set("access_expiry", tokens?.access_expiry);
     };
 
     const logout = useCallback(() => {
