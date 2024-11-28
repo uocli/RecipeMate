@@ -94,6 +94,7 @@ class EmailChangeView(APIView):
             "url": urljoin(settings.BASE_URL, f"/complete-email-change?token={token}"),
             "old_email": user.email,
             "new_email": new_email,
+            "support_email": settings.EMAIL_HOST_USER,
         }
 
         # Email to the new email address
