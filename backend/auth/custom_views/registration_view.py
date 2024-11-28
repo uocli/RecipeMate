@@ -74,6 +74,7 @@ class SendInviteView(APIView):
             url = urljoin(settings.BASE_URL, f"/complete-signup?token={token}")
             context = {
                 "url": url,
+                "support_email": settings.EMAIL_HOST_USER,
             }
             send_email(subject, email, "invite_email", context)
             return Response(

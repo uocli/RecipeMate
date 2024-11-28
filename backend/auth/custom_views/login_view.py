@@ -5,9 +5,13 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from backend import settings
 from ..serializers.user_serializer import UserSerializer
 
+
 class LoginView(APIView):
+    is_local = settings.DEBUG
+
     def post(self, request, format=None):
         email = request.data["email"]
         password = request.data["password"]
@@ -36,8 +40,10 @@ class LoginView(APIView):
                 "access_token",
                 access_token,
                 samesite="Lax",
-                secure=True,
-                max_age=3600,  # 1 hour
+                secure=not self.is_local,  # To address the login issue in Safari
+                max_age=int(
+                    settings.SIMPLE_JWT["ACCESS_TOKEN_LIFETIME"].total_seconds()
+                ),  # To make sure max_age is consistent with SIMPLE_JWT settings
             )
 
             # Set Refresh Token Cookie
@@ -45,8 +51,10 @@ class LoginView(APIView):
                 "refresh_token",
                 refresh_token,
                 samesite="Lax",
-                secure=True,
-                max_age=86400 * 1,  # 1 day
+                secure=not self.is_local,  # To address the login issue in Safari
+                max_age=int(
+                    settings.SIMPLE_JWT["REFRESH_TOKEN_LIFETIME"].total_seconds()
+                ),  # To make sure max_age is consistent with SIMPLE_JWT settings
             )
 
             return response

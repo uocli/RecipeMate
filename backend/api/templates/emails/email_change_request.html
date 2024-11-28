@@ -1,12 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <title>Email Change Request</title>
-</head>
-<body>
-<p>Hi,</p>
-<p>An email change request has been made from {{ old_email }} to {{ new_email }}.</p>
-<p>If this request was not made intentionally, please contact our admin team immediately at hirecipatemate@gmail.com.</p>
-<p>Regards,<br>Recipe Mate</p>
-</body>
-</html>
+{% extends "emails/base_email.html" %}
+
+{% block title %}Email Change Request{% endblock %}
+
+{% block content %}
+    <p>Hi,</p>
+    <p>We have received a request to change the email address associated with your account from {{ old_email }} to {{ new_email }}.</p>
+    <p>If you did not initiate this request, please contact our support team immediately at {{ support_email }}.</p>
+    <p>Best regards,<br>Recipe Mate Team</p>
+{% endblock %}

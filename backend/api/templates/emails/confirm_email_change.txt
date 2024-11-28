@@ -1,10 +1,8 @@
 Hi,
 
-Please confirm your email change by clicking the link below:
+Please confirm your email change using the link below:
 
 {{ url }}
-
-If the link is not clickable, copy and paste it into your browser.
 
 Regards,
 Recipe Mate
