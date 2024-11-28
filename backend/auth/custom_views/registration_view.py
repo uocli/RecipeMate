@@ -154,6 +154,16 @@ class CompleteSignupView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+        context = {
+            "support_email": settings.EMAIL_HOST_USER,
+        }
+
+        send_email(
+            "Welcome to Recipe Mate!",
+            email,
+            "registration_success",
+            context,
+        )
         return Response(
             {
                 "success": True,

@@ -8,13 +8,16 @@ import Cookies from "js-cookie";
 
 const LoginForm = () => {
     const { showAlert } = useContext(AlertContext);
-    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login, setUser, isAuthenticated } = useContext(AuthContext);
 
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
+    // Get the Email from the URL
+    const queryParams = new URLSearchParams(location.search);
+    const initialEmail = queryParams.get("un") || "";
+    const [email, setEmail] = useState(initialEmail || "");
 
     useEffect(() => {
         if (isAuthenticated) {
