@@ -1,0 +1,10 @@
+Hi,
+
+Your email address has been successfully changed to {{ new_email }}.
+
+You can now log in with your new email address. Click the URL below to log in.
+
+{{ url }}
+
+Regards,
+Recipe Mate

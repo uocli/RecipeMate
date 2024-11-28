@@ -1,3 +1,4 @@
+import os.path
 from datetime import timedelta
 from urllib.parse import urljoin
 import hashlib
@@ -162,6 +163,7 @@ class CompleteEmailChangeView(APIView):
             )
 
         user = token_obj.user
+        old_email = user.email
         new_email = token_obj.email
 
         # Update the user's email
@@ -172,6 +174,28 @@ class CompleteEmailChangeView(APIView):
         # Mark the token as used
         token_obj.is_used = True
         token_obj.save(update_fields=["is_used"])
+
+        context = {
+            "new_email": new_email,
+            "support_email": settings.EMAIL_HOST_USER,
+            "url": os.path.join(settings.BASE_URL, f"login/?un={new_email}"),
+        }
+
+        # Notify the old email
+        send_email(
+            "Email Change Successful",
+            old_email,
+            "email_change_success_to_old",
+            context,
+        )
+
+        # Notify the new email
+        send_email(
+            "Email Change Successful",
+            new_email,
+            "email_change_success_to_new",
+            context,
+        )
 
         return Response(
             {
