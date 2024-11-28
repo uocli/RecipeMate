@@ -35,7 +35,7 @@ const drawerAnimation = keyframes`
 const ResponsiveHeader = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const navigate = useNavigate();
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
