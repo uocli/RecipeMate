@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { TextField, Button, Box, Link, Typography } from "@mui/material";
+import {
+    TextField,
+    Button,
+    Box,
+    Link,
+    Typography,
+    CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
@@ -7,6 +14,7 @@ import { AlertContext } from "../utils/AlertContext";
 
 const RegisterForm = () => {
     const [email, setEmail] = useState("");
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { isAuthenticated } = useContext(AuthContext);
     const { showAlert } = useContext(AlertContext);
@@ -32,7 +40,7 @@ const RegisterForm = () => {
             showAlert("Invalid email format!", "error");
             return;
         }
-
+        setLoading(true);
         axios
             .post("/auth/send-invite/", { email })
             .then((response) => {
@@ -54,6 +62,9 @@ const RegisterForm = () => {
                         "Error sending invite email",
                     "error",
                 );
+            })
+            .finally(() => {
+                setLoading(false);
             });
     };
 
@@ -75,6 +86,7 @@ const RegisterForm = () => {
                 value={email}
                 onChange={handleChange}
                 required
+                disabled={loading}
             />
             <Button
                 type="submit"
@@ -82,8 +94,10 @@ const RegisterForm = () => {
                 color="primary"
                 fullWidth
                 sx={{ marginTop: 2 }}
+                disabled={loading}
+                startIcon={loading && <CircularProgress size={20} />}
             >
-                Register
+                {loading ? "Submitting..." : "Register"}
             </Button>
             <Typography
                 variant="body2"
