@@ -178,7 +178,7 @@ class CompleteEmailChangeView(APIView):
         context = {
             "new_email": new_email,
             "support_email": settings.EMAIL_HOST_USER,
-            "url": os.path.join(settings.BASE_URL, "login"),
+            "url": os.path.join(settings.BASE_URL, f"login/?un={new_email}"),
         }
 
         # Notify the old email
