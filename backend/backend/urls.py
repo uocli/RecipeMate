@@ -24,5 +24,6 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("auth/", include("auth.urls")),
     path("favicon/", include("backend.favicon_urls")),
+    path("service-workers/", include("api.custom_urls.service_worker_urls")),
     re_path(r"^.*$", index),
 ]
