@@ -65,12 +65,7 @@ const RecipeList = () => {
                     Favorite Recipes
                 </Typography>
             )}
-            <Grid
-                container
-                spacing={4}
-                justifyContent="center"
-                alignItems="center"
-            >
+            <Grid container spacing={4}>
                 {recipes.map((recipe) => (
                     <Grid
                         item
