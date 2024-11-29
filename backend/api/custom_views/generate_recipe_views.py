@@ -15,7 +15,7 @@ class RecipeGeneratorView(APIView):
         try:
             self.client = OpenAI(
                 api_key=settings.OPENAI_API_KEY,
-                base_url="https://chatapi.littlewheat.com/v1/",
+                base_url=settings.OPENAI_BASE_URL,
             )
         except Exception as e:
             print(f"Error initializing OpenAI client: {str(e)}")
