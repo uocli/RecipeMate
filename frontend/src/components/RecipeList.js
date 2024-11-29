@@ -83,6 +83,13 @@ const RecipeList = () => {
                                 height: 300,
                                 width: 300,
                                 overflow: "hidden",
+                                borderRadius: "16px",
+                                boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                                transition: "transform 0.3s, box-shadow 0.3s",
+                                "&:hover": {
+                                    transform: "scale(1.05)",
+                                    boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)",
+                                },
                             }}
                         >
                             <CardActionArea
@@ -100,6 +107,7 @@ const RecipeList = () => {
                                         height: 200,
                                         width: "100%",
                                         objectFit: "cover",
+                                        borderRadius: "16px 16px 0 0",
                                     }}
                                     image={recipe.image_url}
                                     alt={recipe.name}
@@ -134,7 +142,19 @@ const RecipeList = () => {
                                                     key={index}
                                                     label={ingredient.name}
                                                     size="small"
-                                                    sx={{ margin: "2px" }}
+                                                    sx={{
+                                                        margin: "2px",
+                                                        background:
+                                                            "linear-gradient(45deg, #FD6B8B, #FF8C9D)",
+                                                        color: "#fff",
+                                                        borderRadius: "8px",
+                                                        boxShadow:
+                                                            "0 2px 4px rgba(0, 0, 0, 0.1)",
+                                                        "&:hover": {
+                                                            background:
+                                                                "linear-gradient(45deg, #FF8C9D, #FD6B8B)",
+                                                        },
+                                                    }}
                                                 />
                                             ),
                                         )}
