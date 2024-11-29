@@ -13,10 +13,8 @@ import {
   Stack,
   CircularProgress,
   FormControl,
-  FormLabel,
-  RadioGroup,
-  FormControlLabel,
-  Radio,Grid2 as Grid,
+  Select, MenuItem, InputLabel,
+  Grid2 as Grid,
   Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import useAxios from '../utils/useAxios'; 
@@ -39,7 +37,7 @@ const RecipeGenerator = () => {
   });
 
   const dietaryOptions = [
-    { value: '', label: 'None' },  // Added None options
+    { value: 'none', label: 'None' },  // Added None options
     { value: 'gluten_free', label: 'Gluten Free & Coeliac' },
     { value: 'dairy_free', label: 'Dairy Free & Lactose Free' },
     { value: 'vegetarian', label: 'Vegetarian' },
@@ -123,10 +121,7 @@ const RecipeGenerator = () => {
   
 
   return (
-    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 8, p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Recipe Generator
-      </Typography>
+    <Box sx={{ maxWidth: 800, mx: 'auto', mt: 3, p: 3 }}>
 
       <Paper sx={{ p: 3, mb: 3 }}>
         <Typography variant="h6" gutterBottom>
@@ -154,46 +149,42 @@ const RecipeGenerator = () => {
       </Paper>
 
       <Grid container spacing={2} sx={{ mt: 3, mb: 3 }}>
-        <Grid item xs={12} sm={6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Dietary Preference</FormLabel>
-            <RadioGroup
+        <Grid item xs={12} sm={6} minWidth='180px'>
+          <FormControl fullWidth>
+            <InputLabel>Dietary Preference</InputLabel>
+            <Select
               name="dietary_preference"
               value={preferences.dietary_preference}
+              label="Dietary Preference"
               onChange={handlePreferenceChange}
             >
               {dietaryOptions.map((option) => (
-                <FormControlLabel
-                  key={option.value}
-                  value={option.value}
-                  control={<Radio />}
-                  label={option.label}
-                />
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
               ))}
-            </RadioGroup>
+            </Select>
           </FormControl>
         </Grid>
         
-        <Grid item xs={12} sm={6}>
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Cooking Time</FormLabel>
-            <RadioGroup
-              name="cooking_time"
-              value={preferences.cooking_time}
-              onChange={handlePreferenceChange}
-            >
-              {cookingTimeOptions.map((option) => (
-                <FormControlLabel
-                  key={option.value}
-                  value={option.value}
-                  control={<Radio />}
-                  label={option.label}
-                />
-              ))}
-            </RadioGroup>
-          </FormControl>
-        </Grid>
+        <Grid item xs={12} sm={6} minWidth='150px'>
+        <FormControl fullWidth>
+          <InputLabel>Cooking Time</InputLabel>
+          <Select
+            name="cooking_time"
+            value={preferences.cooking_time}
+            label="Cooking Time"
+            onChange={handlePreferenceChange}
+          >
+            {cookingTimeOptions.map((option) => (
+              <MenuItem key={option.value} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
       </Grid>
+    </Grid>
 
       <Button
         variant="contained"
