@@ -34,7 +34,7 @@ class RecipeGeneratorView(APIView):
         cooking_time = preferences.get('cooking_time', '')
 
         dietary_instructions = {
-            '': "No dietary restrictions",  # Added None option
+            'none': "No dietary restrictions",  # Added None option
             'gluten_free': "Ensure no gluten-containing ingredients",
             'dairy_free': "Exclude all dairy and lactose",
             'vegetarian': "No meat products",
@@ -46,10 +46,10 @@ class RecipeGeneratorView(APIView):
             'keto': "High fat, low carb ingredients only"
         }
 
-        dietary_instruction = dietary_instructions.get(dietary_pref, "")
+        dietary_instruction = dietary_instructions.get(dietary_pref, "No dietary restrictions")
 
         return f"""Create a recipe using these ingredients: {ingredients_list}.
-        Dietary restriction: {dietary_pref if dietary_pref else 'None'} - {dietary_instruction}
+        Dietary restriction: {dietary_pref if dietary_pref != 'none' else 'None'} - {dietary_instruction}
         Cooking time preference: {cooking_time}
         
        Format the response EXACTLY as this JSON object example:
