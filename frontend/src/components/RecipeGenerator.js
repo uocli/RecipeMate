@@ -39,6 +39,7 @@ const RecipeGenerator = () => {
   });
 
   const dietaryOptions = [
+    { value: '', label: 'None' },  // Added None options
     { value: 'gluten_free', label: 'Gluten Free & Coeliac' },
     { value: 'dairy_free', label: 'Dairy Free & Lactose Free' },
     { value: 'vegetarian', label: 'Vegetarian' },
