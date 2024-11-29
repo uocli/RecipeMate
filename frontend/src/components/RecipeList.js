@@ -67,27 +67,48 @@ const RecipeList = () => {
             )}
             <Grid container spacing={4}>
                 {recipes.map((recipe) => (
-                    <Grid item key={recipe.uuid} xs={12} sm={6} md={4}>
+                    <Grid
+                        item
+                        key={recipe.uuid}
+                        xs={12}
+                        sm={6}
+                        md={6}
+                        lg={4}
+                        xl={3}
+                    >
                         <Card
-                            style={{
-                                width: "100%",
-                                maxWidth: "300px",
-                                height: "auto",
+                            sx={{
+                                display: "flex",
+                                flexDirection: "column",
+                                height: 300,
+                                width: 300,
                             }}
                         >
                             <CardActionArea
                                 component={Link}
                                 to={`/recipe/${recipe.uuid}`}
-                                style={{ height: "100%" }}
+                                sx={{
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    height: "100%",
+                                }}
                             >
                                 <CardMedia
                                     component="img"
-                                    height="140"
+                                    sx={{
+                                        height: 200,
+                                        width: "100%",
+                                        objectFit: "cover",
+                                    }}
                                     image={recipe.image_url}
                                     alt={recipe.name}
-                                    style={{ objectFit: "cover" }}
                                 />
-                                <CardContent>
+                                <CardContent
+                                    sx={{
+                                        flex: "1 1 auto",
+                                        overflow: "hidden",
+                                    }}
+                                >
                                     <Typography
                                         variant="h5"
                                         component="div"
@@ -102,7 +123,7 @@ const RecipeList = () => {
                                                     key={index}
                                                     label={ingredient.name}
                                                     size="small"
-                                                    style={{ margin: "2px" }}
+                                                    sx={{ margin: "2px" }}
                                                 />
                                             ),
                                         )}
