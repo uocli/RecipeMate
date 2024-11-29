@@ -54,7 +54,19 @@ class RecipeRateView(APIView):
                 defaults={"rating": rating_value},
             )
 
-            return Response({"message": "Rating updated successfully"})
+            # Reuse RecipeListView to get the updated list of recipes
+            recipes_view = RecipeListView()
+            response = recipes_view.get(request)
+            updated_recipes = response.data
+
+            return Response(
+                {
+                    "success": True,
+                    "message": "Rating updated successfully",
+                    "recipes": updated_recipes,
+                },
+                status=status.HTTP_200_OK,
+            )
         except PublicRecipe.DoesNotExist:
             return Response(
                 {"message": "Recipe could not be found!"},

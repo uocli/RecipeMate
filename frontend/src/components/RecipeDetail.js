@@ -21,6 +21,7 @@ import { AuthContext } from "../utils/AuthContext";
 import useAxios from "../utils/useAxios";
 
 const RecipeDetail = () => {
+    const SESSION_STORAGE_KEY = "recipemate__recipes";
     const { uuid } = useParams();
     const [recipe, setRecipe] = useState(null);
     const [rating, setRating] = useState(0);
@@ -54,8 +55,19 @@ const RecipeDetail = () => {
         setRating(newValue);
         axiosInstance
             .post(`/api/recipe/${uuid}/rate/`, { rating: newValue })
-            .then((_) => {
-                showAlert("Rating updated successfully", "success");
+            .then((response) => {
+                const { status, data } = response || {},
+                    { success, message, recipes: updatedRecipes } = data || {};
+                if (status === 200 && success) {
+                    showAlert(message, "success");
+                    // Update the local sessionStorage with the latest recipes list
+                    sessionStorage.setItem(
+                        SESSION_STORAGE_KEY,
+                        JSON.stringify(updatedRecipes),
+                    );
+                } else {
+                    showAlert(message || "Error updating rating!", "error");
+                }
             })
             .catch((error) => {
                 console.error("There was an error updating the rating!", error);
