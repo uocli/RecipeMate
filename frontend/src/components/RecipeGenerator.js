@@ -33,14 +33,13 @@ const RecipeGenerator = () => {
   const [recipe, setRecipe] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
-
-  // const [error, setError] = useState(null);
   const [preferences, setPreferences] = useState({
     dietary_preference: '',
     cooking_time: ''
   });
 
   const dietaryOptions = [
+    { value: '', label: 'None' },  // Added None options
     { value: 'gluten_free', label: 'Gluten Free & Coeliac' },
     { value: 'dairy_free', label: 'Dairy Free & Lactose Free' },
     { value: 'vegetarian', label: 'Vegetarian' },

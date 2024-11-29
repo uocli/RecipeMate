@@ -29,6 +29,7 @@ class Recipe(models.Model):
     dietary_preference = models.CharField(
         max_length=20,
         choices=(
+            ('', 'None'),  # Added None option
             ('gluten_free', 'Gluten Free & Coeliac'),
             ('dairy_free', 'Dairy Free & Lactose Free'),
             ('vegetarian', 'Vegetarian'),
@@ -41,6 +42,7 @@ class Recipe(models.Model):
         ),
         blank=True,
         null=True,
+        default=''  # Set default to empty string for None
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

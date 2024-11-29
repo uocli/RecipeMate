@@ -15,6 +15,24 @@ class LoginView(APIView):
     def post(self, request, format=None):
         email = request.data["email"]
         password = request.data["password"]
+        if email is None or email.strip() == "":
+            return Response(
+                {
+                    "success": False,
+                    "message": "Email is required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+        if password is None or password.strip() == "":
+            return Response(
+                {
+                    "success": False,
+                    "message": "Password is required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        email = email.strip().lower()
         user = User.objects.filter(username=email).first()
         if (
             user is None

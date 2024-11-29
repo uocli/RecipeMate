@@ -25,6 +25,7 @@ const App = () => {
             <Routes>
                 <Route path="/" exact element={<Home />} />
                 <Route path="/about" element={<About />} />
+
                 <Route
                     path="/profile"
                     element={
@@ -56,6 +57,7 @@ const App = () => {
                             <ShoppingListEdit />
                         </ProtectedRoute>
                     }
+
                 />
                 <Route path="/signup" element={<RegisterForm />} />
                 <Route path="/login" element={<LoginForm />} />
