@@ -108,10 +108,11 @@ const ResponsiveHeader = () => {
                         onClick={() => navigate("/")}
                     />
                     <Typography
-                        variant="h4"
+                        variant="h5"
                         sx={{
                             flexGrow: 1,
                             fontFamily: "'Madimi One', cursive, sans-serif",
+                            fontWeight: "bold",
                         }}
                     >
                         <Link
