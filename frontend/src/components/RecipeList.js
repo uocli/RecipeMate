@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import {
@@ -15,23 +15,36 @@ import {
 } from "@mui/material";
 
 const RecipeList = () => {
+    const SESSION_STORAGE_KEY = "recipemate__recipes";
+
     const [recipes, setRecipes] = useState([]);
     const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        axios
-            .get("/api/recipes/")
-            .then((response) => {
-                setRecipes(response.data);
-            })
-            .catch((error) => {
-                console.error(
-                    "There was an error fetching the recipes!",
-                    error,
-                );
-            })
-            .finally(() => {
-                setLoading(false);
-            });
+        const cachedRecipes = sessionStorage.getItem(SESSION_STORAGE_KEY);
+        if (cachedRecipes) {
+            setRecipes(JSON.parse(cachedRecipes));
+            setLoading(false);
+        } else {
+            axios
+                .get("/api/recipes/")
+                .then((response) => {
+                    setRecipes(response.data);
+                    sessionStorage.setItem(
+                        SESSION_STORAGE_KEY,
+                        JSON.stringify(response.data),
+                    );
+                })
+                .catch((error) => {
+                    console.error(
+                        "There was an error fetching the recipes!",
+                        error,
+                    );
+                })
+                .finally(() => {
+                    setLoading(false);
+                });
+        }
     }, []);
 
     return loading ? (
