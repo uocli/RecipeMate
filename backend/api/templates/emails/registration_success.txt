@@ -1,0 +1,5 @@
+Thank you for registering with Recipe Mate. Your registration was successful!
+If you have any questions, feel free to contact our support team at {{ support_email }}.
+
+Regards,
+Recipe Mate

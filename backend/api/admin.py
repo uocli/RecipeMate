@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .custom_models.favorites_model import Favorite  # Import the Favorite model
 
+from .custom_admin_registration.public_recipe_admin_registration import (
+    PublicRecipeAdmin,
+)
+from .custom_admin_registration.ingredient_admin_registration import IngredientAdmin
 from .custom_models.user_profile_models import UserProfile
 
 admin.site.register(UserProfile)

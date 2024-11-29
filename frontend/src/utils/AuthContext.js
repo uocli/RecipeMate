@@ -1,7 +1,13 @@
-import React, { createContext, useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import {
+    createContext,
+    useState,
+    useCallback,
+    useEffect,
+    useContext,
+} from "react";
 import Cookies from "js-cookie";
+import axios from "axios";
+import { AlertContext } from "./AlertContext";
 
 export const AuthContext = createContext();
 
@@ -9,75 +15,108 @@ const AuthProvider = ({ children }) => {
     const [authTokens, setAuthTokens] = useState(() => {
         const access = Cookies.get("access_token");
         const refresh = Cookies.get("refresh_token");
-        return access && refresh ? { access, refresh } : null;
+        const access_expiry = Cookies.get("access_expiry");
+        return access && refresh && access_expiry
+            ? { access, refresh, access_expiry }
+            : null;
     });
     const [isAuthenticated, setIsAuthenticated] = useState(!!authTokens);
-    const [user, setUser] = useState({});
-    const navigate = useNavigate();
+    const [user, setNewUser] = useState(() => {
+        const acronym = Cookies.get("acronym");
+        return (acronym && { acronym }) || {};
+    });
+
+    const { showAlert } = useContext(AlertContext);
+
+    const setUser = (user) => {
+        const { acronym } = user || {};
+        if (acronym) {
+            Cookies.set("acronym", acronym, { expires: 1 });
+        }
+        setNewUser(user);
+        setIsAuthenticated(!!user);
+    };
 
     const login = (tokens) => {
         setAuthTokens(tokens);
         setIsAuthenticated(true);
-        Cookies.set("access_token", tokens.access);
-        Cookies.set("refresh_token", tokens.refresh);
+        Cookies.set("access_token", tokens?.access);
+        Cookies.set("refresh_token", tokens?.refresh);
+        Cookies.set("access_expiry", tokens?.access_expiry);
     };
 
-    const logout = useCallback(async () => {
-        await axios.post("/auth/logout/");
+    const logout = useCallback(() => {
         setAuthTokens(null);
         setIsAuthenticated(false);
         Cookies.remove("access_token");
         Cookies.remove("refresh_token");
-        navigate("/");
-    }, [navigate]);
+        Cookies.remove("access_expiry");
+    }, []);
 
-    const refreshToken = useCallback(async () => {
-        try {
-            const response = await axios.post("/auth/token/refresh/", {
-                refresh: authTokens.refresh,
-            });
-            setAuthTokens(response.data);
-            Cookies.set("access_token", response.data.access);
-        } catch (error) {
-            logout();
+    const verifyToken = useCallback(async () => {
+        if (!authTokens) {
+            setIsAuthenticated(false);
+            return;
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+        const tokenExpiry = authTokens.access_expiry;
+
+        if (tokenExpiry < now) {
+            try {
+                const response = await axios.post("/auth/token/refresh/", {
+                    refresh: authTokens.refresh,
+                });
+                const newTokens = {
+                    ...response.data,
+                };
+                setAuthTokens(newTokens);
+                Cookies.set("access_token", newTokens.access);
+                Cookies.set("refresh_token", newTokens.refresh);
+                Cookies.set("access_expiry", newTokens.access_expiry);
+                setIsAuthenticated(true);
+            } catch (error) {
+                showAlert(
+                    "Session expired. Please log in again.",
+                    "error",
+                    5000,
+                );
+            }
+        } else {
+            try {
+                await axios.post(
+                    "/auth/token/verify/",
+                    {},
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${authTokens.access}`,
+                            "X-CSRFToken": Cookies.get("csrftoken"),
+                        },
+                    },
+                );
+                setIsAuthenticated(true);
+            } catch (error) {
+                logout();
+            }
         }
     }, [authTokens, logout]);
 
     useEffect(() => {
-        const verifyToken = async () => {
-            if (authTokens) {
-                try {
-                    await axios.post(
-                        "/auth/token/verify/",
-                        {},
-                        {
-                            headers: {
-                                "Content-Type": "application/json",
-                                Authorization: `Bearer ${authTokens.access}`,
-                                "X-CSRFToken": Cookies.get("csrftoken"),
-                            },
-                        },
-                    );
-                    setIsAuthenticated(true);
-                } catch {
-                    refreshToken();
-                }
-            } else {
-                setIsAuthenticated(false);
-            }
-        };
         verifyToken();
-    }, [authTokens, refreshToken]);
+    }, [verifyToken]);
 
     return (
         <AuthContext.Provider
             value={{
                 isAuthenticated,
+                setIsAuthenticated,
                 login,
                 logout,
                 user,
                 setUser,
                 authTokens,
+                setAuthTokens,
             }}
         >
             {children}

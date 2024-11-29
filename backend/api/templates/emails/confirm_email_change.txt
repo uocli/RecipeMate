@@ -1,0 +1,8 @@
+Hi,
+
+Please confirm your email change using the link below:
+
+{{ url }}
+
+Regards,
+Recipe Mate

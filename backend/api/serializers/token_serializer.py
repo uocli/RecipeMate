@@ -11,5 +11,7 @@ class TokenSerializer(serializers.ModelSerializer):
             "created_at",
             "expires_at",
             "user",
+            "email",
             "is_used",
+            "type",
         ]

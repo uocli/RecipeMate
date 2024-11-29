@@ -1,0 +1,10 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Email Change Request{% endblock %}
+
+{% block content %}
+    <p>Hi,</p>
+    <p>We have received a request to change the email address associated with your account from {{ old_email }} to {{ new_email }}.</p>
+    <p>If you did not initiate this request, please contact our support team immediately at {{ support_email }}.</p>
+    <p>Best regards,<br>Recipe Mate Team</p>
+{% endblock %}

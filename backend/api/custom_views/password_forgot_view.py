@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from ..custom_models.token_model import Token
 from ..serializers.token_serializer import TokenSerializer
 from ..utils.email_utils import send_email
 
@@ -49,6 +50,7 @@ class PasswordForgotView(APIView):
             "created_at": created_at,
             "expires_at": expires_at,
             "user": user.id,
+            "type": Token.TYPE_PASSWORD_RESET,
         }
 
         serializer = TokenSerializer(data=token_obj)
@@ -61,6 +63,7 @@ class PasswordForgotView(APIView):
             )
             context = {
                 "url": url,
+                "support_email": settings.EMAIL_HOST_USER,
             }
             send_email(subject, email, "password_forgot", context)
             return Response(

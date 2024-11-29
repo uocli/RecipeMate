@@ -1,0 +1,10 @@
+{% extends "emails/base_email.html" %}
+
+{% block title %}Email Change Successful{% endblock %}
+
+{% block content %}
+    <p>Hi,</p>
+    <p>Your email address has been successfully changed to {{ new_email }}.</p>
+    <p>You can now log in with your new email address. Click <a href="{{ url }}">here</a> to log in.</p>
+    <p>Regards,<br>Recipe Mate</p>
+{% endblock %}

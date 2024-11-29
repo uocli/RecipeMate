@@ -1,107 +1,105 @@
 # Recipe Mate
-## Description
-The project is a group assignment of course GNG5300[A].
-- It is developed using Django and React.
-- The UI is designed using [Material-UI](https://mui.com).
-## Installation
-- Clone the repository
+
+**Recipe Mate** is a powerful, AI-driven recipe generator designed to create personalized meal plans and grocery lists based on users’ dietary preferences and available
+ingredients.
+
+## Features
+
+- 🥘 **Personalized Recipes**: Generate recipes based on dietary preferences and available ingredients.
+- 🛒 **Grocery List Generation**: Automatically create grocery lists for selected recipes.
+- 🤖 **AI-Powered Recommendations**: Use generative AI to suggest meals tailored to users’ needs.
+- 📱 **Responsive Design**: Accessible on both desktop and mobile devices.
+- 🔒 **Secure User Authentication**: Sign up or log in to manage recipes and meal plans.
+
+## Technologies Used
+
+- **Frontend**: [React.js](https://react.dev) with [Material UI](https://mui.com) for styling.
+- **Backend**: [Django](https://www.djangoproject.com) REST Framework for API development.
+- **Database**: PostgreSQL for efficient data storage.
+- **AI Integration**: Powered by generative AI for recipe creation.
+- **Deployment**: Hosted on Heroku.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js and npm
+- Python 3.x
+
+### Installation
+
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/uocli/RecipeMate.git
+    cd RecipeMate
+    ```
+
+2. Set up the backend (Django):
+   ```bash
+    cd backend
+    python -m venv venv
+    source venv/bin/activate  # For Windows: venv\Scripts\activate
+    pip install -r requirements.txt
+    python manage.py migrate
+    python manage.py runserver
+    ```
+   
+3. Set up the frontend (React):
+    ```bash
+   cd ../frontend
+    npm install
+    npm build
+    ```
+   
+4. Open `http://localhost:8000` in your browser to view the app.
+
+### Usage
+1.	Sign up or log in to your account.
+2.	Input your available ingredients or dietary preferences.
+3.	Browse and select recipes from the generated list.
+4.	Generate a grocery list for selected recipes.
+5.	Optionally, arrange grocery delivery.
+
+## Project Structure
 ```bash
-git clone https://github.com/uocli/RecipeMate.git
-```
-- Create a virtual environment
-```bash
-cd RecipeMate
-python3 -m venv venv
-```
-- Install the Python dependencies
-```bash
-pip install -r requirements.txt
-```
-- Install the Node.js dependencies (Make sure you have Node.js installed)
-```bash
-cd frontend
-npm install
-```
-- Build the frontend
-```bash
-cd frontend #ignore this if you are already in the frontend directory
-npm run build
-```
-_Note_: If `npm run watch` is working, you can try that out to detect every change within the frontend/src folder. Otherwise, you have to run `npm run build` every time you make a change in the frontend/src folder.
-- Run the Django server
-```bash
-cd ../backend # or cd backend if you are in the root directory
-python manage.py runserver
-```
-If all goes well, you can access the application at `http://127.0.0.1:8000/` locally.
-## Views and URLs
-As we are working as a team, if we build functions on top of the same views `api/views.py` urls `api/urls.py`
-or serializers `api/serializers.py` conflicts may arise when we make a pull request since we are working on the same files, sometimes even the same lines.
-
-To avoid this, we introduced a custom_views and custom_urls directories to manage smaller views and urls.
-The main views and urls are still in the `views.py` and `urls.py` files. But creating your own views and urls
-in the custom_views and custom_urls directories is highly recommended and will help you avoid any code conflicts.
-Let's take the token views as an example.
-
-There are three urls related to the token functions.
-- ObtainAuthToken
-- VerifyAuthToken
-- RefreshAuthToken
-
-We can definitely implement these views and urls in the main `views.py` and `urls.py` files.
-But it is better to create a new file to manage them in the `custom_views` and `custom_urls` directories.
-
-The main urls.py file will look like this:
-```python
-from django.urls import path, include
-
-urlpatterns = [
-    # ...
-    path("token/", include("auth.custom_urls.token_urls")),
-    # ...
-]
-```
-While in the `custom_urls/token_urls.py` file, we will have:
-```python
-from django.urls import path
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
-from ..custom_views.token_views import VerifyTokenView
-
-urlpatterns = [
-    path("", TokenObtainPairView.as_view(), name="token_obtain"),
-    path("verify/", VerifyTokenView.as_view(), name="token_verify"),
-    path("refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-]
-```
-We can now have smaller views for different tasks.
-This gives us the flexibility to work on different tasks without conflicts.
-Moreover, it makes the code more readable and maintainable.
-```text
-custom_views
-	|-- __init__.py
-	|-- csrf_token_view.py
-	|-- login_view.py
-	|-- registration_view.py
-	|-- token_views.py
+RecipeMate/
+├── backend/
+│   ├── manage.py
+│   ├── settings.py
+│   ├── models.py
+│   └── ...
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   └── App.js
+│   └── package.json
+└── README.md
 ```
 
-## Development Process
-- A User Story is created for each task. The assignee will be responsible for the task.
-- The task will be developed in a separate branch. You have different ways of creating a new branch.
-  - Create a new branch from the terminal`bash git checkout -b <branch-name>`
-  - Create a new branch from the GitHub UI
-  - ![](https://cdn.jsdelivr.net/gh/uocli/img@main/2024-11-01/03MatE.png "Create Branch from Dropdown")
-  - ![](https://cdn.jsdelivr.net/gh/uocli/img@main/2024-11-01/qxBXtz.png "Create Branch from Button")
-- Build the task in the branch.
-- Test the task locally.
-- Commit the changes to the branch.
-  - `git add .`
-  - `git commit -m "Commit message"`
-  - `git push`
-- Once the task is completed, a pull request will be created from the dev branch to the **qa** branch which is pointing to the [qa environment](https://qa.recipemate.uocli.me/).
-  - ![](https://cdn.jsdelivr.net/gh/uocli/img@main/2024-11-01/fzurrL.png "Create Pull Request")
-- The tester will be performing the testing in the qa environment.
-- Once the testing is completed, a pull request will be created from the dev branch to the **main** branch which is pointing to the [production environment](https://recipemate.uocli.me/).
+## Contributing
+We welcome contributions! Follow these steps to contribute:
+1.	Fork the repository.
+2.	Create a new branch (git checkout -b feature-name).
+3.	Make your changes and commit them (git commit -m 'Add feature').
+4.	Push to the branch (git push origin feature-name).
+5.	Open a pull request.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+## Contact
+For any inquiries or feedback, please contact the team members or create an issue on GitHub. 
+
+GitHub Issues: [Create an issue](https://github.com/uocli/RecipeMate/issues/new)
+
+Our Development Team:
+
+| Name     | Email               |
+|----------|---------------------|
+| Mingzhao | myu058@uottawa.ca   |
+| Xinye    | xzhu019@uottawa.ca  |
+| Pouria   | pbahr076@uottawa.ca |
+| Chenyang | cli049@uottawa.ca   |
+
+
