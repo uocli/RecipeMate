@@ -33,6 +33,15 @@ class SendInviteView(APIView):
 
     def post(self, request, format=None):
         email = request.data["email"]
+        if email is None or email.strip() == "":
+            return Response(
+                {
+                    "success": False,
+                    "message": "Email is required!",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        email = email.strip().lower()
         user = User.objects.filter(email=email).first()
         if user is not None:
             return Response(
