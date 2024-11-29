@@ -22,7 +22,15 @@ class EmailChangeView(APIView):
     def post(self, request):
         user = request.user
         new_email = request.data.get("new_email")
-
+        if new_email is None or new_email.strip() == "":
+            return Response(
+                {
+                    "success": False,
+                    "message": "New email is required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+        new_email = new_email.strip().lower()
         # Validate email format
         try:
             validate_email(new_email)
