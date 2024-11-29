@@ -21,11 +21,22 @@ import { Menu as MenuIcon } from "@mui/icons-material";
 import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
+import { keyframes } from "@emotion/react";
+import logo from "../assets/logo.png";
+
+const drawerAnimation = keyframes`
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+`;
 
 const ResponsiveHeader = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+    const isMobile = useMediaQuery(theme.breakpoints.down("md"));
     const navigate = useNavigate();
     const { isAuthenticated, logout, user } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
@@ -72,7 +83,13 @@ const ResponsiveHeader = () => {
     return (
         <Box sx={{ display: "flex" }}>
             <CssBaseline />
-            <AppBar position="fixed">
+            <AppBar
+                position="fixed"
+                sx={{
+                    background:
+                        "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                }}
+            >
                 <Toolbar>
                     {isMobile && (
                         <IconButton
@@ -84,7 +101,19 @@ const ResponsiveHeader = () => {
                             <MenuIcon />
                         </IconButton>
                     )}
-                    <Typography variant="h6" sx={{ flexGrow: 1 }}>
+                    <Avatar
+                        src={logo}
+                        alt="Logo"
+                        sx={{ marginRight: 2, cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    />
+                    <Typography
+                        variant="h4"
+                        sx={{
+                            flexGrow: 1,
+                            fontFamily: "'Madimi One', cursive, sans-serif",
+                        }}
+                    >
                         <Link
                             component="button"
                             style={{ textDecoration: "none", color: "white" }}
@@ -101,6 +130,12 @@ const ResponsiveHeader = () => {
                                     color="inherit"
                                     key={text}
                                     onClick={() => navigate(path)}
+                                    sx={{
+                                        "&:hover": {
+                                            backgroundColor: "#FF8E53",
+                                            color: "white",
+                                        },
+                                    }}
                                 >
                                     {text}
                                 </Button>
@@ -112,12 +147,24 @@ const ResponsiveHeader = () => {
                             <Button
                                 color="inherit"
                                 onClick={() => navigate("/login")}
+                                sx={{
+                                    "&:hover": {
+                                        backgroundColor: "#FF8E53",
+                                        color: "white",
+                                    },
+                                }}
                             >
                                 Sign In
                             </Button>
                             <Button
                                 color="inherit"
                                 onClick={() => navigate("/signup")}
+                                sx={{
+                                    "&:hover": {
+                                        backgroundColor: "#FF8E53",
+                                        color: "white",
+                                    },
+                                }}
                             >
                                 Sign Up
                             </Button>
@@ -158,6 +205,9 @@ const ResponsiveHeader = () => {
                 anchor="left"
                 open={drawerOpen}
                 onClose={toggleDrawer(false)}
+                sx={{
+                    animation: `${drawerAnimation} 0.3s ease-out`,
+                }}
             >
                 {drawerContent}
             </Drawer>
