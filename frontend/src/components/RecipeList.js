@@ -117,7 +117,6 @@ const RecipeList = () => {
                                         flex: "1 1 auto",
                                         height: 300,
                                         width: 300,
-                                        overflow: "hidden",
                                     }}
                                 >
                                     <Typography
@@ -127,15 +126,7 @@ const RecipeList = () => {
                                     >
                                         {recipe.name}
                                     </Typography>
-                                    <div
-                                        style={{
-                                            overflow: "hidden",
-                                            textOverflow: "ellipsis",
-                                            whiteSpace: "nowrap",
-                                            display: "flex",
-                                            flexWrap: "nowrap",
-                                        }}
-                                    >
+                                    <div>
                                         {recipe.ingredients.map(
                                             (ingredient, index) => (
                                                 <Chip
