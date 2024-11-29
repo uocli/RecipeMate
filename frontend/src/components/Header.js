@@ -22,6 +22,7 @@ import { useTheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../utils/AuthContext";
 import { keyframes } from "@emotion/react";
+import logo from "../assets/logo.png";
 
 const drawerAnimation = keyframes`
     0% {
@@ -100,11 +101,17 @@ const ResponsiveHeader = () => {
                             <MenuIcon />
                         </IconButton>
                     )}
+                    <Avatar
+                        src={logo}
+                        alt="Logo"
+                        sx={{ marginRight: 2, cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    />
                     <Typography
-                        variant="h6"
+                        variant="h4"
                         sx={{
                             flexGrow: 1,
-                            fontFamily: "'Comic Sans MS', cursive, sans-serif",
+                            fontFamily: "'Madimi One', cursive, sans-serif",
                         }}
                     >
                         <Link
