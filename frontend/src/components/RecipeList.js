@@ -136,14 +136,14 @@ const RecipeList = () => {
                                                     sx={{
                                                         margin: "2px",
                                                         background:
-                                                            "linear-gradient(45deg, #FD6B8B, #FF8C9D)",
+                                                            "linear-gradient(45deg, #FFB085, #FDA6B3)",
                                                         color: "#fff",
                                                         borderRadius: "8px",
                                                         boxShadow:
                                                             "0 2px 4px rgba(0, 0, 0, 0.1)",
                                                         "&:hover": {
                                                             background:
-                                                                "linear-gradient(45deg, #FF8C9D, #FD6B8B)",
+                                                                "linear-gradient(45deg, #FDA6B3, #FFB085)",
                                                         },
                                                     }}
                                                 />
