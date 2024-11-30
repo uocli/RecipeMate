@@ -220,7 +220,7 @@ const RecipeDetail = () => {
                     <Typography
                         variant="body1"
                         component="p"
-                        sx={{ margin: "16px 0" }}
+                        sx={{ margin: "16px 0", whiteSpace: "pre-line" }}
                     >
                         {recipe.instructions}
                     </Typography>
