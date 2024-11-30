@@ -40,14 +40,25 @@ const Favorites = () => {
         }
     };
 
-    const handleTogglePublic = async (id, isPublic) => {
-        if (isPublic) {
-            try {
-                const response = await axios.post(`/api/favorites/share/${id}/`);
-                showAlert(response.data.message, "success");
-            } catch (error) {
-                showAlert("Failed to make the recipe public.", "error");
-            }
+    const handleTogglePublic = async (event) => {
+        try {
+            const { target } = event || {},
+                { checked, dataset } = target || {},
+                { id } = dataset || {};
+            const response = await axios.post(`/api/favorites/share/${id}/`, {
+                is_shared: checked,
+            });
+            // Update the state to reflect the new value
+            setFavorites((prevFavorites) =>
+                prevFavorites.map((favorite) =>
+                    favorite.id === parseInt(id)
+                        ? { ...favorite, is_shared: checked }
+                        : favorite,
+                ),
+            );
+            showAlert(response.data.message, "success");
+        } catch (error) {
+            showAlert("Failed to make the recipe public.", "error");
         }
     };
 
@@ -88,7 +99,9 @@ const Favorites = () => {
                             <label className="toggle-label">
                                 <input
                                     type="checkbox"
-                                    onChange={(e) => handleTogglePublic(favorite.id, e.target.checked)}
+                                    checked={favorite.is_shared}
+                                    data-id={favorite.id}
+                                    onChange={handleTogglePublic}
                                 />
                                 Make Public
                             </label>
