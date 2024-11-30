@@ -88,6 +88,15 @@ class RecipeCreateView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        if hasattr(favorite, "public_recipe"):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Public recipe already exists for this favorite.",
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
         ingredients = favorite.ingredients
         recipe_steps = favorite.recipe
 
@@ -109,6 +118,7 @@ class RecipeCreateView(APIView):
 
         # Create the public recipe
         public_recipe = PublicRecipe.objects.create(
+            favorite=favorite,
             name=favorite.name,
             description=favorite.name,
             instructions=instructions,
