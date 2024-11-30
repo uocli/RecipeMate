@@ -56,6 +56,10 @@ const Favorites = () => {
                         : favorite,
                 ),
             );
+            if (sessionStorage.getItem("recipemate__recipes")) {
+                // Clear the session storage if the user makes a recipe public
+                sessionStorage.removeItem("recipemate__recipes");
+            }
             showAlert(response.data.message, "success");
         } catch (error) {
             showAlert("Failed to make the recipe public.", "error");
