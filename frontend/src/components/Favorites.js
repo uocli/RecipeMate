@@ -40,6 +40,16 @@ const Favorites = () => {
         }
     };
 
+    const handleTogglePublic = async (id, isPublic) => {
+        if (isPublic) {
+            try {
+                const response = await axios.post(`/api/favorites/share/${id}/`);
+                showAlert(response.data.message, "success");
+            } catch (error) {
+                showAlert("Failed to make the recipe public.", "error");
+            }
+        }
+    };
 
     return (
         <div className="container">
@@ -75,6 +85,13 @@ const Favorites = () => {
                             >
                                 Add Ingredients to Shopping List
                             </button>
+                            <label className="toggle-label">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) => handleTogglePublic(favorite.id, e.target.checked)}
+                                />
+                                Make Public
+                            </label>
                         </li>
                     ))}
                 </ul>
