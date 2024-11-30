@@ -124,6 +124,7 @@ const RecipeDetail = () => {
                             display: "flex",
                             justifyContent: "space-between",
                             alignItems: "center",
+                            flexWrap: "wrap",
                         }}
                     >
                         <Typography
@@ -133,21 +134,28 @@ const RecipeDetail = () => {
                                 fontWeight: "bold",
                                 textShadow: "2px 2px 4px rgba(0, 0, 0, 0.2)",
                                 animation: "fadeIn 1s ease-in-out",
+                                flex: "1 1 auto",
+                                minWidth: "200px",
                             }}
                         >
                             {recipe.name}
                         </Typography>
                         {isAuthenticated ? (
-                            <Rating
-                                name="recipe-rating"
-                                value={rating}
-                                onChange={handleRatingChange}
-                                size="large"
-                                sx={{
-                                    color: "#FD6B8B",
-                                    animation: "bounce 1s ease-in-out",
-                                }}
-                            />
+                            <Button onClick={handleAnonymousRating}>
+                                <Rating
+                                    name="recipe-rating"
+                                    value={rating}
+                                    readOnly
+                                    size="large"
+                                    sx={{
+                                        color: "#FD6B8B",
+                                        animation: "bounce 1s ease-in-out",
+                                        "@media (max-width: 600px)": {
+                                            fontSize: "1.5rem", // Adjust the size for mobile devices
+                                        },
+                                    }}
+                                />
+                            </Button>
                         ) : (
                             <Button onClick={handleAnonymousRating}>
                                 <Rating
@@ -220,7 +228,7 @@ const RecipeDetail = () => {
                     <Typography
                         variant="body1"
                         component="p"
-                        sx={{ margin: "16px 0" }}
+                        sx={{ margin: "16px 0", whiteSpace: "pre-line" }}
                     >
                         {recipe.instructions}
                     </Typography>
