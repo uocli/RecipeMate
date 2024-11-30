@@ -3,6 +3,7 @@ import uuid
 from django.contrib.auth.models import User
 from django.db import models
 
+from .favorites_model import Favorite
 from ..utils.unsplash import UnsplashAPI
 
 
@@ -20,6 +21,12 @@ class Ingredient(models.Model):
 class PublicRecipe(models.Model):
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=255)
+    favorite = models.OneToOneField(
+        Favorite,
+        on_delete=models.CASCADE,
+        related_name="public_recipe",
+        null=True,
+    )
     image_url = models.URLField(max_length=500, blank=True)
     description = models.TextField()
     ingredients = models.ManyToManyField(Ingredient, related_name="ingredients")
