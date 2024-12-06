@@ -109,6 +109,7 @@ const RegisterForm = () => {
                 ref={captchaRef}
                 siteKey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
                 onSuccess={handleCaptchaChange}
+                style={{ textAlign: "center" }}
             />
             <Button
                 type="submit"
