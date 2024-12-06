@@ -11,6 +11,7 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
+import requests
 
 from api.custom_models.token_model import Token
 from backend import settings
@@ -32,15 +33,37 @@ class SendInviteView(APIView):
         )
 
     def post(self, request, format=None):
-        email = request.data["email"]
-        if email is None or email.strip() == "":
+        email = request.data.get("email")
+        captcha_token = request.data.get("captcha")
+
+        if not email or not captcha_token:
             return Response(
                 {
                     "success": False,
-                    "message": "Email is required!",
+                    "message": "Email and CAPTCHA token are required!",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
+
+        # Verify the Turnstile token with Cloudflare
+        response = requests.post(
+            settings.TURNSTILE_VERIFY_URL,
+            data={
+                "secret": settings.TURNSTILE_SECRET_KEY,
+                "response": captcha_token,
+            },
+        )
+        result = response.json()
+
+        if not result.get("success"):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid CAPTCHA!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
         email = email.strip().lower()
         user = User.objects.filter(email=email).first()
         if user is not None:
