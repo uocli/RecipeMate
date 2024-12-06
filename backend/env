@@ -1,0 +1,8 @@
+EMAIL_HOST_USER=hirecipemate@gmail.com
+EMAIL_HOST_PASSWORD=fgudryvhbnuperue
+EMAIL_HOST=smtp.gmail.com
+EMAIL_USE_TLS=True
+EMAIL_PORT=587
+BASE_URL=http://127.0.0.1:8000
+UNSPLASH_ACCESS_KEY=qPu5qLkHNtoPw94GgQoXPBlx1kByZOlczLk3_L26euw
+UNSPLASH_BASE_URL=https://api.unsplash.com/

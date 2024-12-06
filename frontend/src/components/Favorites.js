@@ -40,6 +40,31 @@ const Favorites = () => {
         }
     };
 
+    const handleTogglePublic = async (event) => {
+        try {
+            const { target } = event || {},
+                { checked, dataset } = target || {},
+                { id } = dataset || {};
+            const response = await axios.post(`/api/favorites/share/${id}/`, {
+                is_shared: checked,
+            });
+            // Update the state to reflect the new value
+            setFavorites((prevFavorites) =>
+                prevFavorites.map((favorite) =>
+                    favorite.id === parseInt(id)
+                        ? { ...favorite, is_shared: checked }
+                        : favorite,
+                ),
+            );
+            if (sessionStorage.getItem("recipemate__recipes")) {
+                // Clear the session storage if the user makes a recipe public
+                sessionStorage.removeItem("recipemate__recipes");
+            }
+            showAlert(response.data.message, "success");
+        } catch (error) {
+            showAlert("Failed to make the recipe public.", "error");
+        }
+    };
 
     return (
         <div className="container">
@@ -75,6 +100,15 @@ const Favorites = () => {
                             >
                                 Add Ingredients to Shopping List
                             </button>
+                            <label className="toggle-label">
+                                <input
+                                    type="checkbox"
+                                    checked={favorite.is_shared}
+                                    data-id={favorite.id}
+                                    onChange={handleTogglePublic}
+                                />
+                                Make Public
+                            </label>
                         </li>
                     ))}
                 </ul>
