@@ -11,11 +11,11 @@ from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import requests
 
 from api.custom_models.token_model import Token
 from backend import settings
 from api.serializers.token_serializer import TokenSerializer
+from api.utils.captcha_utils import verify_captcha
 from api.utils.email_utils import send_email
 
 
@@ -45,17 +45,7 @@ class SendInviteView(APIView):
                 status=status.HTTP_200_OK,
             )
 
-        # Verify the Turnstile token with Cloudflare
-        response = requests.post(
-            settings.TURNSTILE_VERIFY_URL,
-            data={
-                "secret": settings.TURNSTILE_SECRET_KEY,
-                "response": captcha_token,
-            },
-        )
-        result = response.json()
-
-        if not result.get("success"):
+        if not verify_captcha(captcha_token):
             return Response(
                 {
                     "success": False,
