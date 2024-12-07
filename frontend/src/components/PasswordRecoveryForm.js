@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useRef } from "react";
 import {
     TextField,
     Button,
@@ -11,15 +11,26 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AlertContext } from "../utils/AlertContext";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 const PasswordRecoveryForm = () => {
     const { showAlert } = useContext(AlertContext);
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
+    const [captchaValue, setCaptchaValue] = useState(null);
+    const captchaRef = useRef(null);
     const navigate = useNavigate();
+
+    const handleCaptchaChange = (token) => {
+        setCaptchaValue(token);
+    };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        if (!captchaValue) {
+            showAlert("Please complete the CAPTCHA", "error");
+            return;
+        }
         if (email?.trim()) {
             setLoading(true);
             axios
@@ -27,6 +38,7 @@ const PasswordRecoveryForm = () => {
                     "/api/password/forgot/",
                     {
                         email,
+                        captcha: captchaValue,
                     },
                     {
                         headers: {
@@ -40,12 +52,16 @@ const PasswordRecoveryForm = () => {
                         { success, message } = data || {};
                     if (status === 200 && success === true) {
                         showAlert(message, "success");
+                        setEmail("");
                     } else {
                         showAlert(message, "error");
                     }
                 })
                 .finally(() => {
                     setLoading(false);
+                    if (captchaRef.current) {
+                        captchaRef.current.reset();
+                    }
                 });
         }
     };
@@ -68,6 +84,12 @@ const PasswordRecoveryForm = () => {
                 disabled={loading}
                 margin="normal"
                 type="email"
+            />
+            <Turnstile
+                ref={captchaRef}
+                siteKey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
+                onSuccess={handleCaptchaChange}
+                style={{ textAlign: "center" }}
             />
             <Button
                 type="submit"
