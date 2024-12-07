@@ -103,8 +103,7 @@ const PasswordRecoveryForm = () => {
                     width: "100%",
                     height: "100%",
                     zIndex: -1,
-                    background: "rgba(28, 146, 210, 0.7)",
-                    filter: "blur(8px)",
+                    background: "white",
                 }}
             />
 
