@@ -6,12 +6,14 @@ import {
     Link,
     Box,
     CircularProgress,
+    useMediaQuery,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { AlertContext } from "../utils/AlertContext";
 import { Turnstile } from "@marsidev/react-turnstile";
+import { useTheme } from "@mui/material/styles";
 
 const PasswordRecoveryForm = () => {
     const { showAlert } = useContext(AlertContext);
@@ -21,6 +23,8 @@ const PasswordRecoveryForm = () => {
     const [backgroundImage, setBackgroundImage] = useState("");
     const captchaRef = useRef(null);
     const navigate = useNavigate();
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
     useEffect(() => {
         // Fetch the background image URL from the backend
@@ -87,7 +91,7 @@ const PasswordRecoveryForm = () => {
                 display: "flex",
                 flexDirection: "column",
                 gap: 2,
-                width: "300px",
+                width: isMobile ? "90%" : "400px", // Adjust width based on screen size
                 margin: "auto",
                 mt: 5,
                 backgroundImage: `url(${backgroundImage})`,
