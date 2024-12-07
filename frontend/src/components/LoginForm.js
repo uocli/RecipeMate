@@ -74,6 +74,9 @@ const LoginForm = () => {
             })
             .finally(() => {
                 setLoading(false);
+                if (captchaRef.current) {
+                    captchaRef.current.reset();
+                }
             });
     };
 
