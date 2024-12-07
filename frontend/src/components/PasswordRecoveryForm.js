@@ -70,20 +70,28 @@ const PasswordRecoveryForm = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                width: "300px",
+                margin: "auto",
+                mt: 5,
+            }}
         >
-            <Typography variant="h5" align="center" gutterBottom>
+            <Typography variant="h5" textAlign="center">
                 Recover Your Password
             </Typography>
             <TextField
                 label="Email"
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                name="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                fullWidth
                 required
                 disabled={loading}
-                margin="normal"
-                type="email"
             />
             <Turnstile
                 ref={captchaRef}
@@ -96,6 +104,7 @@ const PasswordRecoveryForm = () => {
                 variant="contained"
                 color="primary"
                 fullWidth
+                sx={{ marginTop: 2 }}
                 disabled={loading}
                 startIcon={loading && <CircularProgress size={20} />}
             >
