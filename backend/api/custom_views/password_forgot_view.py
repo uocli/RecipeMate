@@ -12,6 +12,7 @@ from rest_framework.views import APIView
 
 from ..custom_models.token_model import Token
 from ..serializers.token_serializer import TokenSerializer
+from ..utils.captcha_utils import verify_captcha
 from ..utils.email_utils import send_email
 
 
@@ -26,7 +27,27 @@ class PasswordForgotView(APIView):
         )
 
     def post(self, request, format=None):
-        email = request.data["email"]
+        captcha_token = request.data.get("captcha")
+        email = request.data.get("email")
+
+        if not email or not captcha_token:
+            return Response(
+                {
+                    "success": False,
+                    "message": "Email and CAPTCHA token are required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
+        if not verify_captcha(captcha_token):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid CAPTCHA!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
         user = User.objects.filter(email=email).first()
         if user is None:
             return Response(
