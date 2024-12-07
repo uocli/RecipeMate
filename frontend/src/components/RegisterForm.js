@@ -89,9 +89,16 @@ const RegisterForm = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ maxWidth: 400, margin: "auto", padding: 4 }}
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                width: "300px",
+                margin: "auto",
+                mt: 5,
+            }}
         >
-            <Typography variant="h5" align="center" gutterBottom>
+            <Typography variant="h5" textAlign="center">
                 Register
             </Typography>
             <TextField
