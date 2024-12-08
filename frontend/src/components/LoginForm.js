@@ -108,13 +108,14 @@
 // export default LoginForm;
 
 
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import {
     Box,
     Button,
     Link,
     TextField,
     Typography,
+    CircularProgress,
     Paper,
 } from "@mui/material";
 import { AuthContext } from "../utils/AuthContext";
@@ -122,17 +123,20 @@ import { AlertContext } from "../utils/AlertContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { Turnstile } from "@marsidev/react-turnstile";
 import backgroundImage from "../assets/images/login-background.jpg";
 
 const LoginForm = () => {
     const { showAlert } = useContext(AlertContext);
     const [password, setPassword] = useState("");
     const { login, setUser, isAuthenticated } = useContext(AuthContext);
+    const [loading, setLoading] = useState(false);
+    const [captchaValue, setCaptchaValue] = useState(null);
+    const captchaRef = useRef(null);
 
     const navigate = useNavigate();
     const location = useLocation();
     const from = location.state?.from?.pathname || "/";
-    // Get the Email from the URL
     const queryParams = new URLSearchParams(location.search);
     const initialEmail = queryParams.get("un") || "";
     const [email, setEmail] = useState(initialEmail || "");
@@ -143,13 +147,21 @@ const LoginForm = () => {
         }
     }, [isAuthenticated, navigate]);
 
+    const handleCaptchaChange = (token) => {
+        setCaptchaValue(token);
+    };
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-
+        if (!captchaValue) {
+            showAlert("Please complete the CAPTCHA", "error");
+            return;
+        }
+        setLoading(true);
         axios
             .post(
                 "/auth/login/",
-                { email, password },
+                { email, password, captcha: captchaValue },
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -171,6 +183,12 @@ const LoginForm = () => {
             })
             .catch((error) => {
                 showAlert(error.response?.data?.message, "error");
+            })
+            .finally(() => {
+                setLoading(false);
+                if (captchaRef.current) {
+                    captchaRef.current.reset();
+                }
             });
     };
 
@@ -260,6 +278,12 @@ const LoginForm = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         fullWidth
+                    />
+                    <Turnstile
+                        ref={captchaRef}
+                        siteKey={process.env.REACT_APP_TURNSTILE_SITE_KEY}
+                        onSuccess={handleCaptchaChange}
+                        style={{ textAlign: "center" }}
                     />
                     <Button
                         variant="contained"

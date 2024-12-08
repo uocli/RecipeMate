@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from api.utils.captcha_utils import verify_captcha
 from backend import settings
 from ..serializers.user_serializer import UserSerializer
 
@@ -15,6 +16,8 @@ class LoginView(APIView):
     def post(self, request, format=None):
         email = request.data["email"]
         password = request.data["password"]
+        captcha_token = request.data.get("captcha")
+
         if email is None or email.strip() == "":
             return Response(
                 {
@@ -28,6 +31,14 @@ class LoginView(APIView):
                 {
                     "success": False,
                     "message": "Password is required!",
+                },
+                status=status.HTTP_200_OK,
+            )
+        if captcha_token is None or not verify_captcha(captcha_token):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid CAPTCHA!",
                 },
                 status=status.HTTP_200_OK,
             )
