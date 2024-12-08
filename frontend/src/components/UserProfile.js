@@ -151,6 +151,9 @@ const UserProfile = () => {
                         margin="normal"
                         required
                         disabled={loading}
+                        sx={{
+                            "& .MuiInputLabel-root": { color: "primary.main" },
+                        }}
                     />
                     <TextField
                         label="Last Name"
@@ -159,12 +162,20 @@ const UserProfile = () => {
                         fullWidth
                         margin="normal"
                         disabled={loading}
+                        sx={{
+                            "& .MuiInputLabel-root": { color: "primary.main" },
+                        }}
                     />
                     <Button
                         type="submit"
                         variant="contained"
                         color="primary"
-                        sx={{ mt: 2 }}
+                        sx={{
+                            mt: 2,
+                            background:
+                                "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                            color: "white",
+                        }}
                         disabled={loading}
                     >
                         Update Account
@@ -196,6 +207,11 @@ const UserProfile = () => {
                                 )
                             }
                             style={{ position: "relative" }}
+                            sx={{
+                                background:
+                                    "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                                color: "white",
+                            }}
                         >
                             Change Password
                         </Button>
@@ -207,6 +223,11 @@ const UserProfile = () => {
                             type="button"
                             onClick={() => setIsDialogOpen(true)}
                             disabled={emailLoading}
+                            sx={{
+                                background:
+                                    "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                                color: "white",
+                            }}
                         >
                             Change Email
                         </Button>
@@ -254,7 +275,11 @@ const UserProfile = () => {
                 fullWidth
             >
                 <DialogTitle
-                    sx={{ backgroundColor: "primary.main", color: "white" }}
+                    sx={{
+                        background:
+                            "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                        color: "white",
+                    }}
                 >
                     Change Email
                 </DialogTitle>
@@ -270,13 +295,23 @@ const UserProfile = () => {
                         fullWidth
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
+                        sx={{
+                            "& .MuiInputLabel-root": { color: "primary.main" },
+                        }}
                     />
                 </DialogContent>
                 <DialogActions sx={{ padding: 2 }}>
                     <Button
                         onClick={() => setIsDialogOpen(false)}
-                        color="primary"
                         variant="outlined"
+                        sx={{
+                            color: "#D84315", // Darker shade of the gradient colors
+                            borderColor: "#D84315",
+                            "&:hover": {
+                                borderColor: "#FF8E53",
+                                backgroundColor: "rgba(255, 142, 83, 0.1)",
+                            },
+                        }}
                     >
                         Cancel
                     </Button>
@@ -284,6 +319,11 @@ const UserProfile = () => {
                         onClick={handleUpdateEmail}
                         color="primary"
                         variant="contained"
+                        sx={{
+                            background:
+                                "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+                            color: "white",
+                        }}
                     >
                         Confirm
                     </Button>
