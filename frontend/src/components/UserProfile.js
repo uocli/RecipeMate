@@ -273,18 +273,33 @@ const UserProfile = () => {
                 onClose={() => setIsDialogOpen(false)}
                 maxWidth="md"
                 fullWidth
+                sx={{
+                    "& .MuiPaper-root": {
+                        borderRadius: 2,
+                        boxShadow: 3,
+                    },
+                }}
             >
                 <DialogTitle
                     sx={{
                         background:
                             "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
                         color: "white",
+                        padding: 2,
+                        fontWeight: "bold",
+                        textAlign: "center",
                     }}
                 >
                     Change Email
                 </DialogTitle>
                 <DialogContent sx={{ padding: 3 }}>
-                    <DialogContentText sx={{ marginBottom: 2 }}>
+                    <DialogContentText
+                        sx={{
+                            marginBottom: 2,
+                            fontSize: "1.1rem",
+                            color: "#333",
+                        }}
+                    >
                         Please enter your new email address.
                     </DialogContentText>
                     <TextField
@@ -297,15 +312,19 @@ const UserProfile = () => {
                         onChange={(e) => setNewEmail(e.target.value)}
                         sx={{
                             "& .MuiInputLabel-root": { color: "primary.main" },
+                            "& .MuiOutlinedInput-root": {
+                                borderRadius: 1,
+                            },
+                            marginBottom: 1,
                         }}
                     />
                 </DialogContent>
-                <DialogActions sx={{ padding: 2 }}>
+                <DialogActions sx={{ padding: 2, justifyContent: "center" }}>
                     <Button
                         onClick={() => setIsDialogOpen(false)}
                         variant="outlined"
                         sx={{
-                            color: "#D84315", // Darker shade of the gradient colors
+                            color: "#D84315",
                             borderColor: "#D84315",
                             "&:hover": {
                                 borderColor: "#FF8E53",
@@ -323,6 +342,11 @@ const UserProfile = () => {
                             background:
                                 "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
                             color: "white",
+                            marginLeft: 2,
+                            "&:hover": {
+                                background:
+                                    "linear-gradient(45deg, #FF8E53 30%, #FE6B8B 90%)",
+                            },
                         }}
                     >
                         Confirm
