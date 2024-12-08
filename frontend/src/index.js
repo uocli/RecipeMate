@@ -6,6 +6,9 @@ import App from "./components/App";
 import AuthProvider from "./utils/AuthContext";
 import { AlertProvider } from "./utils/AlertContext";
 import AlertDisplay from "./utils/AlertDisplay";
+import { ThemeProvider } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
+import theme from "./utils/theme";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -14,7 +17,10 @@ root.render(
             <AlertProvider>
                 <AlertDisplay />
                 <AuthProvider>
-                    <App />
+                    <ThemeProvider theme={theme}>
+                        <CssBaseline />
+                        <App />
+                    </ThemeProvider>
                 </AuthProvider>
             </AlertProvider>
         </Router>
