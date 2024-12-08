@@ -9,14 +9,6 @@ favicon_dir = os.path.join(FRONTEND_ROOT_DIR, "favicon")
 
 urlpatterns = [
     path(
-        "favicon.ico",
-        serve,
-        {
-            "document_root": favicon_dir,
-            "path": "favicon.ico",
-        },
-    ),
-    path(
         "site.webmanifest",
         serve,
         {
@@ -25,19 +17,19 @@ urlpatterns = [
         },
     ),
     path(
-        "favicon-16x16.png",
+        "favicon.ico",
         serve,
         {
             "document_root": favicon_dir,
-            "path": "favicon-16x16.png",
+            "path": "favicon.ico",
         },
     ),
     path(
-        "favicon-32x32.png",
+        "favicon.svg",
         serve,
         {
             "document_root": favicon_dir,
-            "path": "favicon-32x32.png",
+            "path": "favicon.svg",
         },
     ),
     path(
@@ -49,19 +41,27 @@ urlpatterns = [
         },
     ),
     path(
-        "android-chrome-192x192.png",
+        "favicon-96x96.png",
         serve,
         {
             "document_root": favicon_dir,
-            "path": "android-chrome-192x192.png",
+            "path": "favicon-96x96.png",
         },
     ),
     path(
-        "android-chrome-512x512.png",
+        "web-app-manifest-192x192.png",
         serve,
         {
             "document_root": favicon_dir,
-            "path": "android-chrome-512x512.png",
+            "path": "web-app-manifest-192x192.png",
+        },
+    ),
+    path(
+        "web-app-manifest-512x512.png",
+        serve,
+        {
+            "document_root": favicon_dir,
+            "path": "web-app-manifest-512x512.png",
         },
     ),
 ]
