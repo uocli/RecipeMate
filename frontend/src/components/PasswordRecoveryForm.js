@@ -90,6 +90,7 @@ const PasswordRecoveryForm = () => {
                 alignItems: "center",
                 overflow: "hidden",
                 backgroundSize: "cover",
+                backgroundImage: `url(${backgroundImage})`,
                 backgroundPosition: "center center",
                 marginTop: "-64px", // Adjust this value based on the height of your header
             }}
