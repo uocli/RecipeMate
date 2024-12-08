@@ -22,5 +22,5 @@ class PasswordChangeView(APIView):
         data["email"] = user.email
         new_request = Request(request._request)
         new_request._full_data = data
-        response = PasswordForgotView().post(new_request, format)
+        response = PasswordForgotView(ignore_captcha=True).post(new_request, format)
         return response
