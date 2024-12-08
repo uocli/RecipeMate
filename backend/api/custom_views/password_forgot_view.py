@@ -17,6 +17,12 @@ from ..utils.email_utils import send_email
 
 
 class PasswordForgotView(APIView):
+    ignore_captcha = False
+
+    def __init__(self, ignore_captcha=False):
+        super(PasswordForgotView, self).__init__()
+        self.ignore_captcha = ignore_captcha
+
     def get(self, request, format=None):
         return Response(
             {
@@ -27,26 +33,34 @@ class PasswordForgotView(APIView):
         )
 
     def post(self, request, format=None):
-        captcha_token = request.data.get("captcha")
         email = request.data.get("email")
 
-        if not email or not captcha_token:
+        if not email:
             return Response(
                 {
                     "success": False,
-                    "message": "Email and CAPTCHA token are required!",
+                    "message": "Email is required!",
                 },
                 status=status.HTTP_200_OK,
             )
-
-        if not verify_captcha(captcha_token):
-            return Response(
-                {
-                    "success": False,
-                    "message": "Invalid CAPTCHA!",
-                },
-                status=status.HTTP_200_OK,
-            )
+        if not self.ignore_captcha:
+            captcha_token = request.data.get("captcha")
+            if not captcha_token:
+                return Response(
+                    {
+                        "success": False,
+                        "message": "CAPTCHA token is required!",
+                    },
+                    status=status.HTTP_200_OK,
+                )
+            if not verify_captcha(captcha_token):
+                return Response(
+                    {
+                        "success": False,
+                        "message": "Invalid CAPTCHA!",
+                    },
+                    status=status.HTTP_200_OK,
+                )
 
         user = User.objects.filter(email=email).first()
         if user is None:
