@@ -15,6 +15,7 @@ import { AlertContext } from "../utils/AlertContext";
 import { Turnstile } from "@marsidev/react-turnstile";
 
 const RegisterForm = () => {
+    const [backgroundImage, setBackgroundImage] = useState("");
     const [email, setEmail] = useState("");
     const [loading, setLoading] = useState(false);
     const [captchaValue, setCaptchaValue] = useState(null);
@@ -28,6 +29,18 @@ const RegisterForm = () => {
             navigate("/");
         }
     }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
+        // Fetch the background image URL from your API
+        axios
+            .get("/api/background-image/")
+            .then((response) => {
+                setBackgroundImage(response.data.imageUrl);
+            })
+            .catch((error) => {
+                console.error("Error fetching background image:", error);
+            });
+    }, []);
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -95,6 +108,7 @@ const RegisterForm = () => {
                 justifyContent: "center",
                 alignItems: "center",
                 overflow: "hidden",
+                backgroundImage: `url(${backgroundImage})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center center",
                 marginTop: "-64px", // Adjust this value based on the height of your header
