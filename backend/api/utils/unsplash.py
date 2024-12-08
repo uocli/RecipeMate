@@ -30,3 +30,23 @@ class UnsplashAPI:
         except requests.exceptions.RequestException as e:
             print(f"Error fetching Unsplash data: {e}")
             return None
+
+    @classmethod
+    def get_random_image(cls, keyword, size="regular", count=1):
+        endpoint = urljoin(cls.base_url, "photos/random")
+        params = {
+            "client_id": cls.access_key,
+            "query": quote(keyword),
+            "count": count,
+        }
+
+        try:
+            response = requests.get(endpoint, params=params)
+            response.raise_for_status()  # Raise HTTPError for bad responses (4xx and 5xx)
+            data = response.json()
+            if len(data) > 0:
+                return data[0]["urls"][size]
+            return None
+        except requests.exceptions.RequestException as e:
+            print(f"Error fetching Unsplash data: {e}")
+            return None
