@@ -15,6 +15,7 @@ from rest_framework.views import APIView
 from api.custom_models.token_model import Token
 from backend import settings
 from api.serializers.token_serializer import TokenSerializer
+from api.utils.captcha_utils import verify_captcha
 from api.utils.email_utils import send_email
 
 
@@ -32,15 +33,27 @@ class SendInviteView(APIView):
         )
 
     def post(self, request, format=None):
-        email = request.data["email"]
-        if email is None or email.strip() == "":
+        email = request.data.get("email")
+        captcha_token = request.data.get("captcha")
+
+        if not email or not captcha_token:
             return Response(
                 {
                     "success": False,
-                    "message": "Email is required!",
+                    "message": "Email and CAPTCHA token are required!",
                 },
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_200_OK,
             )
+
+        if not verify_captcha(captcha_token):
+            return Response(
+                {
+                    "success": False,
+                    "message": "Invalid CAPTCHA!",
+                },
+                status=status.HTTP_200_OK,
+            )
+
         email = email.strip().lower()
         user = User.objects.filter(email=email).first()
         if user is not None:

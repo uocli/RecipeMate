@@ -1,5 +1,6 @@
 from django.urls import path, include
 
+from .custom_views.background_views import RandomRecipeImageView
 from .custom_views.recipe_views import RecipeListView, RecipeDetailView, RecipeRateView
 from .custom_views.user_profile_views import UserProfileView
 from .custom_views.favorites_view import FavoriteListView, FavoriteDeleteView
@@ -21,5 +22,6 @@ urlpatterns = [
     path("recipes/", RecipeListView.as_view(), name="recipe-list"),
     path("recipe/<str:uuid>/", RecipeDetailView.as_view(), name="recipe-detail"),
     path("recipe/<str:uuid>/rate/", RecipeRateView.as_view(), name="recipe-detail"),
+    path("background-image/", RandomRecipeImageView.as_view(), name="background-image"),
 ]
 
